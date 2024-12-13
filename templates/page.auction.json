@@ -1,0 +1,12 @@
+{
+    "sections": {
+      "main": {
+        "type": "auction",
+        "settings": {}
+      }
+    },
+    "order": [
+      "main"
+    ]
+  }
+  

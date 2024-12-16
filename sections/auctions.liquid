@@ -56,9 +56,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   window.redirectToAuctionPage = (auctionId) => {
-    const auctionPageUrl = `https://levi9-test.myshopify.com/pages/auctions/${auctionId}`;
-    window.location.href = auctionPageUrl;
-  };
+  const auctionPageUrl = `https://levi9-test.myshopify.com/pages/bid/${auctionId}`;
+  window.location.href = auctionPageUrl;
+};
 
 
   fetchAuctions();

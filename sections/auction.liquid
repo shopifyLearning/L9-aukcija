@@ -232,7 +232,6 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
     const customerId = window.customerId || null;
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);
-    const localISOString = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}T${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}:00`;
 
     const auctionApiUrl = 'https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions';
     const auctionPayload = {

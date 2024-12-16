@@ -1,0 +1,1 @@
+The snippets directory contains Liquid files that host smaller reusable snippets of code.

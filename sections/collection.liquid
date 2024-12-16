@@ -1,0 +1,53 @@
+{% paginate collection.products by 4 %}
+  <section class="collection-section">
+    <div>
+      <div class="products-grid">
+        {% for product in collection.products %}
+          <div class="product-card-grid">
+            <img
+              width="300"
+              height="300"
+              loading="lazy"
+              src="{{ product.featured_image | image_url}}">
+            <h3>{{- product.title | link_to: product.url }}</h3>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {{ paginate | default_pagination }}
+{% endpaginate %}
+
+<style>
+  .collection-section {
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    padding: 10px;
+    position: relative;
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "collection",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#F4F4F4"
+      }, {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#000000"
+      }
+    ],
+    "presets": [
+      {
+        "name": "collection"
+      }
+    ]
+  }
+{% endschema %}

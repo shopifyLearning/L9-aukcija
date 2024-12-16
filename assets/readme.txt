@@ -1,0 +1,1 @@
+The assets directory contains all of the assets used in a theme, including image, CSS, and JavaScript files.

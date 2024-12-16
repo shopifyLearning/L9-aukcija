@@ -1,0 +1,272 @@
+<div class="container">
+
+  <div class="left-content">
+    <form id="auction-form" class="auction-form" method="POST" enctype="multipart/form-data">
+   
+      <label for="productTitle">Product Title</label>
+      <input type="text" name="productTitle" id="productTitle" required>
+
+     
+      <label for="productDescription">Product Description</label>
+      <textarea name="productDescription" id="productDescription" required></textarea>
+
+   
+      <label for="imageInput">Add Image (up to 5)</label>
+      <input 
+        type="file" 
+        id="imageInput" 
+        name="images" 
+        accept="image/*" 
+        multiple 
+        onchange="addImage(event)"
+      >
+      <div id="image-preview-container"></div>
+
+    
+      <label for="startDateTime">Start Date and Time</label>
+      <input type="datetime-local" id="startDateTime" name="startDateTime" required>
+
+   
+      <label for="durationDays">Auction Duration (in days)</label>
+      <input type="number" id="durationDays" name="durationDays" min="1" step="1" required>
+
+    
+      <label for="startPrice">Start Price</label>
+      <input type="number" id="startPrice" name="startPrice" min="0" step="100" required>
+
+     
+      <button type="submit">Create Auction</button>
+    </form>
+  </div>
+
+
+<div class="right-links">
+  <ul>
+    <li>
+     <a href="/pages/bid">ACTIVE</a>
+      <span class="auction-count">0</span>
+    </li>
+    <li>
+      <a href="#upcoming">UPCOMING</a>
+      <span class="auction-count">0</span>
+    </li>
+    <li>
+      <a href="#completed">COMPLETED</a>
+      <span class="auction-count">0</span>
+    </li>
+  </ul>
+</div>
+
+</div>
+<div id="response-message"></div>
+
+
+<script>  
+  
+  const startDateTimeInput = document.getElementById("startDateTime");
+
+
+  function formatDate(date) {
+    return date.toISOString().split('T')[0];
+  }
+
+const today = new Date();
+const minDateTime = today.toISOString().slice(0, 16);
+startDateTimeInput.min = minDateTime;
+
+
+const selectedImages = [];
+
+function addImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (selectedImages.length >= 5) {
+    alert('You can upload up to 5 images.');
+    event.target.value = ''; 
+    return;
+  }
+
+  selectedImages.push(file);
+  previewImages(); 
+  event.target.value = ''; 
+}
+
+
+function previewImages() {
+  const container = document.getElementById('image-preview-container');
+  container.innerHTML = ''; 
+
+  selectedImages.forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.style.width = '100px';
+      img.style.margin = '10px';
+      img.style.border = '1px solid #ddd';
+      img.style.borderRadius = '5px';
+
+      
+      const removeButton = document.createElement('button');
+      removeButton.innerText = 'Remove';
+      removeButton.style.display = 'block';
+      removeButton.style.marginTop = '-5px';
+      removeButton.style.margin = '5px auto';
+      removeButton.style.backgroundColor = '#c76161'
+      removeButton.style.width = '90px'; 
+      removeButton.style.height = '30px';
+      removeButton.style.cursor = 'pointer'; 
+      removeButton.style.fontSize = '11px'; 
+      removeButton.onclick = () => {
+        selectedImages.splice(index, 1); 
+        previewImages();
+      };
+
+      const wrapper = document.createElement('div');
+      wrapper.appendChild(img);
+      wrapper.appendChild(removeButton);
+      container.appendChild(wrapper);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+
+document.getElementById('auction-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+    const submitButton = document.querySelector('button[type="submit"]');
+  submitButton.disabled = true; 
+  submitButton.style.opacity = 0.5; 
+   const productTitle = document.getElementById('productTitle').value;
+  const productDescription = document.getElementById('productDescription').value;
+  const startDate = document.getElementById('startDateTime').value;
+  const durationDays = parseInt(document.getElementById('durationDays').value, 10);
+  const startPrice = parseFloat(document.getElementById('startPrice').value);
+  const responseMessage = document.getElementById('response-message');
+  const imgbbApiKey = 'd829b5901c431ab9fde7d59648419ce4';
+
+  const displayMessage = (message, type) => {
+    responseMessage.className = ''; 
+    responseMessage.classList.add(type === 'success' ? 'success-message' : 'error-message');
+    responseMessage.innerHTML = `
+      <span class="icon">${type === 'success' ? '✅' : '❌'}</span>
+      ${message}
+    `;
+    responseMessage.style.display = 'block'; 
+  };
+
+  try {
+    if (selectedImages.length === 0) {
+      throw new Error('You must add at least one image.');
+    }
+
+   
+    const imageUrls = [];
+    for (const file of selectedImages) {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('key', imgbbApiKey);
+
+      const uploadImageResponse = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadImageResponse.ok) throw new Error('Image upload failed');
+      const uploadImageData = await uploadImageResponse.json();
+      imageUrls.push(uploadImageData.data.url);
+    }
+
+  
+    const mediaArray = imageUrls.map((url, i) => ({
+      originalSource: url,
+      alt: `Uploaded Image ${i + 1}`,
+      mediaContentType: "IMAGE",
+    }));
+    const mediaArrayGraphQL = JSON.stringify(mediaArray)
+  .replace(/"mediaContentType":"IMAGE"/g, 'mediaContentType: IMAGE')  
+  .replace(/"([^"]+)":/g, '$1:'); 
+
+    const productCreateValidan = `
+  mutation {
+    productCreate(
+      input: {
+        title: "${productTitle}",
+        descriptionHtml: "<p>${productDescription}</p>"
+        vendor: "Auction",
+        productType: "Custom Type",
+      },
+      media: ${mediaArrayGraphQL}
+    ) {
+      product {
+        id
+        title
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }`;
+
+    const graphQlUrl = 'https://l9-learning.myshopify.com/admin/api/2024-04/graphql.json';
+
+
+    const createProductResponse = await fetch(graphQlUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query: productCreateValidan }),
+    });
+
+    const createProductData = await createProductResponse.json();
+    if (createProductData.errors) {
+      throw new Error(createProductData.errors[0].message);
+    }
+
+    const productId = createProductData.data.productCreate.product.id.split('/').pop();
+    
+    const customerId = window.customerId || null;
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + durationDays);
+    
+    const auctionApiUrl = 'https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions';
+    const auctionPayload = {
+      productTitle,
+      customerId,
+      bidderId: "bidder_id_placeholder",
+      productId,
+      status: "Active",
+      shop: "l9-learning.myshopify.com",
+      startDate,
+      endDate: endDate.toISOString(),
+      startPrice,
+      imgUrlProduct: imageUrls[0], 
+    };
+    const auctionResponse = await fetch(auctionApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(auctionPayload),
+    });
+    if (!auctionResponse.ok) {
+      throw new Error('Failed to create auction.');
+    }
+    displayMessage(`🎉 Product and auction created successfully! Product ID: ${productId}`, 'success');
+    document.getElementById('auction-form').reset();
+    selectedImages.length = 0; 
+    previewImages(); 
+  } catch (error) {
+    displayMessage(`❌ Error: ${error.message}`, 'error');
+    console.error('Error:', error);
+  } finally {
+    
+    submitButton.disabled = false; 
+    submitButton.style.opacity = 1; 
+  }
+});
+
+  </script>

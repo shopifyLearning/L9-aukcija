@@ -1,0 +1,1 @@
+The templates directory contains a theme’s template files, which control what's rendered on each type of page.

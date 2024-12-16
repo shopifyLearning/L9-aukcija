@@ -1,0 +1,1 @@
+The config directory contains the config files for a theme.

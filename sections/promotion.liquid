@@ -1,0 +1,101 @@
+<section>
+  <div class="promotion-wrapper">
+    <div class="slide-text" id="text1">
+      <p>{{ section.settings.text1 }}</p>
+    </div>
+    <div class="slide-text" id="text2">
+      <p>{{ section.settings.text2 }}</p>
+    </div>
+    <div class="slide-text" id="text3">
+      <p>{{ section.settings.text3 }}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .promotion-wrapper {
+    padding: 30px;
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    position: relative;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const text1 = document.getElementById('text1');
+    const text2 = document.getElementById('text2');
+    const text3 = document.getElementById('text3');
+  
+    // Array of text elements
+    const texts = [text1, text2, text3];
+    let currentIndex = 0;
+  
+    // Function to slide the text to the middle
+    function slideToMiddle(element) {
+      element.style.left = '40%'; // Change this value as needed for centering
+      element.style.top ='50%';
+  
+    }
+  
+    // Function to reset the position of the text
+    function resetPosition(element) {
+      element.style.left = '-100%';
+    }
+  
+    // Function to handle sliding the text elements
+    function slideText() {
+      resetPosition(texts[currentIndex]);
+      currentIndex = (currentIndex + 1) % texts.length;
+      slideToMiddle(texts[currentIndex]);
+    }
+  
+    // Initial slide
+    slideToMiddle(texts[currentIndex]);
+  
+    // Set interval to slide the text every 3 seconds
+    setInterval(slideText, 3000);
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Promotion",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#F4F4F4"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#000000"
+      },
+      {
+        "type": "text",
+        "id": "text1",
+        "label": "text 1",
+        "default": "Members: Free Shipping!"
+      },
+      {
+        "type": "text",
+        "id": "text2",
+        "label": "text 2",
+        "default": "Save Up to 40%"
+      }, {
+        "type": "text",
+        "id": "text3",
+        "label": "text 3",
+        "default": "Get Your Gear Faster"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Promotion"
+      }
+    ]
+  }
+{% endschema %}

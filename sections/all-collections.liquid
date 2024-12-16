@@ -1,0 +1,111 @@
+<section class="all-collections">
+  <button class="scroll-button left" onclick="scrollLeft()">&#10094;</button>
+  <h1>Featured Collections</h1>
+  <div class="collection-container">
+    <div class="all-collections-wrapper">
+      {% for collection in section.settings.collection_list %}
+        <div class="collection-card">
+          <img
+            width="300"
+            height="300"
+            loading="lazy"
+            src="{{ collection.featured_image | image_url}}">
+          <h3>{{- collection.title | link_to: collection.url }}</h3>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <button class="scroll-button right" onclick="scrollRight()">&#10095;</button>
+</section>
+
+
+<style>
+  .all-collections {
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    padding: 10px;
+    position: relative;
+  }
+</style>
+
+<script>
+  function scrollLeft() {
+    const container = document.querySelector('.collection-container');
+    container.scrollBy({ left: -container.clientWidth, behavior: 'smooth' });
+    setTimeout(checkScrollButtons, 500); // Allow time for smooth scroll
+  }
+  
+  function scrollRight() {
+    const container = document.querySelector('.collection-container');
+    container.scrollBy({ left: container.clientWidth, behavior: 'smooth' });
+    setTimeout(checkScrollButtons, 500); // Allow time for smooth scroll
+  }
+  
+  function checkOverflow() {
+    const container = document.querySelector('.collection-container');
+    const wrapper = document.querySelector('.all-collections-wrapper');
+    const leftButton = document.querySelector('.scroll-button.left');
+    const rightButton = document.querySelector('.scroll-button.right');
+  
+    if (wrapper.scrollWidth > container.clientWidth) {
+      leftButton.style.display = 'block';
+      rightButton.style.display = 'block';
+      checkScrollButtons();
+    } else {
+      leftButton.style.display = 'none';
+      rightButton.style.display = 'none';
+    }
+  }
+  
+  function checkScrollButtons() {
+    const container = document.querySelector('.collection-container');
+    const leftButton = document.querySelector('.scroll-button.left');
+    const rightButton = document.querySelector('.scroll-button.right');
+  
+    if (container.scrollLeft <= 0) {
+      leftButton.style.display = 'none';
+    } else {
+      leftButton.style.display = 'block';
+    }
+  
+    if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+      rightButton.style.display = 'none';
+    } else {
+      rightButton.style.display = 'block';
+    }
+  }
+  
+  // Run the overflow check on page load
+  window.addEventListener('load', checkOverflow);
+  window.addEventListener('resize', checkOverflow);
+  document.querySelector('.collection-container').addEventListener('scroll', checkScrollButtons);
+</script>
+
+{% schema %}
+  {
+    "name": "Collections",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#F4F4F4"
+      }, {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#000000"
+      }, {
+        "type": "collection_list",
+        "id": "collection_list",
+        "label": "Collections",
+        "limit": 10
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collections"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,11 +1,8 @@
 {
   "sections": {
     "main": {
-      "type": "main-login",
+      "type": "main-customers-login",
       "settings": {
-        "enable_shop_login_button": true,
-        "padding_top": 36,
-        "padding_bottom": 36
       }
     }
   },

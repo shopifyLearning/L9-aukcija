@@ -1,0 +1,1 @@
+The locales directory contains the locale files for a theme, which are used to provide translated content.

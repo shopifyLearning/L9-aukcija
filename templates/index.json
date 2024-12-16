@@ -1,35 +1,72 @@
+/*
+* ------------------------------------------------------------
+* IMPORTANT: The contents of this file are auto-generated.
+*
+* This file may be updated by the Shopify admin theme editor
+* or related systems. Please exercise caution as any changes
+* made to this file may be overwritten.
+* ------------------------------------------------------------
+*/
 {
   "sections": {
-    "featured_collection": {
-      "type": "featured-collection",
+    "promotion": {
+      "type": "promotion",
       "settings": {
-        "title": "",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "all",
-        "products_to_show": 24,
-        "columns_desktop": 4,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "outline",
-        "enable_desktop_slider": false,
-        "color_scheme": "scheme-1",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 0,
-        "padding_bottom": 36
+        "background": "#f4f4f4",
+        "text_color": "#000000",
+        "text1": "Members: Free Shipping!",
+        "text2": "Save Up to 40%",
+        "text3": "Get Your Gear Faster"
+      }
+    },
+    "three_images": {
+      "type": "three-images",
+      "settings": {
+      }
+    },
+    "image-banner": {
+      "type": "main-image-banner",
+      "disabled": true,
+      "settings": {
+        "image": "shopify:\/\/shop_images\/petshop_banner.jpg"
+      }
+    },
+    "more-info": {
+      "type": "more-info",
+      "settings": {
+        "background": "#f4f4f4",
+        "text_color": "#000000",
+        "text": "default text",
+        "text2": "default text"
+      }
+    },
+    "all-collections": {
+      "type": "all-collections",
+      "settings": {
+        "background": "#f4f4f4",
+        "text_color": "#000000",
+        "collection_list": [
+          "birds",
+          "cats",
+          "dogs"
+        ]
+      }
+    },
+    "all-products": {
+      "type": "all-products",
+      "settings": {
+        "background": "#f4f4f4",
+        "text_color": "#000000",
+        "collection_name": "birds"
       }
     }
   },
   "order": [
-    "featured_collection"
+    "promotion",
+    "three_images",
+    "image-banner",
+    "more-info",
+    "all-collections",
+    "all-products"
   ]
 }

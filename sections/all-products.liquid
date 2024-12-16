@@ -1,0 +1,112 @@
+<section class="all-products">
+  <button class="scroll-button left" onclick="scrollLeft()">&#10094;</button>
+  <h1>{{ collections[section.settings.collection_name].title }}</h1>
+  <div class="product-container">
+    <div class="all-products-wrapper">
+      {% for product in collections[section.settings.collection_name].products %}
+        <div class="product-card">
+          <img
+            width=""
+            height=""
+            loading="lazy"
+            limit:
+            5
+            src="{{ product.featured_image | image_url}}">
+          <h3>{{- product.title | link_to: product.url }}</h3>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <button class="scroll-button right" onclick="scrollRight()">&#10095;</button>
+</section>
+
+<style>
+  .all-products {
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    padding: 10px;
+    position: relative;
+  }
+</style>
+
+<script>
+  function scrollLeft() {
+    const container = document.querySelector('.product-container');
+    container.scrollBy({ left: -container.clientWidth, behavior: 'smooth' });
+    setTimeout(checkScrollButtons, 500); // Allow time for smooth scroll
+  }
+  
+  function scrollRight() {
+    const container = document.querySelector('.product-container');
+    container.scrollBy({ left: container.clientWidth, behavior: 'smooth' });
+    setTimeout(checkScrollButtons, 500); // Allow time for smooth scroll
+  }
+  
+  function checkOverflow() {
+    const container = document.querySelector('.product-container');
+    const wrapper = document.querySelector('.all-product-wrapper');
+    const leftButton = document.querySelector('.scroll-button.left');
+    const rightButton = document.querySelector('.scroll-button.right');
+  
+    if (wrapper.scrollWidth > container.clientWidth) {
+      leftButton.style.display = 'block';
+      rightButton.style.display = 'block';
+      checkScrollButtons();
+    } else {
+      leftButton.style.display = 'none';
+      rightButton.style.display = 'none';
+    }
+  }
+  
+  function checkScrollButtons() {
+    const container = document.querySelector('.product-container');
+    const leftButton = document.querySelector('.scroll-button.left');
+    const rightButton = document.querySelector('.scroll-button.right');
+  
+    if (container.scrollLeft <= 0) {
+      leftButton.style.display = 'none';
+    } else {
+      leftButton.style.display = 'block';
+    }
+  
+    if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+      rightButton.style.display = 'none';
+    } else {
+      rightButton.style.display = 'block';
+    }
+  }
+  
+  // Run the overflow check on page load
+  window.addEventListener('load', checkOverflow);
+  window.addEventListener('resize', checkOverflow);
+  document.querySelector('.product-container').addEventListener('scroll', checkScrollButtons);
+</script>
+
+{% schema %}
+  {
+    "name": "All Products",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#F4F4F4"
+      }, {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#000000"
+      }, {
+        "type": "text",
+        "id": "collection_name",
+        "label": "Text",
+        "default": "birds"
+      }
+    ],
+    "presets": [
+      {
+        "name": "All Products"
+      }
+    ]
+  }
+{% endschema %}

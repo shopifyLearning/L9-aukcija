@@ -1,0 +1,1 @@
+The layout directory contains the layout files for a theme, through which template files are rendered..

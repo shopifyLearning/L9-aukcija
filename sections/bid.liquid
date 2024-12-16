@@ -50,29 +50,37 @@
     }
 
   
-    submitBidButton.addEventListener("click", async () => {
-      const price = parseFloat(bidInput.value);
-      if (!price || price <= 0) {
-        responseMessage.textContent = "Please enter a valid bid.";
-        return;
-      }
+submitBidButton.addEventListener("click", async () => {
+  const price = parseFloat(bidInput.value);
+  if (!price || price <= 0) {
+    responseMessage.textContent = "Please enter a valid bid.";
+    return;
+  }
 
-      try {
-        const bidPayload = { auctionId, price, customerId };
-        const bidApiUrl = `${auctionApiUrl}`;
-        const response = await fetch(bidApiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(bidPayload),
-        });
+  try {
+    // Konvertovanje customerId u string
+    const customerIdAsString = String(customerId);
 
-        if (!response.ok) throw new Error("Failed to submit bid.");
-        responseMessage.textContent = "Your bid has been successfully placed!";
-        bidInput.value = "";
-      } catch (error) {
-        console.error("Error submitting bid:", error);
-        responseMessage.textContent = "Failed to place bid. Please try again.";
-      }
+    // Kreiranje payloada sa customerId kao string
+    const bidPayload = { 
+      auctionId, 
+      price, 
+      customerId: customerIdAsString 
+    };
+
+    const response = await fetch(auctionApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bidPayload),
     });
+
+    if (!response.ok) throw new Error("Failed to submit bid.");
+    responseMessage.textContent = "Your bid has been successfully placed!";
+    bidInput.value = "";
+  } catch (error) {
+    console.error("Error submitting bid:", error);
+    responseMessage.textContent = "Failed to place bid. Please try again.";
+  }
+});
   });
 </script>

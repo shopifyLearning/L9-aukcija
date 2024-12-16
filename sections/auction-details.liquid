@@ -1,17 +1,18 @@
 <div class="auction-details-container">
   <h1 id="auction-title">Loading...</h1>
+   <p><strong>Time Remaining:</strong> <span id="countdown-timer">Loading...</span></p>
   <img id="auction-image" class="auction-image" alt="Auction Image">
+  <div class="bid-section">
+    <label for="bid-input"><strong>Place Your Bid:</strong></label>
+    <input type="number" id="bid-input" min="0" step="100">
+    <button id="submit-bid">Submit Bid</button>
+     <div id="response-message"></div>
+  </div>
   <p><strong>Start Price:</strong> <span id="start-price"></span></p>
   <p><strong>Current Price:</strong> <span id="current-price"></span></p>
   <p><strong>Start Date:</strong> <span id="start-date"></span></p>
   <p><strong>End Date:</strong> <span id="end-date"></span></p>
-  <p><strong>Time Remaining:</strong> <span id="countdown-timer">Loading...</span></p>
-  <div class="bid-section">
-    <label for="bid-input"><strong>Place Your Bid:</strong></label>
-    <input type="number" id="bid-input" min="0" step="10">
-    <button id="submit-bid">Submit Bid</button>
-  </div>
-  <div id="response-message"></div>
+ 
 </div>
 
 <script>
@@ -27,7 +28,7 @@
     const endDate = document.getElementById("end-date");
     const bidInput = document.getElementById("bid-input");
     const submitBidButton = document.getElementById("submit-bid");
-    const responseMessage = document.getElementById("response-message");
+    const responseMessage = document.getElementById('response-message');
     const countdownTimer = document.getElementById("countdown-timer");
     
     try {
@@ -37,8 +38,8 @@
 
       auctionTitle.textContent = auction.productTitle;
       auctionImage.src = auction.imgUrlProduct;
-      startPrice.textContent = `$${auction.startPrice}`;
-      currentPrice.textContent = `$${auction.currentPrice}`;
+      startPrice.textContent = `RSD ${auction.startPrice}`;
+      currentPrice.textContent = `RSD ${auction.currentPrice}`;
       startDate.textContent = new Date(auction.startDate).toLocaleString();
       endDate.textContent = new Date(auction.endDate).toLocaleString();
             
@@ -70,37 +71,75 @@
     }
 
     submitBidButton.addEventListener("click", async () => {
-      const price = parseFloat(bidInput.value);
-      if (!price || price <= 0) {
-        responseMessage.textContent = "Please enter a valid bid.";
-        return;
-      }
+  const price = parseFloat(bidInput.value);
+  if (!price || price <= 0) {
+    responseMessage.textContent = "Please enter a valid bid.";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+    return;
+  }
+  if (price <= parseFloat(currentPrice.textContent.replace('$', ''))) {
+    responseMessage.textContent = "Your bid must be higher than the current price.";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+    return;
+  }
 
-      try {
-        const auctionIdAsInt = parseInt(auctionId, 10);
-        const customerId = window.customerId || null;
-        const bidPayload = { 
-          customerId: String(customerId),
-          auctionId: auctionIdAsInt,  
-          price: price 
-        };
+  submitBidButton.disabled = true;
+  submitBidButton.style.opacity = 0.5; 
+  bidInput.disabled = true;           
+  bidInput.style.opacity = 0.5;
 
-        const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
+  try {
+    const auctionIdAsInt = parseInt(auctionId, 10);
+    const customerId = window.customerId || null;
+    const bidPayload = { 
+      customerId: String(customerId),
+      auctionId: auctionIdAsInt,  
+      price: price 
+    };
 
-        const response = await fetch(bidApiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(bidPayload),
-        });
+    const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
 
-        if (!response.ok) throw new Error("Failed to submit bid.");
-        
-        responseMessage.textContent = "Your bid has been successfully placed!";
-        bidInput.value = "";
-      } catch (error) {
-        console.error("Error submitting bid:", error);
-        responseMessage.textContent = "Failed to place bid. Please try again.";
-      }
+    const response = await fetch(bidApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bidPayload),
     });
+
+    if (!response.ok) throw new Error("Failed to submit bid.");
+    
+    responseMessage.textContent = "Your bid has been successfully placed!";
+    responseMessage.className = "success-message";
+    responseMessage.style.display = "block";
+    
+   
+    const updatedAuction = await response.json();
+    currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
+    
+    
+    setTimeout(() => {
+      responseMessage.style.display = "none";
+      bidInput.value = "";
+      submitBidButton.disabled = false;  
+      submitBidButton.style.opacity = 1; 
+      bidInput.disabled = false;        
+      bidInput.style.opacity = 1;       
+    }, 2000);
+
+  } catch (error) {
+    console.error("Error submitting bid:", error);
+    responseMessage.textContent = "Failed to place bid. Please try again.";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+
+  
+    submitBidButton.disabled = false;
+    submitBidButton.style.opacity = 1;
+    bidInput.disabled = false;
+    bidInput.style.opacity = 1;
+  }
+});
+
   });
 </script>

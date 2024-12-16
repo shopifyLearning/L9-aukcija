@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
  
   function createAuctionCard(auction) {
-    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "Europe/Belgrade" });
+    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
     const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
 
 

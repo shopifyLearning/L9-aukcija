@@ -14,38 +14,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   const auctionListContainer = document.getElementById("auction-list");
   const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
 
- 
+  // Funkcija za kreiranje HTML-a za jednu aukciju
   function createAuctionCard(auction) {
     const startDate = new Date(auction.startDate).toLocaleString();
     const endDate = new Date(auction.endDate).toLocaleString();
 
     return `
-      <div class="auction-card">
+      <div class="auction-card" onclick="openAuctionDetails(${auction.id})">
         <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
         <h2>${auction.productTitle}</h2>
         <p><strong>Start Price:</strong> $${auction.startPrice}</p>
         <p><strong>Current Price:</strong> $${auction.currentPrice}</p>
         <p><strong>Start Date:</strong> ${startDate}</p>
         <p><strong>End Date:</strong> ${endDate}</p>
-        <button class="bid-button" onclick="bidOnAuction(${auction.id})">Place Bid</button>
       </div>
     `;
   }
 
- 
+  // Dohvatanje liste aukcija sa API-ja
   async function fetchAuctions() {
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error("Failed to fetch auctions.");
       const auctions = await response.json();
 
-     
+      // Provera da li ima aukcija
       if (auctions.length === 0) {
         auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
         return;
       }
 
-    
+      // Generisanje HTML-a za aukcije
       const auctionCards = auctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
     } catch (error) {
@@ -54,16 +53,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  
-  window.bidOnAuction = (auctionId) => {
-    if (!customerId) {
-      alert("You need to log in to place a bid.");
-      return;
+  // Funkcija za otvaranje detalja aukcije
+  window.openAuctionDetails = async (auctionId) => {
+    try {
+      const auctionDetailsUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
+      const response = await fetch(auctionDetailsUrl);
+      if (!response.ok) throw new Error("Failed to fetch auction details.");
+      const auctionDetails = await response.json();
+
+      // Otvaranje nove stranice za detalje aukcije
+      const detailsPageContent = `
+        <div class="auction-details">
+          <img src="${auctionDetails.imgUrlProduct}" alt="${auctionDetails.productTitle}" class="auction-image">
+          <h1>${auctionDetails.productTitle}</h1>
+          <p><strong>Start Price:</strong> $${auctionDetails.startPrice}</p>
+          <p><strong>Current Price:</strong> $${auctionDetails.currentPrice}</p>
+          <p><strong>Start Date:</strong> ${new Date(auctionDetails.startDate).toLocaleString()}</p>
+          <p><strong>End Date:</strong> ${new Date(auctionDetails.endDate).toLocaleString()}</p>
+        </div>
+      `;
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write(detailsPageContent);
+      newWindow.document.close();
+    } catch (error) {
+      console.error("Error fetching auction details:", error);
+      alert("Failed to load auction details. Please try again.");
     }
-    alert(`Bid placed on auction ID: ${auctionId}`);
   };
 
- 
+  // Inicijalno učitavanje aukcija
   fetchAuctions();
 });
+
 </script>

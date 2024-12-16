@@ -37,7 +37,7 @@
       if (!response.ok) throw new Error("Failed to fetch auction details.");
       const auction = await response.json();
 
-      // Popunjavanje detalja
+    
       auctionTitle.textContent = auction.productTitle;
       auctionImage.src = auction.imgUrlProduct;
       startPrice.textContent = `$${auction.startPrice}`;

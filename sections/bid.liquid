@@ -48,8 +48,6 @@
       console.error("Error fetching auction details:", error);
       responseMessage.textContent = "Error loading auction details.";
     }
-
-  
 submitBidButton.addEventListener("click", async () => {
   const price = parseFloat(bidInput.value);
   if (!price || price <= 0) {
@@ -58,12 +56,15 @@ submitBidButton.addEventListener("click", async () => {
   }
 
   try {
+    // Konvertovanje auctionId u broj
+    const auctionIdAsInt = parseInt(auctionId, 10);
+
     // Konvertovanje customerId u string
     const customerIdAsString = String(customerId);
 
-    // Kreiranje payloada sa customerId kao string
+    // Kreiranje payloada sa pravilnim tipovima podataka
     const bidPayload = { 
-      auctionId, 
+      auctionId: auctionIdAsInt, 
       price, 
       customerId: customerIdAsString 
     };
@@ -82,5 +83,4 @@ submitBidButton.addEventListener("click", async () => {
     responseMessage.textContent = "Failed to place bid. Please try again.";
   }
 });
-  });
 </script>

@@ -56,13 +56,13 @@ submitBidButton.addEventListener("click", async () => {
   }
 
   try {
-    // Konvertovanje auctionId u broj
+   
     const auctionIdAsInt = parseInt(auctionId, 10);
 
-    // Konvertovanje customerId u string
+  
     const customerIdAsString = String(customerId);
 
-    // Kreiranje payloada sa pravilnim tipovima podataka
+   
     const bidPayload = { 
       auctionId: auctionIdAsInt, 
       price, 

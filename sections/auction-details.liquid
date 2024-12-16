@@ -17,7 +17,8 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
-    const auctionId = new URLSearchParams(window.location.search).get("auctionId");
+    const auctionId = window.location.pathname.split('/').pop();
+    console.log(auctionId);
     const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
 
     const auctionTitle = document.getElementById("auction-title");

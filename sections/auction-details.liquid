@@ -1,5 +1,4 @@
-{% assign auctionId = request.params.auctionId %}
-{% if auctionId %}
+
 <div class="auction-details-container">
   <h1 id="auction-title">Loading...</h1>
   <img id="auction-image" class="auction-image" alt="Auction Image">
@@ -80,6 +79,4 @@
     });
   });
 </script>
-{% else %}
-  <p>Invalid auction ID.</p>
-{% endif %}
+

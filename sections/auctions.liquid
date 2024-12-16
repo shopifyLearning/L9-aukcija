@@ -16,8 +16,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
  
   function createAuctionCard(auction) {
-    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
-    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
+const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Konvertovanje vremena iz UTC u lokalno vreme
+  const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: localTimeZone });
+  const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: localTimeZone });
 
 
     return `

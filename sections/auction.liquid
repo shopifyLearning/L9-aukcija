@@ -242,7 +242,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
       status: "Active",
       shop: "l9-learning.myshopify.com",
       startDate,
-      endDate: endDate.toISOString(),
+      endDate: `${endDate.toISOString().slice(0, -1)}`,
       startPrice,
       imgUrlProduct: imageUrls[0], 
     };

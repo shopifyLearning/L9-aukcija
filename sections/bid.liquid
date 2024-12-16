@@ -51,8 +51,8 @@
 
   
     submitBidButton.addEventListener("click", async () => {
-      const newBid = parseFloat(bidInput.value);
-      if (!newBid || newBid <= 0) {
+      const price = parseFloat(bidInput.value);
+      if (!price || price <= 0) {
         responseMessage.textContent = "Please enter a valid bid.";
         return;
       }

@@ -1,6 +1,176 @@
-{% schema %}
-  {
-    "name": "Section name",
-    "settings": []
-  }
-{% endschema %}
+<div class="product-container">
+    <div class="product-card">
+        <div class="product-info">
+            <img 
+                class="product-image" 
+                src="{{ product.featured_image | image_url }}" 
+                alt="{{ product.title }}"
+                width="150" 
+                height="150"
+            >
+            <h3 id="productTitle">{{ product.title }}</h3>
+            <p class="starting-price">
+                Starting Price: <span id="startingPrice">{{ product.price | money }}</span>
+            </p>
+        </div>
+
+        <div class="product-bid">
+            <label for="bid-{{ product.id }}">Input bid amount</label>
+            <input 
+                type="number" 
+                class="bid-input" 
+                id="bid-{{ product.id }}" 
+                data-product-id="{{ product.id }}" 
+                placeholder="Enter bid amount..." 
+                min="0"
+            >
+            <button 
+                class="bid-button save-button" 
+                id="saveButton" 
+                data-product-id="{{ product.id }}" 
+                data-product-title="{{ product.title }}"
+            >
+                Save
+            </button>
+
+            <p class="current-max-bid" data-product-id="{{ product.id }}">
+                Current highest bid: <span id="currentBidValue-{{ product.id }}">0</span>
+            </p>
+
+            <p>
+                Auction ends at: <span id="timer-{{ product.id }}"></span>
+            </p>
+
+            <a 
+                href="#" 
+                class="bid-history-link" 
+                data-product-id="{{ product.id }}"
+                onclick="openModal(event, '{{ product.id }}')"
+            >
+                View all bids (<span class="bid-number" data-product-id="{{ product.id }}">0</span>)
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var endDate = new Date('{{ section.settings.end_date | date: "%Y-%m-%d %H:%M" }}');
+    var buttons = document.querySelectorAll('.bid-button');
+    var randomId = generateRandomId();
+
+    // Update the countdown every second
+    var x = setInterval(function () {
+        var now = new Date().getTime();
+        var distance = endDate - now;
+
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerHTML = days + 'd ' + hours + 'h '
+            + minutes + 'm ' + seconds + 's ';
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById('timer').innerHTML = 'EXPIRED';
+            buttons.forEach(function (button) {
+                button.disabled = true;
+            });
+        }
+    }, 1000);
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var productId = button.dataset.productId;
+            var productTitle = button.dataset.productTitle;
+            var input = document.querySelector('.bid-input[data-product-id="' + productId + '"]');
+            var inputValue = input ? input.value.trim() : '';
+
+            if (button.id === 'saveButton') {
+                saveButtonClicked(productId, inputValue, productTitle);
+                input.value = '';
+            }
+        });
+    });
+
+    // Event listener for the View all bids link
+    var bidHistoryLinks = document.querySelectorAll('.bid-history-link');
+    bidHistoryLinks.forEach(function(link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            var productId = link.dataset.productId;
+            showAllBids(productId);
+        });
+    });
+
+    function getNumberOfBids(productId) {
+        var results = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            var storedItem = localStorage.getItem(key);
+            var parsedItem = JSON.parse(storedItem);
+            if (parsedItem && parsedItem.data.productId === productId) {
+                results.push(storedItem);
+            }
+        }
+        return results.length;
+    }
+
+    function generateRandomId() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
+    function getMaxInputValueByProductId(type, productId) {
+        var maxUserInputValue = -Infinity;
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            var storedItem = localStorage.getItem(key);
+            var parsedItem = JSON.parse(storedItem);
+            if (parsedItem && parsedItem.type === type && parsedItem.data.productId === productId) {
+                var userInputValue = parsedItem.data.userInputValue;
+                if (userInputValue > maxUserInputValue) {
+                    maxUserInputValue = userInputValue;
+                }
+            }
+        }
+        return maxUserInputValue;
+    }
+
+    function saveButtonClicked(productId, inputValue, productTitle) {
+        randomId = generateRandomId();
+        var myObject = {
+            productId: productId,
+            productTitle: productTitle,
+            user: '{{ customer.first_name }}' + ' ' + '{{ customer.last_name }}',
+            userInputValue: inputValue
+        };
+
+        localStorage.setItem(randomId, JSON.stringify({ type: 'userInputBid', data: myObject }));
+
+        document.querySelector('.bid-number[data-product-id="' + productId + '"]').innerHTML = getNumberOfBids(productId);
+        document.querySelector('.current-max-bid[data-product-id="' + productId + '"]').innerHTML = getMaxInputValueByProductId('userInputBid', productId);
+    }
+
+    function showAllBids(productId) {
+        var products = getDataByType('userInputBid', productId);
+        console.log('Products:', products); 
+        // Here you can implement a modal to display bids, or open a new page with the bids.
+    }
+
+    function getDataByType(type, productId) {
+        var results = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            var storedItem = localStorage.getItem(key);
+            var parsedItem = JSON.parse(storedItem);
+            if (parsedItem && parsedItem.type === type && parsedItem.data.productId === productId) {
+                results.push(storedItem);
+            }
+        }
+        return results;
+    }
+});
+</script>

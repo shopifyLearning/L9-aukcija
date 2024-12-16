@@ -60,10 +60,10 @@ submitBidButton.addEventListener("click", async () => {
   try {
     // Konvertovanje customerId u string
     const customerIdAsString = String(customerId);
-
+    const auctionIdAsInt = parseInt(auctionId, 10);
     // Kreiranje payloada sa customerId kao string
     const bidPayload = { 
-      auctionId, 
+       auctionId: auctionIdAsInt,  
       price, 
       customerId: customerIdAsString 
     };

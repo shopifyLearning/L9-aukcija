@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const auctionListContainer = document.getElementById("auction-list");
   const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
 
-  // Funkcija za kreiranje HTML-a za jednu aukciju
+ 
   function createAuctionCard(auction) {
     const startDate = new Date(auction.startDate).toLocaleString();
     const endDate = new Date(auction.endDate).toLocaleString();
@@ -31,20 +31,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
   }
 
-  // Dohvatanje liste aukcija sa API-ja
+
   async function fetchAuctions() {
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error("Failed to fetch auctions.");
       const auctions = await response.json();
 
-      // Provera da li ima aukcija
+  
       if (auctions.length === 0) {
         auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
         return;
       }
 
-      // Generisanje HTML-a za aukcije
+ 
       const auctionCards = auctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
     } catch (error) {
@@ -53,13 +53,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Funkcija za preusmeravanje na stranicu aukcije
+
   window.redirectToAuctionPage = (auctionId) => {
     const auctionPageUrl = `https://levi9-test.myshopify.com/pages/auctions/${auctionId}`;
     window.location.href = auctionPageUrl;
   };
 
-  // Inicijalno učitavanje aukcija
+
   fetchAuctions();
 });
 

@@ -59,7 +59,7 @@
 
       try {
         const bidPayload = { auctionId, newBid, customerId };
-        const bidApiUrl = `${auctionApiUrl}/bids`;
+        const bidApiUrl = `${auctionApiUrl}`;
         const response = await fetch(bidApiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

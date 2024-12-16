@@ -1,0 +1,80 @@
+<section class="login-section">
+
+  {% form 'recover_customer_password' %}
+    {{ form.errors | default_errors }}
+
+    <div class="recover-form">
+      <div class="email">
+        <label for="email">Email</label>
+        <input type="email" name="email">
+      </div>
+
+      <div class="submit">
+        <input type="submit" value="Submit">
+      </div>
+      <div>
+        <a href="{{ routes.account_login_url }}">Return to login page</a>
+      </div>
+    </div>
+  {% endform %}
+
+
+  {% form 'customer_login' %}
+    {{ form.errors | default_errors }}
+
+    <div class="login-form">
+      <div class="email">
+        <input
+          placeholder="email"
+          type="email"
+          name="customer[email]">
+      </div>
+
+      <div class="password">
+        <input
+          type="password"
+          name="customer[password]"
+          placeholder="password">
+      </div>
+      <a id="recover-password" href="#recover">
+        Forgot your password?
+      </a>
+
+      <div class="submit">
+        <input type="submit" value="Sign in">
+      </div>
+
+      <a href="{{ routes.account_register_url }}">
+        Create account
+      </a>
+    </div>
+  {% endform %}
+</section>
+
+<script>
+  const loginForm = document.getElementById('customer_login');
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hide the recover customer password form on page load
+    var recoverForm = document.querySelector('form[action="/account/recover"]');
+    if (recoverForm) {
+       recoverForm.style.display = 'none';
+    }
+  });
+
+  function showResetPasswordForm() {
+    loginForm.style.display = 'none';
+    var recoverForm = document.querySelector('form[action="/account/recover"]');
+    if (recoverForm) {
+        recoverForm.style.display = 'block';
+    }
+  }
+
+  document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
+</script>
+
+{% schema %}
+  {
+    "name": "Login"
+  }
+{% endschema %}

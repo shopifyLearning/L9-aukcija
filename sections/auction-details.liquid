@@ -28,7 +28,7 @@
     const endDate = document.getElementById("end-date");
     const bidInput = document.getElementById("bid-input");
     const submitBidButton = document.getElementById("submit-bid");
-    const responseMessage = document.getElementById("response-message");
+    const responseMessage = document.getElementById('response-message');
     const countdownTimer = document.getElementById("countdown-timer");
     
     try {
@@ -52,6 +52,18 @@
         if (timeRemaining <= 0) {
           countdownTimer.textContent = "Auction Ended";
           clearInterval(countdownInterval);
+          
+          const timeRemainingLabel = countdownTimer.parentElement;
+         if (timeRemainingLabel) {
+          timeRemainingLabel.innerHTML = "<strong>Status:</strong> Auction Ended";
+          }
+         submitBidButton.disabled = true;
+         submitBidButton.style.opacity = 0.5;
+         bidInput.disabled = true;
+         bidInput.style.opacity = 0.5;
+
+         return;
+          
         } else {
           const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
           const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -84,7 +96,6 @@
     responseMessage.style.display = "block";
     return;
   }
-
 
   submitBidButton.disabled = true;
   submitBidButton.style.opacity = 0.5; 

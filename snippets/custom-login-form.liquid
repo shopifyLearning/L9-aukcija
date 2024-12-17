@@ -1,0 +1,14 @@
+<form method="post" action="/account/login" class="custom-login-form">
+  <div class="form-group">
+    <label for="customer_email">{{ 'customer.email' }}</label>
+    <input type="email" name="customer[email]" id="customer_email" required class="input-full" placeholder="Email"/>
+  </div>
+  <div class="form-group">
+    <label for="customer_password">{{ 'customer.password' }}</label>
+    <input type="password" name="customer[password]" id="customer_password" required class="input-full" placeholder="Password"/>
+  </div>
+  <button type="submit" class="btn">Login</button>
+  <div class="form-group">
+    <a href="{{ routes.password_recovery_url }}" class="link">{{ 'customer.forgot_password' }}</a>
+  </div>
+</form>

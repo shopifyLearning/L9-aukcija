@@ -228,7 +228,8 @@
 
       {%- if shop.customer_accounts_enabled -%}
         <a
-          href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+          href="#"
+          onclick="document.getElementById('custom-login-modal').style.display='block'"
           class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
           rel="nofollow"
         >
@@ -253,6 +254,14 @@
             -%}
           </span>
         </a>
+
+        <!-- Modal for Custom Login Form -->
+        <div id="custom-login-modal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span onclick="document.getElementById('custom-login-modal').style.display='none'" class="close">&times;</span>
+            {% render 'custom-login-form' %}
+          </div>
+        </div>
       {%- endif -%}
 
       {%- for block in section.blocks -%}

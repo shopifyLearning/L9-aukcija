@@ -160,8 +160,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
     if (selectedImages.length === 0) {
       throw new Error('You must add at least one image.');
     }
-
-   
+    
     const imageUrls = [];
     for (const file of selectedImages) {
       const formData = new FormData();
@@ -251,6 +250,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81", 
       },
       body: JSON.stringify(auctionPayload),
     });

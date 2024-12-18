@@ -14,12 +14,18 @@
   <p><strong>End Date:</strong> <span id="end-date"></span></p>
  
 </div>
-
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+
+    window.customerEmail = "{{ customer.email | escape }}";
+</script>
+<script>
+  const customerEmail = window.customerEmail || null;
+  console.log("Customer email:", customerEmail);
+  document.addEventListener("DOMContentLoaded", async () => {
+
   const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
-    const auctionTitle = document.getElementById("auction-title");
+   const auctionTitle = document.getElementById("auction-title");
   const auctionImage = document.getElementById("auction-image");
   const startPrice = document.getElementById("start-price");
   const currentPrice = document.getElementById("current-price");
@@ -129,12 +135,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const auctionIdAsInt = parseInt(auctionId, 10);
-      const customerId = window.customerId || null;
+
+      
       const bidPayload = {
-        customerId: String(customerId),
-        auctionId: auctionIdAsInt,
-        price: price,
-      };
+        customerId: String(customerEmail),
+      const customerId = window.customerId || null;
 
       const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
 

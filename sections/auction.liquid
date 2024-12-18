@@ -59,10 +59,13 @@
 
 </div>
 <div id="response-message"></div>
-
+<script>
+    window.customerEmail = "{{ customer.email | escape }}";
+</script>
 
 <script>  
-  
+  const customerEmail = window.customerEmail || null;
+  console.log("Customer email:", customerEmail);
   const startDateTimeInput = document.getElementById("startDateTime");
 
 
@@ -228,7 +231,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
 
     const productId = createProductData.data.productCreate.product.id.split('/').pop();
     
-    const customerId = window.customerId || null;
+    
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);
     endDate.setHours(endDate.getHours() + 1); 
@@ -236,7 +239,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
     const auctionApiUrl = 'https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions';
     const auctionPayload = {
       productTitle,
-      customerId,
+      customerId: customerEmail,
       bidderId: "bidder_id_placeholder",
       productId,
       status: "Active",

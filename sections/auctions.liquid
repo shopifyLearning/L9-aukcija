@@ -1,5 +1,5 @@
 <div class="auction-list-container">
-  <h1>Active Auctions</h1>
+  <h1>Auctions</h1>
   <div id="auction-list">
    
   </div>
@@ -17,25 +17,38 @@ document.addEventListener("DOMContentLoaded", async () => {
  
   function createAuctionCard(auction) {
     const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
-    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });    
-
-
-    return `
-      <div class="auction-card" onclick="redirectToAuctionPage(${auction.id})">
-        <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
-        <h2>${auction.productTitle}</h2>
-        <p><strong>Start Price:</strong> $${auction.startPrice}</p>
-        <p><strong>Current Price:</strong> $${auction.currentPrice}</p>
-        <p><strong>Start Date:</strong> ${startDate}</p>
-        <p><strong>End Date:</strong> ${endDate}</p>
-      </div>
-    `;
-  }
+    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });  
+    const isExpired = new Date(auction.endDate) < new Date();
+    const cardClass = isExpired ? "auction-card expired" : "auction-card";
+    const expiredLabel = isExpired
+        ? `<span class="expired-label">Expired</span>`
+        : "";
+    
+     return `
+        <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
+          <div class="image-wrapper">
+            <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
+            ${expiredLabel}
+          </div>
+          <h2>${auction.productTitle}</h2>
+          <p><strong>Start Price:</strong> $${auction.startPrice}</p>
+          <p><strong>Current Price:</strong> $${auction.currentPrice}</p>
+          <p><strong>Start Date:</strong> ${startDate}</p>
+          <p><strong>End Date:</strong> ${endDate}</p>
+        </div>
+      `;
+    }
 
 
   async function fetchAuctions() {
     try {
-      const response = await fetch(apiUrl);
+       const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81", 
+      },
+    });
       if (!response.ok) throw new Error("Failed to fetch auctions.");
       const auctions = await response.json();
 

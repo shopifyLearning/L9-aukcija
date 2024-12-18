@@ -17,7 +17,7 @@
 <div class="customer account section-{{ section.id }}-padding">
   <div>
     <h1 class="customer__title">{{ 'customer.account.title' | t }}</h1>
-    <a href="{{ routes.account_logout_url }}">
+    <a href="#" id="logout-link">  <!-- Changed href to # and added an id for the event listener -->
       <span class="svg-wrapper">
         {{- 'icon-account.svg' | inline_asset_content -}}
       </span>
@@ -149,6 +149,45 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Wait for the DOM to fully load before executing the script
+  document.addEventListener('DOMContentLoaded', function() {
+    // Retrieve the customer object from the server-side template
+    var customer = {{ customer | json }};
+    // Get the current path of the webpage
+    var currentPath = window.location.pathname;
+
+    // Redirect to login page if the customer is not logged in and not on login or register pages
+    if (!customer) {
+      if (currentPath !== '/account/login' && currentPath !== '/account/register') {
+        window.location.href = '/account/login';
+      }
+    }
+
+    // Get the logout link element
+    var logoutLink = document.getElementById('logout-link');
+    if (logoutLink) {
+      // Add a click event listener to the logout link
+      logoutLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        // Send a GET request to the logout endpoint
+        fetch('/account/logout', {
+          method: 'GET'
+        }).then(function(response) {
+          // Redirect to login page if logout is successful
+          if (response.ok) {
+            window.location.href = '/account/login';
+          } else {
+            console.error('Logout failed'); // Log an error if logout fails
+          }
+        }).catch(function(error) {
+          console.error('Error:', error); // Log any errors that occur during the fetch
+        });
+      });
+    }
+  });
+</script>
 
 {% schema %}
 {

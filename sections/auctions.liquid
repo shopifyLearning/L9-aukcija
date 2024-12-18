@@ -1,0 +1,81 @@
+<div class="auction-list-container">
+  <h1>Auctions</h1>
+  <div id="auction-list">
+   
+  </div>
+</div>
+
+<script>
+ 
+  var customerId = {{ customer.id | json }};
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const auctionListContainer = document.getElementById("auction-list");
+  const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
+
+ 
+  function createAuctionCard(auction) {
+    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
+    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });  
+    const isExpired = new Date(auction.endDate) < new Date();
+    const cardClass = isExpired ? "auction-card expired" : "auction-card";
+    const expiredLabel = isExpired
+        ? `<span class="expired-label">Expired</span>`
+        : "";
+    
+     return `
+        <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
+          <div class="image-wrapper">
+            <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
+            ${expiredLabel}
+          </div>
+          <h2>${auction.productTitle}</h2>
+          <p><strong>Start Price:</strong> $${auction.startPrice}</p>
+          <p><strong>Current Price:</strong> $${auction.currentPrice}</p>
+          <p><strong>Start Date:</strong> ${startDate}</p>
+          <p><strong>End Date:</strong> ${endDate}</p>
+        </div>
+      `;
+    }
+
+
+  async function fetchAuctions() {
+    try {
+       const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81", 
+      },
+    });
+      if (!response.ok) throw new Error("Failed to fetch auctions.");
+      const auctions = await response.json();
+
+  
+      if (auctions.length === 0) {
+        auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
+        return;
+      }
+
+ 
+      const auctionCards = auctions.map(createAuctionCard).join("");
+      auctionListContainer.innerHTML = auctionCards;
+    } catch (error) {
+      console.error("Error fetching auctions:", error);
+      auctionListContainer.innerHTML = `<p>Error loading auctions. Please try again later.</p>`;
+    }
+  }
+
+
+     window.redirectToAuctionPage = (auctionId) => {
+ 
+     const auctionPageUrl = `/pages/auction-details?auctionId=${auctionId}`;
+     window.location.href = auctionPageUrl;
+};
+
+
+  fetchAuctions();
+});
+
+</script>

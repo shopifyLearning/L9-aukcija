@@ -1,0 +1,146 @@
+<section class="login-section">
+  <div class="login-container">  <!-- New container for centering -->
+  
+      {% form 'recover_customer_password' %}
+      {{ form.errors | default_errors }}
+
+      <div class="recover-form">
+        <div class="email">
+          <label for="email">Email</label>
+          <input type="email" name="email">
+        </div>
+
+        <div class="submit">
+          <input type="submit" value="Submit" class="btn">  <!-- Added class for styling -->
+        </div>
+        <div>
+          <a href="{{ routes.account_login_url }}">Return to login page</a>
+        </div>
+      </div>
+    {% endform %}
+
+    {% form 'customer_login' %}
+      {{ form.errors | default_errors }}
+
+      <div class="login-form">
+        <div class="email">
+          <input
+            placeholder="email"
+            type="email"
+            name="customer[email]">
+        </div>
+
+        <div class="password">
+          <input
+            type="password"
+            name="customer[password]"
+            placeholder="password">
+        </div>
+        <a id="recover-password" href="#recover">
+          Forgot your password?
+        </a>
+
+        <div class="submit">
+          <input type="submit" value="Sign in" class="btn">  <!-- Added class for styling -->
+        </div>
+
+        <a href="/pages/register">Create account</a>  <!-- Link to the registration page -->
+      </div>
+    {% endform %}
+  </div>  <!-- End of login-container -->
+  
+  <style>
+    .login-section {
+        display: flex;  /* Use flexbox for the section to allow centering */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        height: 70vh; /* Full viewport height */
+    }
+
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center horizontally */
+        max-width: 400px; /* Width of the form container */
+        margin: auto; /* Center the container */
+        padding: 20px;
+        border: 1px solid #ccc; /* Optional: border around the login box */
+        border-radius: 5px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: shadow effect */
+    }
+
+    .login-form,
+    .recover-form {
+      width: 100%; /* Full width of the container */
+      margin-bottom: 20px; /* Space between forms */
+    }
+
+    .email,
+    .password {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px; /* Space below input fields */
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%; /* Full width for input fields */
+      box-sizing: border-box; /* Include padding and border in element's total width */
+    }
+
+    .btn {
+      padding: 10px 15px; /* Button padding */
+      background-color: #007bff; /* Button color */
+      color: white; /* Text color */
+      border: none; /* Remove default border */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer; /* Pointer on hover */
+      width: 100%; /* Full width for button */
+    }
+
+    .btn:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    a {
+      color: #007bff; /* Link color */
+      text-decoration: none; /* Remove underline */
+    }
+
+    a:hover {
+      text-decoration: underline; /* Underline on hover */
+    }
+  </style>
+
+</section>
+
+<script>
+  const loginForm = document.getElementById('customer_login');
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hide the recover customer password form on page load
+    var recoverForm = document.querySelector('form[action="/account/recover"]');
+    if (recoverForm) {
+       recoverForm.style.display = 'none';
+    }
+  });
+
+  function showResetPasswordForm() {
+    loginForm.style.display = 'none';
+    var recoverForm = document.querySelector('form[action="/account/recover"]');
+    if (recoverForm) {
+        recoverForm.style.display = 'block';
+    }
+  }
+
+  document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
+</script>
+
+{% schema %}
+  {
+    "name": "Login"
+  }
+{% endschema %}

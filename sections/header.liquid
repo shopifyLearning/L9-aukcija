@@ -70,6 +70,11 @@
       padding-top: 0.5rem;
     }
   }
+
+  .header__icon--cart.disabled {
+    pointer-events: none;
+    opacity: 0.5; /* Optional: to visually indicate it's disabled */
+  }
 </style>
 
 {%- style -%}
@@ -227,8 +232,14 @@
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 
       {%- if shop.customer_accounts_enabled -%}
+        {% if customer %}
+          {% assign account_url = '/account' %}
+        {% else %}
+          {% assign account_url = '/pages/login' %}
+        {% endif %}
+
         <a
-          href="/pages/login"
+          href="{{ account_url }}"
           class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
           rel="nofollow"
         >
@@ -262,7 +273,7 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset disabled" id="cart-icon-bubble">
           {% if cart == empty %}
             <span class="svg-wrapper">{{'icon-cart-empty.svg' | inline_asset_content }}</span>
           {% else %}

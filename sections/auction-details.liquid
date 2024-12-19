@@ -17,6 +17,13 @@
 <script>
     window.customerEmail = "{{ customer.email | escape }}";
 </script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js'></script>
+<script type='text/javascript'>
+   (function(){
+      emailjs.init('UW-9aMs2LssiFTzga');
+   })();
+</script>
+
 <script>
   const customerEmail = window.customerEmail || null;
   console.log("Customer email:", customerEmail);
@@ -81,17 +88,19 @@
 
        
         if (bids.length > 0) {
-  const lastBid = bids[bids.length - 1];
-  const customerId = lastBid.customerId || "Unknown"; 
+   const lastBid = bids[bids.length - 1];
+   const customerId = lastBid.customerId || "Unknown"; 
 
   const congratulationsMessage = document.createElement("p");
   congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
   congratulationsMessage.className = "congratulations-message";
   submitBidButton.parentElement.appendChild(congratulationsMessage);
+  sendWinnerEmail(customerId, auctionTitle, lastBid);
 }
 
         return;
       }
+
 
       
       const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
@@ -109,7 +118,21 @@
     console.error("Error fetching auction details:", error);
     responseMessage.textContent = "Error loading auction details.";
   }
-
+  function sendWinnerEmail(customerId, auctionTitleElement, lastBid) {
+    const emailParams = {
+      to_email: customerId,
+      auction_title: auctionTitleElement.textContent,
+      winning_bid: `RSD ${lastBid.price}`,
+    };
+  
+    emailjs.send('shopify_learning@outlook', 'template_kqb8a9o', emailParams)
+      .then(() => {
+        console.log('Winner email sent successfully!');
+      })
+      .catch((error) => {
+        console.error('Error sending email:', error);
+      });
+  }
   
   submitBidButton.addEventListener("click", async () => {
     const price = parseFloat(bidInput.value);

@@ -36,12 +36,18 @@
             name="customer[password]"
             placeholder="password">
         </div>
+
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me" name="remember_me">
+          <label for="remember-me">Remember me</label>
+        </div>
+
         <a id="recover-password" href="#recover">
           Forgot your password?
         </a>
 
         <div class="submit">
-          <input type="submit" value="Sign in" class="btn">  <!-- Added class for styling -->
+          <input type="submit" value="Login" class="btn">  <!-- Added class for styling -->
         </div>
 
         <a href="/pages/register">Create account</a>  <!-- Link to the registration page -->
@@ -100,6 +106,21 @@
 
     a:hover {
       text-decoration: underline; /* Underline on hover */
+    }
+
+    .remember-me {
+      margin-bottom: 15px; /* Space below checkbox */
+      display: flex;
+      align-items: center; /* Align checkbox and label */
+    }
+    
+    input[type="checkbox"] {
+      margin-right: 5px; /* Space between checkbox and label */
+    }
+
+    .remember-me label {
+      margin-top: -8px; /* Move label 5 pixels up */
+      font-weight: normal; /* Make font non-bold */
     }
   </style>
 

@@ -231,7 +231,6 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
 
     const productId = createProductData.data.productCreate.product.id.split('/').pop();
     
-    
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);
     endDate.setHours(endDate.getHours() + 1); 

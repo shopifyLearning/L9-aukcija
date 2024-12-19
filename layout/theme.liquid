@@ -346,20 +346,18 @@
         {%- render 'cart-drawer' -%}
       {%- endif -%}
       {% sections 'header-group' %}
-    {% endif %} 
-
-    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+        {{ content_for_layout }}
+      </main>
+    {% elsif request.path != '/pages/login' and request.path != '/pages/register' %}
       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var currentPath = window.location.pathname;
-          //alert( currentPath);
-          if (!customer && currentPath !== '/pages/login' && currentPath !== '/pages/register') {
-            window.location.href = '/pages/login';
-          }
-        });  
-      </script>   
-      {{ content_for_layout }}
-    </main>
+        window.location.href = '/pages/login';
+      </script>
+    {% else %}
+      <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+        {{ content_for_layout }}
+      </main>
+    {% endif %} 
 
     {% sections 'footer-group' %}
 

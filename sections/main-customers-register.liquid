@@ -27,6 +27,11 @@
           <span id="password-tooltip" class="tooltip" style="display: none;">Password is too short (minimum is 5 characters).</span>
         </div>
 
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me" name="remember_me">
+          <label for="remember-me">Remember me</label>
+        </div>
+
         <div>
           <!-- Submit button with validation function -->
           <input class="btn" type="submit" value="Create" onclick="return validateForm()">
@@ -41,6 +46,31 @@
 </section>
 
 <script>
+  // Function to set a cookie
+  function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); 
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; 
+  }
+
+  // Function to get a cookie value
+  function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length); 
+      }
+    }
+    return ""; 
+  }
+
   // Function to validate the form inputs
   function validateForm() {
     // Get the email value and convert it to lowercase
@@ -73,6 +103,17 @@
       // Show the password tooltip if validation fails
       passwordTooltip.style.display = 'inline';  // Show the password tooltip
       valid = false;
+    }
+
+    if (valid) {
+      const rememberMeCheckbox = document.getElementById('remember-me');
+      const emailField = document.querySelector('input[name="customer[email]"]');
+
+      if (rememberMeCheckbox.checked) {
+        setCookie("rememberedEmail", emailField.value, 30); // Cookie expires in 30 days
+      } else {
+        setCookie("rememberedEmail", "", -1); // Delete the cookie if not checked
+      }
     }
 
     return valid;  // Return false if any validation fails
@@ -147,10 +188,30 @@
   a:hover {
     text-decoration: underline; /* Underline on hover */
   }
+
   .tooltip {
     color: red; 
     font-size: 12px; 
     margin-left: 5px; 
+  }
+
+  .remember-me {
+    margin-bottom: 15px; /* Space below checkbox */
+    display: flex;
+    align-items: center; /* Align checkbox and label */
+  }
+  
+  input[type="checkbox"] {
+    margin-right: 5px; /* Space between checkbox and label */
+  }
+
+  .remember-me label {
+    margin-top: 0px; /* Move label 5 pixels up */
+    font-weight: normal; /* Make font non-bold */
+  }
+   
+  .remember-me label:hover {
+    text-decoration: underline; /* Underline on hover */
   }
 </style>
 

@@ -27,10 +27,12 @@
 <script>
   const customerEmail = window.customerEmail || null;
   console.log("Customer email:", customerEmail);
+  let bids = [];
+  
   document.addEventListener("DOMContentLoaded", async () => {
   const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
-    const auctionTitle = document.getElementById("auction-title");
+  const auctionTitle = document.getElementById("auction-title");
   const auctionImage = document.getElementById("auction-image");
   const startPrice = document.getElementById("start-price");
   const currentPrice = document.getElementById("current-price");
@@ -52,7 +54,8 @@
     
     if (!response.ok) throw new Error("Failed to fetch auction details.");
     const auction = await response.json();
-
+    
+     bids = auction.bids || [];
     
     auctionTitle.textContent = auction.productTitle;
     auctionImage.src = auction.imgUrlProduct;
@@ -63,7 +66,7 @@
 
 
    
-    const bids = auction.bids || [];
+    bids = auction.bids || [];
     console.log("Bids:", bids);
     if (bids.length > 0) {
       const lastBid = bids[bids.length - 1];
@@ -88,15 +91,15 @@
 
        
         if (bids.length > 0) {
-   const lastBid = bids[bids.length - 1];
-   const customerId = lastBid.customerId || "Unknown"; 
+        const lastBid = bids[bids.length - 1];
+        const customerId = lastBid.customerId || "Unknown"; 
 
-  const congratulationsMessage = document.createElement("p");
-  congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
-  congratulationsMessage.className = "congratulations-message";
-  submitBidButton.parentElement.appendChild(congratulationsMessage);
-  sendWinnerEmail(customerId, auctionTitle, lastBid);
-}
+        const congratulationsMessage = document.createElement("p");
+        congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
+        congratulationsMessage.className = "congratulations-message";
+        submitBidButton.parentElement.appendChild(congratulationsMessage);
+        sendWinnerEmail(customerId, auctionTitle, lastBid);
+        }
 
         return;
       }
@@ -133,7 +136,23 @@
         console.error('Error sending email:', error);
       });
   }
-  
+    function notifyOutbidder(outbidderEmail, auctionTitleElement, previousBid) {
+    const emailParams = {
+        to_email: outbidderEmail,
+        auction_title: auctionTitleElement.textContent,
+        outbid_price: `RSD ${previousBid}`,
+    };
+
+    emailjs.send('shopify_learning@outlook', 'template_g9irw73', emailParams)
+        .then(() => {
+            console.log('Outbid notification email sent successfully!');
+        })
+        .catch((error) => {
+            console.error('Error sending outbid notification email:', error);
+        });
+}
+
+    
   submitBidButton.addEventListener("click", async () => {
     const price = parseFloat(bidInput.value);
     if (!price || price <= 0) {
@@ -156,6 +175,7 @@
 
     try {
       const auctionIdAsInt = parseInt(auctionId, 10);
+      const previousBidder = bids.length > 0 ? bids[bids.length - 1] : null;
       
       const bidPayload = {
         customerId: String(customerEmail),
@@ -166,13 +186,13 @@
       const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
 
       const response = await fetch(bidApiUrl, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
-  },
-  body: JSON.stringify(bidPayload)
-});
+       method: "POST",
+       headers: {
+       "Content-Type": "application/json",
+       "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+      },
+          body: JSON.stringify(bidPayload)
+         });
 
       if (!response.ok) throw new Error("Failed to submit bid.");
 
@@ -181,8 +201,13 @@
       responseMessage.style.display = "block";
 
       const updatedAuction = await response.json();
+      bids = updatedAuction.bids || [];
       currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
 
+      if (previousBidder) {
+            notifyOutbidder(previousBidder.customerId, auctionTitle, previousBidder.price);
+        }
+      
       setTimeout(() => {
         responseMessage.style.display = "none";
         bidInput.value = "";

@@ -11,7 +11,7 @@
         </div>
 
         <div class="submit">
-          <input type="submit" value="Submit" class="btn">  <!-- Added class for styling -->
+          <input type="submit" value="Submit" class="btn">
         </div>
         <div>
           <a href="{{ routes.account_login_url }}">Return to login page</a>
@@ -36,15 +36,21 @@
             name="customer[password]"
             placeholder="password">
         </div>
+
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me" name="remember_me">
+          <label for="remember-me">Remember me</label>
+        </div>
+
         <a id="recover-password" href="#recover">
           Forgot your password?
         </a>
 
         <div class="submit">
-          <input type="submit" value="Sign in" class="btn">  <!-- Added class for styling -->
+          <input type="submit" value="Login" class="btn">
         </div>
 
-        <a href="/pages/register">Create account</a>  <!-- Link to the registration page -->
+        <a href="/pages/register">Create account</a>
       </div>
     {% endform %}
   </div>  <!-- End of login-container -->
@@ -101,30 +107,91 @@
     a:hover {
       text-decoration: underline; /* Underline on hover */
     }
-  </style>
 
+    .remember-me {
+      margin-bottom: 15px; /* Space below checkbox */
+      display: flex;
+      align-items: center; /* Align checkbox and label */
+    }
+    
+    input[type="checkbox"] {
+      margin-right: 5px; /* Space between checkbox and label */
+    }
+
+    .remember-me label {
+      margin-top: -8px; /* Move label 5 pixels up */
+      font-weight: normal; /* Make font non-bold */
+    }
+
+    .remember-me label:hover {
+      text-decoration: underline; /* Underline on hover */
+    }
+  </style>
 </section>
 
 <script>
+  // Function to set a cookie
+  function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); 
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; 
+  }
+
+  // Function to get a cookie value
+  function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length); 
+      }
+    }
+    return ""; 
+  }
+
   const loginForm = document.getElementById('customer_login');
-  
+
   document.addEventListener('DOMContentLoaded', function() {
     // Hide the recover customer password form on page load
     var recoverForm = document.querySelector('form[action="/account/recover"]');
     if (recoverForm) {
        recoverForm.style.display = 'none';
     }
-  });
 
-  function showResetPasswordForm() {
-    loginForm.style.display = 'none';
-    var recoverForm = document.querySelector('form[action="/account/recover"]');
-    if (recoverForm) {
-        recoverForm.style.display = 'block';
+    // Check for the remember me cookie and set the email field if it exists
+    const storedEmail = getCookie("rememberedEmail");
+    if (storedEmail) {
+      document.querySelector('input[name="customer[email]"]').value = storedEmail; 
     }
-  }
 
-  document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
+    // Handle form submission
+    loginForm.addEventListener('submit', function(event) {
+      const rememberMeCheckbox = document.getElementById('remember-me');
+      const emailField = document.querySelector('input[name="customer[email]"]');
+
+      if (rememberMeCheckbox.checked) {
+        setCookie("rememberedEmail", emailField.value, 30); // Cookie expires in 30 days
+      } else {
+        setCookie("rememberedEmail", "", -1); // Delete the cookie if not checked
+      }
+    });
+
+    function showResetPasswordForm() {
+      loginForm.style.display = 'none';
+      var recoverForm = document.querySelector('form[action="/account/recover"]');
+      if (recoverForm) {
+          recoverForm.style.display = 'block';
+      }
+    }
+
+    document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
+  });
 </script>
 
 {% schema %}

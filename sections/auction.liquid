@@ -40,22 +40,6 @@
   </div>
 
 
-<div class="right-links">
-  <ul>
-    <li>
-     <a href="/pages/bid">ACTIVE</a>
-      <span class="auction-count">0</span>
-    </li>
-    <li>
-      <a href="#upcoming">UPCOMING</a>
-      <span class="auction-count">0</span>
-    </li>
-    <li>
-      <a href="#completed">COMPLETED</a>
-      <span class="auction-count">0</span>
-    </li>
-  </ul>
-</div>
 
 </div>
 <div id="response-message"></div>
@@ -230,7 +214,6 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
     }
 
     const productId = createProductData.data.productCreate.product.id.split('/').pop();
-    
     
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);

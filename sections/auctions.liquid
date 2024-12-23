@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${expiredLabel}
           </div>
           <h2>${auction.productTitle}</h2>
-          <p><strong>Start Price:</strong> $${auction.startPrice}</p>
-          <p><strong>Current Price:</strong> $${auction.currentPrice}</p>
+          <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
+          <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
           <p><strong>Start Date:</strong> ${startDate}</p>
           <p><strong>End Date:</strong> ${endDate}</p>
         </div>
@@ -40,32 +40,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
-  async function fetchAuctions() {
-    try {
-       const response = await fetch(apiUrl, {
+async function fetchAuctions() {
+  try {
+    const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81", 
+        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81",
       },
     });
-      if (!response.ok) throw new Error("Failed to fetch auctions.");
-      const auctions = await response.json();
+    if (!response.ok) throw new Error("Failed to fetch auctions.");
+    const auctions = await response.json();
 
-  
-      if (auctions.length === 0) {
-        auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
-        return;
-      }
-
- 
-      const auctionCards = auctions.map(createAuctionCard).join("");
-      auctionListContainer.innerHTML = auctionCards;
-    } catch (error) {
-      console.error("Error fetching auctions:", error);
-      auctionListContainer.innerHTML = `<p>Error loading auctions. Please try again later.</p>`;
+    if (auctions.length === 0) {
+      auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
+      return;
     }
+
+    
+    const now = new Date();
+    const nonExpired = auctions.filter(auction => new Date(auction.endDate) >= now);
+    const expired = auctions.filter(auction => new Date(auction.endDate) < now);
+
+   
+    nonExpired.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+    expired.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+    
+    const sortedAuctions = [...nonExpired, ...expired];
+
+   
+    const auctionCards = sortedAuctions.map(createAuctionCard).join("");
+    auctionListContainer.innerHTML = auctionCards;
+  } catch (error) {
+    console.error("Error fetching auctions:", error);
+    auctionListContainer.innerHTML = `<p>Error loading auctions. Please try again later.</p>`;
   }
+}
+
 
 
      window.redirectToAuctionPage = (auctionId) => {

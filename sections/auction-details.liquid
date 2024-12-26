@@ -57,6 +57,24 @@
 
     auctionOwner = auction.customerId;
     console.log("Auction Owner:", auctionOwner);
+
+     if (customerEmail === auctionOwner) {
+      bidInput.disabled = true;
+      submitBidButton.disabled = true;
+      bidInput.style.opacity = 0.5;
+      submitBidButton.style.opacity = 0.5;
+
+      
+      const ownerMessage = document.createElement("p");
+      ownerMessage.textContent = "You are the owner of this auction. Bidding is disabled.";
+      ownerMessage.className = "info-message";
+      ownerMessage.style.color = "red"; 
+      ownerMessage.style.fontWeight = "bold";
+      ownerMessage.style.marginTop = "10px";
+      submitBidButton.parentElement.appendChild(ownerMessage);
+
+      return;
+    }
     
      bids = auction.bids || [];
     
@@ -181,14 +199,6 @@
     }
   }
  
-  if (customerEmail === auctionOwner) {
-    submitBidButton.disabled = true;
-    submitBidButton.style.opacity = 0.5;
-    bidInput.disabled = true;
-    bidInput.style.opacity = 0.5;
-    return;
-  }
-    
     submitBidButton.disabled = true;
     submitBidButton.style.opacity = 0.5;
     bidInput.disabled = true;

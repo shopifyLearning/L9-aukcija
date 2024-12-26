@@ -1698,4 +1698,60 @@ input:disabled, button:disabled {
   .auction2-link:hover {
     background-color: #005f8c;
   }
+  .auction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 20px; 
+  padding: 20px;
+}
+
+.auction-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+}
+
+.auction-card.expired {
+  opacity: 0.6;
+}
+
+.auction-card .image-wrapper {
+  position: relative;
+}
+
+.auction-card .expired-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: red;
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+.auction-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.auction-card h2 {
+  margin: 10px 0;
+  font-size: 1.2rem;
+}
+
+.auction-card p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.auction-card p strong {
+  font-weight: bold;
+}
+
 

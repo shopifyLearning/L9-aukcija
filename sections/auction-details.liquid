@@ -26,7 +26,6 @@
 
 <script>
   const customerEmail = window.customerEmail || null;
-  console.log("Customer email:", customerEmail);
   let bids = [];
   let auctionOwner;
   document.addEventListener("DOMContentLoaded", async () => {
@@ -56,7 +55,7 @@
     const auction = await response.json();
 
     auctionOwner = auction.customerId;
-    console.log("Auction Owner:", auctionOwner);
+   
 
     
      bids = auction.bids || [];
@@ -70,10 +69,10 @@
 
    
     bids = auction.bids || [];
-    console.log("Bids:", bids);
+   
     if (bids.length > 0) {
       const lastBid = bids[bids.length - 1];
-      console.log("Last Bid:", lastBid);
+     
     }
 
     
@@ -149,7 +148,7 @@
   
     emailjs.send('shopify_learning@outlook', 'template_kqb8a9o', emailParams)
       .then(() => {
-        console.log('Winner email sent successfully!');
+        
       })
       .catch((error) => {
         console.error('Error sending email:', error);
@@ -164,7 +163,7 @@
 
     emailjs.send('shopify_learning@outlook', 'template_g9irw73', emailParams)
         .then(() => {
-            console.log('Outbid notification email sent successfully!');
+            
         })
         .catch((error) => {
             console.error('Error sending outbid notification email:', error);

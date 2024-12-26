@@ -28,7 +28,7 @@
   const customerEmail = window.customerEmail || null;
   console.log("Customer email:", customerEmail);
   let bids = [];
-  
+  let auctionOwner;
   document.addEventListener("DOMContentLoaded", async () => {
   const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
@@ -54,6 +54,9 @@
     
     if (!response.ok) throw new Error("Failed to fetch auction details.");
     const auction = await response.json();
+
+    auctionOwner = auction.customerId;
+    console.log("Auction Owner:", auctionOwner);
     
      bids = auction.bids || [];
     
@@ -83,7 +86,7 @@
         countdownTimer.textContent = "Auction Ended";
         clearInterval(countdownInterval);
 
-     
+        
         submitBidButton.disabled = true;
         submitBidButton.style.opacity = 0.5;
         bidInput.disabled = true;
@@ -177,7 +180,15 @@
       return;
     }
   }
-
+ 
+  if (customerEmail === auctionOwner) {
+    submitBidButton.disabled = true;
+    submitBidButton.style.opacity = 0.5;
+    bidInput.disabled = true;
+    bidInput.style.opacity = 0.5;
+    return;
+  }
+    
     submitBidButton.disabled = true;
     submitBidButton.style.opacity = 0.5;
     bidInput.disabled = true;

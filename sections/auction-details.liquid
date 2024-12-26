@@ -58,6 +58,17 @@
     auctionOwner = auction.customerId;
     console.log("Auction Owner:", auctionOwner);
 
+    
+     bids = auction.bids || [];
+    
+    auctionTitle.textContent = auction.productTitle;
+    auctionImage.src = auction.imgUrlProduct;
+    startPrice.textContent = `RSD ${auction.startPrice}`;
+    currentPrice.textContent = `RSD ${auction.currentPrice}`;
+    startDate.textContent = new Date(new Date(auction.startDate).getTime() - 3600000).toLocaleString();
+    endDate.textContent = new Date(new Date(auction.endDate).getTime() - 3600000).toLocaleString();
+
+
      if (customerEmail === auctionOwner) {
       bidInput.disabled = true;
       submitBidButton.disabled = true;
@@ -75,17 +86,6 @@
 
       return;
     }
-    
-     bids = auction.bids || [];
-    
-    auctionTitle.textContent = auction.productTitle;
-    auctionImage.src = auction.imgUrlProduct;
-    startPrice.textContent = `RSD ${auction.startPrice}`;
-    currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    startDate.textContent = new Date(new Date(auction.startDate).getTime() - 3600000).toLocaleString();
-    endDate.textContent = new Date(new Date(auction.endDate).getTime() - 3600000).toLocaleString();
-
-
    
     bids = auction.bids || [];
     console.log("Bids:", bids);

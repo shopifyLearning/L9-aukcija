@@ -68,24 +68,6 @@
     startDate.textContent = new Date(new Date(auction.startDate).getTime() - 3600000).toLocaleString();
     endDate.textContent = new Date(new Date(auction.endDate).getTime() - 3600000).toLocaleString();
 
-
-     if (customerEmail === auctionOwner) {
-      bidInput.disabled = true;
-      submitBidButton.disabled = true;
-      bidInput.style.opacity = 0.5;
-      submitBidButton.style.opacity = 0.5;
-
-      
-      const ownerMessage = document.createElement("p");
-      ownerMessage.textContent = "You are the owner of this auction. Bidding is disabled.";
-      ownerMessage.className = "info-message";
-      ownerMessage.style.color = "red"; 
-      ownerMessage.style.fontWeight = "bold";
-      ownerMessage.style.marginTop = "10px";
-      submitBidButton.parentElement.appendChild(ownerMessage);
-
-      return;
-    }
    
     bids = auction.bids || [];
     console.log("Bids:", bids);
@@ -137,6 +119,24 @@
 
     const countdownInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
+
+      if (customerEmail === auctionOwner) {
+      bidInput.disabled = true;
+      submitBidButton.disabled = true;
+      bidInput.style.opacity = 0.5;
+      submitBidButton.style.opacity = 0.5;
+
+      
+      const ownerMessage = document.createElement("p");
+      ownerMessage.textContent = "You are the owner of this auction. Bidding is disabled.";
+      ownerMessage.className = "info-message";
+      ownerMessage.style.color = "red"; 
+      ownerMessage.style.fontWeight = "bold";
+      ownerMessage.style.marginTop = "10px";
+      submitBidButton.parentElement.appendChild(ownerMessage);
+
+      return;
+    }
 
   } catch (error) {
     console.error("Error fetching auction details:", error);

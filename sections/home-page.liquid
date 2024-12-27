@@ -67,7 +67,7 @@
          const totalPages = Math.ceil(auctions.length / auctionsPerPage);
       const currentAuctions = auctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
 
-      // Create auction cards
+      
       const auctionCards = currentAuctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
 

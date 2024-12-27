@@ -349,7 +349,10 @@
       </main>
     window.location.href = 'https://levi9-test.myshopify.com/page/home-page';
   {% else %}
-    // Ako korisnik nije prijavljen, preusmeriti ga na stranicu za prijavu
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+        {{ content_for_layout }}
+      </main>
+    window.location
     window.location.href = '/pages/login';
   {% endif %}
 </script>

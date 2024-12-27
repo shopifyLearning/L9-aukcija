@@ -1677,7 +1677,7 @@ input:disabled, button:disabled {
 .auction-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 10px; /* Reduced gap between cards */
+  gap: 5px; /* Reduced gap further */
   padding: 0 20px;
   max-width: 100%;
   margin: 0 auto; /* Center the grid itself */
@@ -1693,6 +1693,7 @@ input:disabled, button:disabled {
   transition: transform 0.3s ease;
   position: relative;
   width: 250px; /* Set a fixed width for the card */
+  height: 350px; /* Set a fixed height for the card to ensure uniform size */
   margin: 0; /* Remove any margin around the card */
 }
 
@@ -1703,17 +1704,13 @@ input:disabled, button:disabled {
 .auction-card .image-wrapper {
   position: relative;
   overflow: hidden;
+  height: 200px; /* Fixed height for the image container */
 }
 
 .auction-card .auction-image {
   width: 100%;
-  height: auto;
-  transition: transform 0.3s ease;
-  margin: 5px 5px;
-}
-
-.auction-card:hover .auction-image {
-  transform: scale(1.05);
+  height: 100%;
+  object-fit: cover; /* Ensures image covers the space without distortion */
 }
 
 .auction-card h2 {

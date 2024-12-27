@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const auctionListContainer = document.getElementById("auction-list");
   const paginationContainer = document.getElementById("pagination");
   const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
-  const auctionsPerPage = 9; // Number of auctions per page
-  let currentPage = 1; // Start from the first page
+  const auctionsPerPage = 9;
+  let currentPage = 1; 
 
   function createAuctionCard(auction) {
     const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
@@ -67,27 +67,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Sort auctions: Active auctions first (based on endDate), then expired
+    
       const now = new Date();
       const sortedAuctions = auctions.sort((a, b) => {
         const aEndDate = new Date(a.endDate);
         const bEndDate = new Date(b.endDate);
 
-        // Active auctions first, then expired ones, sorted by end date
-        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate; // Both expired, sort by end date
-        if (aEndDate < now) return 1; // a is expired, b is active
-        if (bEndDate < now) return -1; // b is expired, a is active
-        return aEndDate - bEndDate; // Both active, sort by end date
+        
+        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate; 
+        if (aEndDate < now) return 1; 
+        if (bEndDate < now) return -1; 
+        return aEndDate - bEndDate; 
       });
 
       const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
       const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
 
-      // Create auction cards for the current page
+     
       const auctionCards = currentAuctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
 
-      // Create pagination buttons
+     
       createPagination(totalPages);
     } catch (error) {
       console.error("Error fetching auctions:", error);
@@ -95,13 +95,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Create pagination buttons
+  
   function createPagination(totalPages) {
-    paginationContainer.innerHTML = ""; // Clear any existing pagination
+    paginationContainer.innerHTML = ""; 
 
-    if (totalPages <= 1) return; // No pagination needed if there's only one page
+    if (totalPages <= 1) return; 
 
-    // Create pagination links
+    
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement("a");
       pageButton.href = "#";
@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       pageButton.addEventListener("click", (event) => {
         event.preventDefault();
-        currentPage = i; // Update currentPage
-        fetchAuctions(); // Re-fetch auctions for the new page
+        currentPage = i; 
+        fetchAuctions(); 
       });
       paginationContainer.appendChild(pageButton);
     }
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = auctionPageUrl;
   };
 
-  // Initialize the page
+  
   fetchAuctions();
 });
 

@@ -349,9 +349,9 @@
       <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
-    {% elsif request.path != '/pages/login' and request.path != '/pages/register' %}
+    {% elsif request.path != '/pages/home-page' and request.path != '/pages/register' %}
       <script>
-        window.location.href = '/pages/home-page'
+        window.location.href = '/pages/login'
       </script>
     {% else %}
       <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">

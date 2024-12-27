@@ -341,23 +341,20 @@
       {{ 'accessibility.skip_to_text' | t }}
     </a>
 
-    {% if customer %}
-      {%- if settings.cart_type == 'drawer' -%}
-        {%- render 'cart-drawer' -%}
-      {%- endif -%}
-      {% sections 'header-group' %}
+<script>
+  {% if customer %}
+    {% sections 'header-group' %}
       <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
-    {% elsif request.path != '/pages/login' and request.path != '/pages/register' %}
-      <script>
-        window.location.href = '/pages/login'
-      </script>
-    {% else %}
-      <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
-        {{ content_for_layout }}
-      </main>
-    {% endif %} 
+    window.location.href = 'https://levi9-test.myshopify.com/page/home-page';
+  {% else %}
+    // Ako korisnik nije prijavljen, preusmeriti ga na stranicu za prijavu
+    window.location.href = '/pages/login';
+  {% endif %}
+</script>
+    
+ 
 
     {% sections 'footer-group' %}
 

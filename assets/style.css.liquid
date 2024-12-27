@@ -1677,13 +1677,14 @@ input:disabled, button:disabled {
 .auction-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 20px; /* Reduced gap between columns */
-  padding: 0 250px;
+  gap: 10px; /* Smanjen razmak između kartica */
+  padding: 0 50px; /* Smanjen padding sa strane kako bi kartice bile bliže */
   max-width: 100%;
   margin: 0 auto; /* Center the grid itself */
   justify-items: center; /* Center the grid items (cards) horizontally */
   align-items: start; /* Align the cards to the top of the grid cells */
 }
+
 
 .auction-card {
   background-color: white;
@@ -1743,7 +1744,8 @@ input:disabled, button:disabled {
 
 .pagination {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 20px; /* Dodajte malo razmaka između paginacije i ostatka sadržaja */
+  margin-bottom: 20px; /* Dodajte razmak između paginacije i footer-a */
 }
 
 .pagination a {

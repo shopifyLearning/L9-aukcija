@@ -24,7 +24,137 @@ a {
   text-decoration: none;
 }
 
+/* HEADER */
+.header {
+  background: white;
+}
 
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  display: block;
+}
+
+.header-logo {
+  display: block;
+}
+
+.shopping-img {
+  cursor: 'pointer';
+  display: block;
+}
+
+.header-nav {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 1px;
+  padding: 0 30px 0 30px;
+}
+
+.right-nav-items {
+  display: flex;
+  align-items: center;
+}
+.search-nav {
+  padding: 10px;
+  border-radius: 15px;
+  border: none;
+  background-color: rgb(239, 234, 234);
+}
+
+.middle-nav-links {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+  color: #223D98;
+}
+
+.middle-nav-list {
+  list-style-type: none;
+  display: none;
+}
+
+.middle-nav-list li {
+  padding: 10px;
+}
+
+.middle-nav-list li:hover {
+  text-decoration: underline;
+}
+
+.middle-nav-list a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hamburger-icon {
+  display: none;
+  color: {{ section.settings.color_menu_text }};
+}
+
+@media (max-width: 768px) {
+  .hamburger-icon {
+    display: block;
+    cursor: pointer;
+    padding: 10px;
+    margin-right: 10px;
+  }
+
+  .drawer-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 180px;
+    background-color: #f9f9f9;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding-top: 50px;
+  }
+
+  .drawer-menu.open {
+    transform: translateX(0);
+  }
+
+  .drawer-menu ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .drawer-menu li {
+    padding: 15px;
+  }
+
+  .drawer-menu li:hover {
+    background-color: #ddd;
+  }
+
+  .drawer-menu a {
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .right-nav-items{
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .middle-nav-list {
+    display: flex;
+  }
+
+  .drawer-menu {
+    display: none;
+  }
+}
 
 /* FOOTER */
 
@@ -1637,61 +1767,3 @@ input:disabled, button:disabled {
   background-color: #ddd;
   color: #aaa;
 }
-/* General header styling */
-.header-wrapper color-scheme-1 gradient {
-  background-color: #0D40C4; /* Plava boja za pozadinu */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Blaga senka za efekt */
-}
-
-/* Stilizacija unutrašnjeg header-a */
-.header {
-  color: #FFFFFF; /* Bele boje za tekst */
-  font-family: Arial, sans-serif; /* Moderniji font */
-  padding: 15px 20px; /* Dodato unutrašnje rastojanje */
-  border-bottom: 2px solid #FFFFFF; /* Tanka bela linija ispod header-a */
-}
-
-/* Logo styling */
-.header .logo a {
-  color: #FFFFFF;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-/* Navigacija styling */
-.header nav a {
-  color: #FFFFFF;
-  text-decoration: none;
-  font-weight: 500;
-  margin: 0 10px;
-  transition: color 0.3s ease;
-}
-
-.header nav a:hover {
-  color: #FFD700; /* Zlatna boja na hover */
-}
-
-/* Account link styling */
-.header .account a {
-  color: #FFFFFF;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.header .account a:hover {
-  color: #FFD700; /* Zlatna boja na hover */
-}
-
-/* Mobilna optimizacija */
-@media (max-width: 768px) {
-  .header {
-    text-align: center;
-  }
-
-  .header nav {
-    margin-top: 10px;
-  }
-}
-

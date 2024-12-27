@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 {%- endif -%}
 
-
 <style>
   header-drawer {
     justify-self: start;
@@ -126,67 +125,69 @@
   #popup .close-icon:hover {
     background-color: #ff1a1a;
   }
+
+  /* Notification Dropdown Styles */
+  .notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1001;
+    display: none; /* Initially hidden */
+  }
+
+  .notification-bell:hover + .notification-dropdown {
+    display: block; /* Show dropdown on hover */
+  }
+
+/*
+  .notification-dropdown.active { 
+    display: block;
+  }
+*/
+  .notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
+
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+
+  .notification-item:hover {
+    background-color: #f9f9f9;
+  }
+
+  .notification-item a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .notification-item a .notification-time {
+    font-size: 0.8rem;
+    color: #555;
+  }
+
+  .notification-item a .notification-message {
+    font-size: 1rem;
+  }
 </style>
 
-{%- style -%}
-  .header {
-    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
-  }
-
-  .section-header {
-    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
-    margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
-  }
-
-  @media screen and (min-width: 750px) {
-    .section-header {
-      margin-bottom: {{ section.settings.margin_bottom }}px;
-    }
-  }
-
-  @media screen and (min-width: 990px) {
-    .header {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
-  }
-
-  .header__notifications {
-    position: relative;
-  }
-
-  .notification-count {
-    position: flex;
-    top: -5px;
-    right: 10px;
-    width: 40px; /* Adjusted to be equal to height */
-    height: 5px; /* Adjusted to be equal to width */
-    background-color: red;
-    color: white;
-    border-radius: 10%;
-    margin-left: 3rem; /* Adjust margin as necessary */
-    padding: 2px 10px;
-    font-size: 2rem;
-    display: none; /* Hidden by default */
-  }
-{%- endstyle -%}
-
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
-
-{%- liquid
-  for block in section.blocks
-    if block.type == '@app'
-      assign has_app_block = true
-    endif
-  endfor
--%}
 
 <{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
   {%- liquid
     assign social_links = false
     assign localization_forms = false
 
-    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank
       assign social_links = true
     endif
 
@@ -344,11 +345,11 @@
       {%- endfor -%}
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset disabled" id="cart-icon-bubble">
-          {% if cart == empty %}
-            <span class="svg-wrapper">{{'icon-cart-empty.svg' | inline_asset_content }}</span>
-          {% else %}
-            <span class="svg-wrapper">{{'icon-cart.svg' | inline_asset_content }}</span>
-          {% endif %}
+        {% if cart == empty %}
+          <span class="svg-wrapper">{{'icon-cart-empty.svg' | inline_asset_content }}</span>
+        {% else %}
+          <span class="svg-wrapper">{{'icon-cart.svg' | inline_asset_content }}</span>
+        {% endif %}
         <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
         {%- if cart != empty -%}
           <div class="cart-count-bubble">
@@ -359,13 +360,34 @@
           </div>
         {%- endif -%}
       </a>
-            
+      
       <!-- Notification Bell -->
       <div class="header__notifications">
-        <a href="{{ routes.notifications_url }}" class="header__icon header__icon--notifications link focus-inset" id="notification-bell">
+        <a href="javascript:void(0)" class="header__icon header__icon--notifications link focus-inset" id="notification-bell">
           <span class="svg-wrapper">{{ 'icon-bell.svg' | inline_asset_content }}</span>
           <span class="notification-count" id="notification-count">0</span>
         </a>
+        <div class="notification-dropdown" id="notification-dropdown">
+          <!-- Dummy notifications for testing -->
+          <div class="notification-item" data-url="/pages/auction-details?auctionId=19">
+            <a href="javascript:void(0)">
+              <span class="notification-time">09:11 26-Dec-2024</span>
+              <span class="notification-message">Auction ended</span>
+            </a>
+          </div>
+          <div class="notification-item" data-url="/pages/auction-details?auctionId=33">
+            <a href="javascript:void(0)">
+              <span class="notification-time">09:15 26-Dec-2024</span>
+              <span class="notification-message">A higher bid has been placed, so your bid is no longer the highest</span>
+            </a>
+          </div>
+          <div class="notification-item" data-url="/pages/auction-details?auctionId=20">
+            <a href="javascript:void(0)">
+              <span class="notification-time">20:29 24-Dec-2024</span>
+              <span class="notification-message">Auction ended</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Popup message -->
@@ -386,6 +408,13 @@
     constructor() {
       super();
       this.notificationCount = 0; // Initialize notification count
+      this.notifications = [
+        { time: '09:11 26-Dec-2024', message: 'Auction ended', url: '/pages/auction-details?auctionId=19' },
+        { time: '09:15 26-Dec-2024', message: 'A higher bid has been placed, so your bid is no longer the highest', url: '/pages/auction-details?auctionId=33' },
+        { time: '20:29 24-Dec-2024', message: 'Auction ended', url: '/pages/auction-details?auctionId=20' }
+      ];
+      this.isMouseOverBell = false;
+      this.isMouseOverDropdown = false;      
     }
 
     connectedCallback() {
@@ -416,15 +445,15 @@
       // Initialize notification checking
       this.checkNotifications();
       setInterval(this.checkNotifications.bind(this), 15000); // Check notifications every 15 seconds
-    }
 
-    setHeaderHeight() {
-      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
+      // Add event listeners for notifications
+      this.addNotificationEventListeners();
     }
 
     disconnectedCallback() {
       this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
       window.removeEventListener('scroll', this.onScrollHandler);
+      this.removeNotificationEventListeners();
     }
 
     createObserver() {
@@ -434,6 +463,10 @@
       });
 
       observer.observe(this.header);
+    }
+
+    setHeaderHeight() {
+      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
     }
 
     onScroll() {
@@ -496,7 +529,8 @@
 
     checkNotifications() {
       // Simulating fetching notification count (Replace with actual logic)
-      this.notificationCount = Math.floor(Math.random() * 10); // Random number for demo purposes
+      // this.notificationCount = Math.floor(Math.random() * 10); // Random number for demo purposes
+      this.notificationCount = this.notifications.length;
       const notificationCountElement = document.getElementById('notification-count');
 
       console.log('checkNotifications called, notificationCount:', this.notificationCount); // Debugging log
@@ -505,14 +539,48 @@
         notificationCountElement.textContent = this.notificationCount;
         notificationCountElement.style.display = 'block';
         document.getElementById('notification-bell').style.color = 'red'; // Change color if there's a notification
-        this.showPopup(); // Show popup whenever there are notifications
+        this.populateNotifications();
+        //this.showPopup(); // Show popup whenever there are notifications
       } else {
         notificationCountElement.style.display = 'none';
         document.getElementById('notification-bell').style.color = ''; // Reset color
-        this.hidePopup(); // Hide popup if there are no notifications
+        //this.hidePopup(); // Hide popup if there are no notifications
       }
     }
 
+    populateNotifications() {
+      const dropdown = document.getElementById('notification-dropdown');
+      if (!dropdown) {
+        console.error('Dropdown element not found'); // Debug log
+        return;
+      }      
+      dropdown.innerHTML = '';
+
+      this.notifications.forEach(notification => {
+        const notificationItem = document.createElement('div');
+        notificationItem.className = 'notification-item';
+        notificationItem.dataset.url = notification.url;
+
+        const link = document.createElement('a');
+        link.href = 'javascript:void(0)';
+
+        const time = document.createElement('span');
+        time.className = 'notification-time';
+        time.textContent = notification.time;
+
+        const message = document.createElement('span');
+        message.className = 'notification-message';
+        message.textContent = notification.message;
+
+        link.appendChild(time);
+        link.appendChild(message);
+        notificationItem.appendChild(link);
+        dropdown.appendChild(notificationItem);
+        console.log('Notif item added, URL:', notification.url); // Debugging log
+      });
+      console.log('Notifications populated in dropdown'); // Debug log
+    }
+    
     showPopup() {
       const popup = document.getElementById('popup');
       if (popup) {
@@ -536,6 +604,123 @@
         popup.classList.remove('active');
         popup.style.opacity = '0';
         popup.style.transform = 'translate(-50%, -50%)';
+      }
+    }
+
+    addNotificationEventListeners() {
+      const notificationBell = document.getElementById('notification-bell');
+      if (!notificationBell) {
+        console.error('Notification bell element not found'); // Debug log
+        return;
+      }
+
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (!notificationDropdown) {
+        console.error('Notification dropdown element not found'); // Debug log
+        return;
+      }
+
+      // Add hover event listeners to the notification bell
+      notificationBell.addEventListener('mouseover', () => {
+        this.isMouseOverBell = true;
+        this.updateDropdownVisibility();
+        console.log('Dropdown should be visible now'); // Debug log
+      });
+
+      notificationBell.addEventListener('mouseout', () => {
+        this.isMouseOverBell = false;
+        this.updateDropdownVisibility();
+        console.log('Mouse out of bell, checking dropdown hover'); // Debug log
+      });
+
+      // Add hover event listeners to the notification dropdown
+      notificationDropdown.addEventListener('mouseover', () => {
+        this.isMouseOverDropdown = true;
+        this.updateDropdownVisibility();
+        console.log('Mouse over dropdown, keeping it visible'); // Debug log
+      });
+
+      notificationDropdown.addEventListener('mouseout', () => {
+        this.isMouseOverDropdown = false;
+        this.updateDropdownVisibility();
+        console.log('Mouse out of dropdown, checking bell hover'); // Debug log
+      });
+
+      // Add click event listeners to the notification items
+      notificationDropdown.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const url = item.dataset.url;
+          this.removeNotification(item);
+          window.location.href = url;
+        });
+      });
+
+      console.log('Notification event listeners added'); // Debug log
+    }
+
+    updateDropdownVisibility() {
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (!notificationDropdown) {
+        console.error('Dropdown element not found'); // Debug log
+        return;
+      }
+
+      if (this.isMouseOverBell || this.isMouseOverDropdown) {
+        notificationDropdown.style.display = 'block'; // Show dropdown if mouse is over bell or dropdown
+      } else {
+        notificationDropdown.style.display = 'none'; // Hide dropdown if mouse is not over either
+      }
+    }
+
+    removeNotificationEventListeners() {
+      const notificationBell = document.getElementById('notification-bell');
+      if (notificationBell) {
+        notificationBell.removeEventListener('mouseover', () => {
+          this.isMouseOverBell = true;
+          this.updateDropdownVisibility();
+          console.log('Dropdown should be visible now'); // Debug log
+        });
+
+        notificationBell.removeEventListener('mouseout', () => {
+          this.isMouseOverBell = false;
+          this.updateDropdownVisibility();
+          console.log('Mouse out of bell, checking dropdown hover'); // Debug log
+        });
+      }
+
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (notificationDropdown) {
+        notificationDropdown.removeEventListener('mouseover', () => {
+          this.isMouseOverDropdown = true;
+          this.updateDropdownVisibility();
+          console.log('Mouse over dropdown, keeping it visible'); // Debug log
+        });
+
+        notificationDropdown.removeEventListener('mouseout', () => {
+          this.isMouseOverDropdown = false;
+          this.updateDropdownVisibility();
+          console.log('Mouse out of dropdown, checking bell hover'); // Debug log
+        });
+
+        notificationDropdown.querySelectorAll('.notification-item').forEach(item => {
+          item.removeEventListener('click', () => {
+            const url = item.dataset.url;
+            this.removeNotification(item);
+            window.location.href = url;
+          });
+        });
+      }
+    }
+
+    removeNotification(item) {
+      const dropdown = document.getElementById('notification-dropdown');
+      dropdown.removeChild(item);
+      this.notificationCount--;
+      if (this.notificationCount === 0) {
+        document.getElementById('notification-count').style.display = 'none';
+        document.getElementById('notification-bell').style.color = ''; // Reset color
+      } else {
+        document.getElementById('notification-count').textContent = this.notificationCount;
       }
     }
   }
@@ -582,6 +767,57 @@
     }
   </script>
 {%- endif -%}
+
+{%- style -%}
+  .header {
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
+  }
+
+  .section-header {
+    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
+    margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-header {
+      margin-bottom: {{ section.settings.margin_bottom }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .header {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .header__notifications {
+    position: relative;
+  }
+
+  .notification-count {
+    position: flex;
+    top: -5px;
+    right: 10px;
+    width: 40px; /* Adjusted to be equal to height */
+    height: 5px; /* Adjusted to be equal to width */
+    background-color: red;
+    color: white;
+    border-radius: 10%;
+    margin-left: 3rem; /* Adjust margin as necessary */
+    padding: 2px 10px;
+    font-size: 2rem;
+    display: none; /* Hidden by default */
+  }
+{%- endstyle -%}
+
+{%- liquid
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_app_block = true
+    endif
+  endfor
+-%}
 
 {% schema %}
 {

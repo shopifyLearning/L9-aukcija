@@ -1677,13 +1677,12 @@ input:disabled, button:disabled {
 .auction-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  grid-template-rows: auto; /* Automatska visina redova */
-  gap: 10px; /* Razmak između kartica, kako u kolonama tako i u redovima */
-  padding: 0 50px; /* Padding sa strane */
+  gap: 10px; /* Smanjen razmak između kartica */
+  padding: 0 50px; /* Smanjen padding sa strane kako bi kartice bile bliže */
   max-width: 100%;
-  margin: 0 auto; /* Centriranje grid-a */
-  justify-items: center; /* Centriranje kartica horizontalno */
-  align-items: start; /* Poravnanje kartica na početak grid celija */
+  margin: 0 auto; /* Center the grid itself */
+  justify-items: center; /* Center the grid items (cards) horizontally */
+  align-items: start; /* Align the cards to the top of the grid cells */
 }
 
 

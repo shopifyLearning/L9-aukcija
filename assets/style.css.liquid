@@ -1455,40 +1455,7 @@ button:disabled {
 padding: 20px;
 }
 
-.auction-card {
-position: relative;
-border: 1px solid #ddd;
-border-radius: 5px;
-padding: 15px;
-margin: 10px 0;
-display: flex;
-flex-direction: column;
-align-items: center;
-cursor: pointer;
-transition: box-shadow 0.3s ease;
-}
-.auction-card.expired {
-  background-color: #f5f5f5;
-  opacity: 0.7;
-}
 
-.image-wrapper {
-  position: relative;
-}
-.expired-label {
-  position: absolute;
-  top: 10px;
-  right: -332px;
-  background-color: #d9534f;
-  color: #fff;
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  font-weight: bold;
-}
-.auction-card:hover {
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
 
 .auction-image {
 width: 100%;
@@ -1675,83 +1642,128 @@ input:disabled, button:disabled {
       transform: scale(1);
     }
   }
-  .home-page-container {
-    text-align: center;
-    padding: 20px;
-  }
+ 
+.home-page-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-  .auction2-links {
-    margin-top: 20px;
-  }
+.auction2-links {
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: 100px; 
+  margin-top: 20px;
+}
 
-  .auction2-link {
-    display: inline-block;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #007cba;
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    border-radius: 5px;
-  }
+.auction2-links .auction2-link {
+  background-color: #0D40C4;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  display: inline-block;
+}
 
-  .auction2-link:hover {
-    background-color: #005f8c;
-  }
-  .auction-grid {
+.auction-list-container {
+  margin-top: 40px;
+}
+
+.auction-list-container h1 {
+  font-size: 32px;
+  color: #0D40C4;
+}
+
+.auction-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
-  gap: 20px; 
-  padding: 20px;
+  gap: 10px 10px; 
+  padding: 0 250px; 
+  max-width: 100%;
+  margin: 0 auto; 
+  justify-items: center; 
+  align-items: start; 
 }
 
 .auction-card {
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  cursor: pointer;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  position: relative;
+  width: 300px;
+  height: 350px; 
+  margin: 0; 
+  padding: 15px; 
 }
 
-.auction-card.expired {
-  opacity: 0.6;
+.auction-card:hover {
+  transform: translateY(-5px);
+  cursor: pointer; 
 }
 
 .auction-card .image-wrapper {
   position: relative;
+  overflow: hidden;
+  height: 200px; 
+  margin-bottom: 10px; 
 }
 
-.auction-card .expired-label {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: red;
-  color: white;
-  padding: 5px;
-  font-weight: bold;
-  border-radius: 3px;
-}
-
-.auction-image {
+.auction-card .auction-image {
   width: 100%;
-  height: auto;
-  border-radius: 5px;
+  height: 100%;
+  object-fit: cover; 
 }
 
 .auction-card h2 {
-  margin: 10px 0;
-  font-size: 1.2rem;
+  font-size: 18px;
+  margin: 10px 0; 
+  color: #0D40C4; 
 }
 
 .auction-card p {
-  margin: 5px 0;
-  font-size: 0.9rem;
+  font-size: 12px;
+  color: #555;
+  margin: -5px 0; 
 }
 
-.auction-card p strong {
-  font-weight: bold;
+.expired {
+  opacity: 0.4;
+  background-color: rgba(0, 0, 0, 0.1); 
 }
 
+.expired-label {
+  position: absolute;
+  top: 10px;
+  right: 0px;
+  background-color: rgba(0, 0, 0, 0.8); 
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+}
 
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px; 
+}
+
+.pagination a {
+  background-color: #0D40C4;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  margin: 0 5px;
+  border-radius: 5px;
+}
+
+.pagination a:hover {
+  background-color: #083B8B;
+}
+
+.pagination a.disabled {
+  background-color: #ddd;
+  color: #aaa;
+}

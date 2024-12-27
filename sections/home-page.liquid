@@ -195,28 +195,62 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   
-  function createPagination(totalPages) {
-    paginationContainer.innerHTML = ""; 
+function createPagination(totalPages) {
+ paginationContainer.innerHTML = ""; 
 
-    if (totalPages <= 1) return; 
+ if (totalPages <= 1) return; 
+ 
+ // Prethodna stranica
+ const prevButton = document.createElement("a");
+ prevButton.href = "#";
+ prevButton.innerText = "«";
+ prevButton.classList.add("pagination-link");
+ if (currentPage === 1) {
+   prevButton.classList.add("disabled");
+ }
+ prevButton.addEventListener("click", (event) => {
+   event.preventDefault();
+   if (currentPage > 1) {
+     currentPage--;
+     fetchAuctions();
+   }
+ });
+ paginationContainer.appendChild(prevButton);
 
-    
-    for (let i = 1; i <= totalPages; i++) {
-      const pageButton = document.createElement("a");
-      pageButton.href = "#";
-      pageButton.innerText = i;
-      pageButton.classList.add("pagination-link");
-      if (i === currentPage) {
-        pageButton.classList.add("active");
-      }
-      pageButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        currentPage = i; 
-        fetchAuctions(); 
-      });
-      paginationContainer.appendChild(pageButton);
-    }
-  }
+ // Stranice
+ for (let i = 1; i <= totalPages; i++) {
+   const pageButton = document.createElement("a");
+   pageButton.href = "#";
+   pageButton.innerText = i;
+   pageButton.classList.add("pagination-link");
+   if (i === currentPage) {
+     pageButton.classList.add("active");
+   }
+   pageButton.addEventListener("click", (event) => {
+     event.preventDefault();
+     currentPage = i; 
+     fetchAuctions(); 
+   });
+   paginationContainer.appendChild(pageButton);
+ }
+
+ // Sledeća stranica
+ const nextButton = document.createElement("a");
+ nextButton.href = "#";
+ nextButton.innerText = "»";
+ nextButton.classList.add("pagination-link");
+ if (currentPage === totalPages) {
+   nextButton.classList.add("disabled");
+ }
+ nextButton.addEventListener("click", (event) => {
+   event.preventDefault();
+   if (currentPage < totalPages) {
+     currentPage++;
+     fetchAuctions();
+   }
+ });
+ paginationContainer.appendChild(nextButton);
+}
 
   window.redirectToAuctionPage = (auctionId) => {
     const auctionPageUrl = `/pages/auction-details?auctionId=${auctionId}`;

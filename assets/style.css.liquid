@@ -1767,3 +1767,61 @@ input:disabled, button:disabled {
   background-color: #ddd;
   color: #aaa;
 }
+/* General header styling */
+.header-wrapper {
+  background-color: #0D40C4; /* Plava boja za pozadinu */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Blaga senka za efekt */
+}
+
+/* Stilizacija unutrašnjeg header-a */
+.header {
+  color: #FFFFFF; /* Bele boje za tekst */
+  font-family: Arial, sans-serif; /* Moderniji font */
+  padding: 15px 20px; /* Dodato unutrašnje rastojanje */
+  border-bottom: 2px solid #FFFFFF; /* Tanka bela linija ispod header-a */
+}
+
+/* Logo styling */
+.header .logo a {
+  color: #FFFFFF;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Navigacija styling */
+.header nav a {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.header nav a:hover {
+  color: #FFD700; /* Zlatna boja na hover */
+}
+
+/* Account link styling */
+.header .account a {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.header .account a:hover {
+  color: #FFD700; /* Zlatna boja na hover */
+}
+
+/* Mobilna optimizacija */
+@media (max-width: 768px) {
+  .header {
+    text-align: center;
+  }
+
+  .header nav {
+    margin-top: 10px;
+  }
+}
+

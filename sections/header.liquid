@@ -441,7 +441,7 @@
       setInterval(this.checkNotifications.bind(this), 15000); // Check notifications every 15 seconds
 
       // Add event listeners for notifications
-      this.addNotificationEventListeners();
+      //this.addNotificationEventListeners();
     }
 
     disconnectedCallback() {
@@ -536,6 +536,9 @@
           notificationCountElement.style.display = 'none';
           document.getElementById('notification-bell').style.color = ''; // Reset color
       }
+
+      // Add event listeners for notifications
+      this.addNotificationEventListeners();
     }
 
     populateNotifications() {
@@ -644,6 +647,7 @@
           const url = item.dataset.url;
           this.removeNotification(item);
           window.location.href = url;
+          console.log('Mouse click on notification, redirecting to:', url); // Debug log
         });
       });
 

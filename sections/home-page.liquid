@@ -67,21 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Sort auctions: Active auctions first (based on endDate), then expired
-      const now = new Date();
-      const sortedAuctions = auctions.sort((a, b) => {
-        const aEndDate = new Date(a.endDate);
-        const bEndDate = new Date(b.endDate);
-
-        // Active auctions first, then expired ones, sorted by end date
-        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate; // Both expired, sort by end date
-        if (aEndDate < now) return 1; // a is expired, b is active
-        if (bEndDate < now) return -1; // b is expired, a is active
-        return aEndDate - bEndDate; // Both active, sort by end date
-      });
-
-      const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
-      const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
+      const totalPages = Math.ceil(auctions.length / auctionsPerPage);
+      const currentAuctions = auctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
 
       // Create auction cards for the current page
       const auctionCards = currentAuctions.map(createAuctionCard).join("");

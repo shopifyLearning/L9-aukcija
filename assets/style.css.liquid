@@ -1744,26 +1744,28 @@ input:disabled, button:disabled {
   border-radius: 5px;
 }
 
-.pagination {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px; 
-}
-
-.pagination a {
-  background-color: #0D40C4;
-  color: white;
-  padding: 8px 16px;
-  text-decoration: none;
+.pagination-link {
+  display: inline-block;
+  padding: 10px 15px;
   margin: 0 5px;
-  border-radius: 5px;
+  text-decoration: none;
+  color: #0D40C4; /* Plava boja */
+  font-size: 16px;
+  border: 1px solid #0D40C4; /* Granica */
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
-.pagination a:hover {
-  background-color: #083B8B;
+.pagination-link:hover {
+  background-color: #0D40C4; /* Plava pozadina na hover */
+  color: #FFFFFF; /* Bela boja teksta */
 }
 
-.pagination a.disabled {
-  background-color: #ddd;
-  color: #aaa;
+.pagination-link.active {
+  font-size: 18px; /* Veći font */
+  font-weight: bold;
+  background-color: #0D40C4; /* Plava pozadina */
+  color: #FFFFFF; /* Bela boja teksta */
+  border-color: #0A2F8A; /* Tamnija plava za granicu */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Blaga senka */
 }

@@ -1,19 +1,16 @@
 <div class="home-page-container">
   <h1>Welcome to Levi9 Auction Site</h1>
-
   <div class="auction2-links">
-    
-    
     <a href="https://levi9-test.myshopify.com/pages/auction" class="auction2-link">
       Create Auction
     </a>
   </div>
 </div>
+
 <div class="auction-list-container">
-  <div id="auction-list" class="auction-grid">
- 
-  </div>
+  <div id="auction-list" class="auction-grid"></div>
 </div>
+
 <div id="pagination" class="pagination"></div>
 
 <script>
@@ -26,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const paginationContainer = document.getElementById("pagination");
   const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
   const auctionsPerPage = 9;
-  let currentPage = 1; 
+  let currentPage = 1;
 
   function createAuctionCard(auction) {
     const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
@@ -67,27 +64,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-    
       const now = new Date();
       const sortedAuctions = auctions.sort((a, b) => {
         const aEndDate = new Date(a.endDate);
         const bEndDate = new Date(b.endDate);
-
-        
-        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate; 
-        if (aEndDate < now) return 1; 
-        if (bEndDate < now) return -1; 
-        return aEndDate - bEndDate; 
+        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate;
+        if (aEndDate < now) return 1;
+        if (bEndDate < now) return -1;
+        return aEndDate - bEndDate;
       });
 
       const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
       const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
 
-     
       const auctionCards = currentAuctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
 
-     
       createPagination(totalPages);
     } catch (error) {
       console.error("Error fetching auctions:", error);
@@ -95,28 +87,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  
   function createPagination(totalPages) {
     paginationContainer.innerHTML = ""; 
+    if (totalPages <= 1) return;
 
-    if (totalPages <= 1) return; 
+    const prevButton = document.createElement("a");
+    prevButton.href = "#";
+    prevButton.innerText = "«";
+    prevButton.classList.add("pagination-link");
+    if (currentPage === 1) prevButton.classList.add("disabled");
+    prevButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        fetchAuctions();
+      }
+    });
+    paginationContainer.appendChild(prevButton);
 
-    
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement("a");
       pageButton.href = "#";
       pageButton.innerText = i;
       pageButton.classList.add("pagination-link");
-      if (i === currentPage) {
-        pageButton.classList.add("active");
-      }
+      if (i === currentPage) pageButton.classList.add("active");
       pageButton.addEventListener("click", (event) => {
         event.preventDefault();
-        currentPage = i; 
-        fetchAuctions(); 
+        currentPage = i;
+        fetchAuctions();
       });
       paginationContainer.appendChild(pageButton);
     }
+
+    const nextButton = document.createElement("a");
+    nextButton.href = "#";
+    nextButton.innerText = "»";
+    nextButton.classList.add("pagination-link");
+    if (currentPage === totalPages) nextButton.classList.add("disabled");
+    nextButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        fetchAuctions();
+      }
+    });
+    paginationContainer.appendChild(nextButton);
   }
 
   window.redirectToAuctionPage = (auctionId) => {
@@ -124,8 +139,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = auctionPageUrl;
   };
 
-  
   fetchAuctions();
 });
-
 </script>

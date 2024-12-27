@@ -21,58 +21,60 @@
 </script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const auctionListContainer = document.getElementById("auction-list");
-    const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
-     const auctionsPerPage = 9;
-     let currentPage = 1;
+document.addEventListener("DOMContentLoaded", async () => {
+  const auctionListContainer = document.getElementById("auction-list");
+  const paginationContainer = document.getElementById("pagination");
+  const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
+  const auctionsPerPage = 9; // Number of auctions per page
+  let currentPage = 1; // Start from the first page
 
-    function createAuctionCard(auction) {
-      const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
-      const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
-      const isExpired = new Date(auction.endDate) < new Date();
-      const cardClass = isExpired ? "auction-card expired" : "auction-card";
-      const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
+  function createAuctionCard(auction) {
+    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
+    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
+    const isExpired = new Date(auction.endDate) < new Date();
+    const cardClass = isExpired ? "auction-card expired" : "auction-card";
+    const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
 
-      return `
-        <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
-          <div class="image-wrapper">
-            <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
-            ${expiredLabel}
-          </div>
-          <h2>${auction.productTitle}</h2>
-          <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
-          <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
-          <p><strong>Start Date:</strong> ${startDate}</p>
-          <p><strong>End Date:</strong> ${endDate}</p>
+    return `
+      <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
+        <div class="image-wrapper">
+          <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
+          ${expiredLabel}
         </div>
-      `;
-    }
+        <h2>${auction.productTitle}</h2>
+        <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
+        <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
+        <p><strong>Start Date:</strong> ${startDate}</p>
+        <p><strong>End Date:</strong> ${endDate}</p>
+      </div>
+    `;
+  }
 
-    async function fetchAuctions() {
-      try {
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81",
-          },
-        });
-        if (!response.ok) throw new Error("Failed to fetch auctions.");
-        const auctions = await response.json();
+  async function fetchAuctions() {
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81",
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch auctions.");
+      const auctions = await response.json();
 
-        if (auctions.length === 0) {
-          auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
-          return;
-        }
-         const totalPages = Math.ceil(auctions.length / auctionsPerPage);
+      if (auctions.length === 0) {
+        auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
+        return;
+      }
+
+      const totalPages = Math.ceil(auctions.length / auctionsPerPage);
       const currentAuctions = auctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
 
-      
+      // Create auction cards for the current page
       const auctionCards = currentAuctions.map(createAuctionCard).join("");
       auctionListContainer.innerHTML = auctionCards;
 
-    
+      // Create pagination buttons
       createPagination(totalPages);
     } catch (error) {
       console.error("Error fetching auctions:", error);
@@ -80,13 +82,13 @@
     }
   }
 
-  
+  // Create pagination buttons
   function createPagination(totalPages) {
-    const paginationContainer = document.getElementById("pagination");
-    paginationContainer.innerHTML = "";
+    paginationContainer.innerHTML = ""; // Clear any existing pagination
 
-    if (totalPages <= 1) return; 
+    if (totalPages <= 1) return; // No pagination needed if there's only one page
 
+    // Create pagination links
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement("a");
       pageButton.href = "#";
@@ -97,8 +99,8 @@
       }
       pageButton.addEventListener("click", (event) => {
         event.preventDefault();
-        currentPage = i;
-        fetchAuctions();
+        currentPage = i; // Update currentPage
+        fetchAuctions(); // Re-fetch auctions for the new page
       });
       paginationContainer.appendChild(pageButton);
     }
@@ -109,32 +111,8 @@
     window.location.href = auctionPageUrl;
   };
 
-  
+  // Initialize the page
   fetchAuctions();
 });
 
-        const now = new Date();
-        const nonExpired = auctions.filter(auction => new Date(auction.endDate) >= now);
-        const expired = auctions.filter(auction => new Date(auction.endDate) < now);
-
-        nonExpired.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-        expired.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-
-        const sortedAuctions = [...nonExpired, ...expired];
-
-        const auctionCards = sortedAuctions.map(createAuctionCard).join("");
-        auctionListContainer.innerHTML = auctionCards;
-      } catch (error) {
-        console.error("Error fetching auctions:", error);
-        auctionListContainer.innerHTML = `<p>Error loading auctions. Please try again later.</p>`;
-      }
-    }
-
-    window.redirectToAuctionPage = (auctionId) => {
-      const auctionPageUrl = `/pages/auction-details?auctionId=${auctionId}`;
-      window.location.href = auctionPageUrl;
-    };
-
-    fetchAuctions();
-  });
 </script>

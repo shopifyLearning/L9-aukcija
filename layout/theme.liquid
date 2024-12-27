@@ -341,21 +341,23 @@
       {{ 'accessibility.skip_to_text' | t }}
     </a>
 
-<script>
-  {% if customer %}
-    {% sections 'header-group' %}
+    {% if customer %}
+      {%- if settings.cart_type == 'drawer' -%}
+        {%- render 'cart-drawer' -%}
+      {%- endif -%}
+      {% sections 'header-group' %}
       <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
-    window.location.href = 'https://levi9-test.myshopify.com/page/home-page';
-  {% else %}
- <script>
+    {% elsif request.path != '/pages/login' and request.path != '/pages/register' %}
+      <script>
         window.location.href = '/pages/login';
       </script>
-  {% endif %}
-</script>
-    
- 
+    {% else %}
+      <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+        {{ content_for_layout }}
+      </main>
+    {% endif %} 
 
     {% sections 'footer-group' %}
 

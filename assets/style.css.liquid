@@ -1690,7 +1690,8 @@ input:disabled, button:disabled {
   overflow: hidden;
   transition: transform 0.3s ease;
   position: relative;
-  padding: 10px; /* Reduced card padding for smaller size */
+  width: 250px; /* Set a fixed width for the card */
+  margin: 0 auto; /* Center the cards within the grid */
 }
 
 .auction-card:hover {
@@ -1706,21 +1707,21 @@ input:disabled, button:disabled {
   width: 100%;
   height: auto;
   transition: transform 0.3s ease;
-  margin: 5px 5px; /* Reduced margin for smaller cards */
+  margin: 5px 5px;
 }
 
 .auction-card:hover .auction-image {
-  transform: scale(1.05); /* Reduced scale on hover for smaller size */
+  transform: scale(1.05);
 }
 
 .auction-card h2 {
-  font-size: 16px; /* Reduced font size */
+  font-size: 16px;
   margin: 10px 5px;
-  color: #0D40C4; /* Applied #0D40C4 to heading text */
+  color: #0D40C4; /* Heading color */
 }
 
 .auction-card p {
-  font-size: 12px; /* Reduced font size */
+  font-size: 12px;
   color: #555;
   margin: 5px 5px;
 }
@@ -1746,7 +1747,7 @@ input:disabled, button:disabled {
 }
 
 .pagination a {
-  background-color: #0D40C4; /* Pagination buttons with #0D40C4 */
+  background-color: #0D40C4;
   color: white;
   padding: 8px 16px;
   text-decoration: none;

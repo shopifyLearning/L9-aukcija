@@ -126,55 +126,54 @@
 
 <style>
 
-/* Osnovni stil za registraciju sekciju */
+
 .register {
-  background-color: #f4f4f4; /* Pozadina kao login sekcija */
-  min-height: 100vh; /* Minimum visina sekcije */
+  background-color: #f4f4f4; 
+  min-height: 100vh; 
   display: flex;
-  justify-content: center; /* Centriraj horizontalno */
-  align-items: center; /* Centriraj vertikalno */
-  padding: 20px; /* Razmak oko sekcije */
+  justify-content: center; 
+  align-items: center; 
+  padding: 20px; 
 }
 
-/* Kontejner za formu sa registracijom */
+
 .register-container {
-  background-color: #fff; /* Bela pozadina za kontejner */
+  background-color: #fff; /
   padding: 30px;
   border-radius: 8px; /* Zaobljeni uglovi */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Senka oko kontejnera */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
   width: 100%;
-  max-width: 400px; /* Maksimalna širina */
+  max-width: 400px; 
   box-sizing: border-box;
 }
 
-/* Forma unutar kontejnera */
+
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Razmak između polja */
+  gap: 20px; 
 }
 
-/* Stilizacija za input polja (ime, prezime, email, lozinka) */
+
 .email, .password, .first-name, .last-name {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px; /* Razmak ispod input polja */
+  margin-bottom: 15px; 
 }
 
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-  padding: 12px; /* Veći padding za input polja */
+  padding: 12px; 
   margin: 5px 0;
   border-radius: 5px;
-  border: 1px solid #ddd; /* Sivo-bela granica */
-  width: 100%; /* Puni širinu input polja */
-  box-sizing: border-box; /* Uključuje padding i border u ukupnu širinu */
-  font-size: 1.6rem; /* Veći font za input */
-  transition: border 0.3s ease; /* Efekat pri fokusu */
+  border: 1px solid #ddd; 
+  width: 100%; /
+  box-sizing: border-box; 
+  font-size: 1.6rem; 
+  transition: border 0.3s ease; 
 }
 
-/* Fokus na input poljima */
 input[type="email"]:focus,
 input[type="password"]:focus,
 input[type="text"]:focus {
@@ -182,28 +181,27 @@ input[type="text"]:focus {
   outline: none;
 }
 
-/* Dugme za submit */
+
 .btn {
-  padding: 12px; /* Veći padding na dugmetu */
-  background-color: #0D40C4; /* Plava pozadina */
+  padding: 12px; 
+  background-color: #0D40C4; 
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 100%; /* Puni širinu za dugme */
-  font-size: 1.6rem; /* Veći font */
+  width: 100%; 
+  font-size: 1.6rem; 
   transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-  background-color: #083c92; /* Tamnija nijansa pri hover-u */
+  background-color: #083c92; /
 }
 
-/* Linkovi */
 a {
   text-decoration: none;
-  color: #0D40C4; /* Plava boja linkova */
-  font-size: 1.6rem; /* Smanjeni font za linkove */
+  color: #0D40C4; 
+  font-size: 1.6rem; 
   text-align: center;
   margin-top: 10px;
 }
@@ -212,14 +210,13 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Tooltip stilizacija */
+
 .tooltip {
   color: red;
   font-size: 12px;
   margin-left: 5px;
 }
 
-/* Remember me checkbox stilizacija */
 .remember-me {
   display: flex;
   align-items: center;
@@ -243,7 +240,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Stil za povratak na login stranu */
+
 #recover-password {
   color: #0D40C4;
   font-size: 1.6rem;
@@ -255,7 +252,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Greške u formi */
+
 .form-errors {
   color: red;
   font-size: 1.6rem;
@@ -274,7 +271,7 @@ a[href="/pages/register"]:hover {
   text-decoration: underline;
 }
 
-/* Mobilna responzivnost */
+
 @media (max-width: 480px) {
   .register-container {
     padding: 20px;

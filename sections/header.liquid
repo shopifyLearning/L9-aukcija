@@ -398,18 +398,18 @@
 
 {% javascript %}
   class StickyHeader extends HTMLElement {
-    constructor() {
+    constructor(notifications) {
       super();
-      this.notificationCount = 0; // Initialize notification count
+      this.notifications = notifications || [];
+      this.notificationCount = 0;
 
-      // Retrieve the notification data from the script tag
-      const notificationScript = document.getElementById('notification-data');
-      const notificationData = JSON.parse(notificationScript.textContent);
+      // Determine logged customer id
+      const customerId = String(window.customerId || null);
+      console.log('Logged in customer id:' + customerId); // Debug log
 
-      this.notifications = notificationData.notifications || []; // Use notifications from JSON data or fallback to an empty array
       this.isMouseOverBell = false;
-      this.isMouseOverDropdown = false;      
-    }
+      this.isMouseOverDropdown = false;
+    }   
 
     connectedCallback() {
       this.header = document.querySelector('.section-header');
@@ -441,8 +441,8 @@
       setInterval(this.checkNotifications.bind(this), 15000); // Check notifications every 15 seconds
 
       // Add event listeners for notifications
-      //this.addNotificationEventListeners();
-    }
+      this.addNotificationEventListeners();
+    }  
 
     disconnectedCallback() {
       this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
@@ -521,61 +521,94 @@
       this.searchModal.close(false);
     }
 
-    checkNotifications() {
-      this.notificationCount = this.notifications.length; // Update notification count from the array
+    async checkNotifications() {
+      console.log('Checking for new notifications via API'); // Debug log
       const notificationCountElement = document.getElementById('notification-count');
+
+      // Determine logged customer id
+      const customerId = String(window.customerId || null);
+      console.log('Logged in customer id:' + customerId); // Debug log
+
+      try {
+        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerId;
+
+        const response = await fetch(notificationsUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+          }
+        });
+        if (!response.ok) throw new Error("Failed to get notifications.");
+        const notifications = await response.json();
+        this.notifications = notifications; // Update notifications with the fetched data
+        this.notifications = notifications.map(notification => ({
+          ...notification,
+          time: this.formatDate(notification.createdAt),
+          url: this.auctionUrl(notification.auctionId) // Add URL here
+        }));        
+        this.notificationCount = notifications.length; // Update notification count with the fetched data
+        console.log("API notifications count: ", this.notificationCount); // Debug log    
+      } catch (error) {
+        console.error("Error getting notifications via API: ", error);
+      }      
       
-      console.log('checkNotifications called, notificationCount:', this.notificationCount); // Debugging log
-
       if (this.notificationCount > 0) {
-          notificationCountElement.textContent = this.notificationCount;
-          notificationCountElement.style.display = 'block';
-          document.getElementById('notification-bell').style.color = 'red'; // Change color if there's a notification
-          this.populateNotifications(); // Populate notifications dynamically
+        notificationCountElement.textContent = this.notificationCount;
+        notificationCountElement.style.display = 'block';
+        document.getElementById('notification-bell').style.color = 'red';
+        this.populateNotifications();
       } else {
-          notificationCountElement.style.display = 'none';
-          document.getElementById('notification-bell').style.color = ''; // Reset color
+        notificationCountElement.style.display = 'none';
+        document.getElementById('notification-bell').style.color = '';
       }
-
+      
       // Add event listeners for notifications
-      this.addNotificationEventListeners();
+      this.addNotificationEventListeners();      
     }
 
     populateNotifications() {
       const dropdown = document.getElementById('notification-dropdown');
-
-      if (!dropdown) {
-          console.error('Dropdown element not found'); // Debug log
-          return;
-      }
-
-      dropdown.innerHTML = ''; // Clear existing notifications
+      dropdown.innerHTML = '';
 
       if (this.notifications.length === 0) {
-          dropdown.innerHTML = '<div class="notification-item">No notifications available</div>'; // Notify user if no notifications
-          return;
+        dropdown.innerHTML = '<div class="notification-item">No notifications available</div>';
+        return;
       }
 
       this.notifications.forEach(notification => {
         const notificationItem = document.createElement('div');
         notificationItem.className = 'notification-item';
-        notificationItem.dataset.url = notification.url;
-
+        notificationItem.dataset.id = notification.id; // Add dataset for notification ID
+        notificationItem.dataset.url = notification.url; // Use the URL from the notification object
+        console.log("API auction url: ", notificationItem.dataset.url); // Debug log 
         const link = document.createElement('a');
         link.href = 'javascript:void(0)';
         link.innerHTML = `
             <span class="notification-time">${notification.time}</span>
             <span class="notification-message">${notification.message}</span>
         `;
-
         notificationItem.appendChild(link);
         dropdown.appendChild(notificationItem);
-        console.log('Notification item added, URL:', notification.url); // Debugging log
       });
-
-      console.log('Notifications populated in dropdown'); // Debug log
     }
-    
+
+    formatDate(createdAt) {
+      const date = new Date(createdAt);
+      const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      };
+      return date.toLocaleString('en-GB', options).replace(',', '');
+    }
+
+    auctionUrl(auctionId) {
+      return "/pages/auction-details?auctionId=" + auctionId;
+    }
+
     showPopup() {
       const popup = document.getElementById('popup');
       if (popup) {
@@ -642,13 +675,31 @@
       });
 
       // Add click event listeners to the notification items
-      notificationDropdown.querySelectorAll('.notification-item').forEach(item => {
-        item.addEventListener('click', () => {
+      notificationDropdown.addEventListener('click', async (event) => {
+        const item = event.target.closest('.notification-item');
+        if (item) {
+          const id = item.dataset.id;
           const url = item.dataset.url;
-          this.removeNotification(item);
-          window.location.href = url;
-          console.log('Mouse click on notification, redirecting to:', url); // Debug log
-        });
+          console.log('Mouse click on notification: ', id); // Debug log
+          console.log('Redirecting to: ', url); // Debug log
+
+          try {
+            const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + id;
+
+            const response = await fetch(notificationsUrl, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+              }
+            });
+            if (!response.ok) throw new Error("Failed to delete the notification.");
+            this.removeNotification(item);
+            window.location.href = url;
+          } catch (error) {
+            console.error("Error deleting notification via API: ", error);
+          }           
+        }
       });
 
       console.log('Notification event listeners added'); // Debug log
@@ -709,14 +760,14 @@
     }
 
     removeNotification(item) {
-      const dropdown = document.getElementById('notification-dropdown');
-      dropdown.removeChild(item);
-      this.notificationCount--;
-      if (this.notificationCount === 0) {
-        document.getElementById('notification-count').style.display = 'none';
-        document.getElementById('notification-bell').style.color = ''; // Reset color
+      item.remove();
+      this.notificationCount -= 1;
+      const notificationCountElement = document.getElementById('notification-count');
+      if (this.notificationCount > 0) {
+        notificationCountElement.textContent = this.notificationCount;
       } else {
-        document.getElementById('notification-count').textContent = this.notificationCount;
+        notificationCountElement.style.display = 'none';
+        document.getElementById('notification-bell').style.color = '';
       }
     }
   }

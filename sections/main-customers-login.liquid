@@ -1,201 +1,158 @@
-<section class="login-section">
-  <div class="login-container">  <!-- New container for centering -->
-  
-      {% form 'recover_customer_password' %}
-      {{ form.errors | default_errors }}
+{{ 'customer.css' | asset_url | stylesheet_tag }}
 
-      <div class="recover-form">
-        <div class="email">
-          <label for="email">Email</label>
-          <input type="email" name="email">
-        </div>
 
-        <div class="submit">
-          <input type="submit" value="Submit" class="btn">
-        </div>
-        <div>
-          <a href="{{ routes.account_login_url }}">Return to login page</a>
-        </div>
+{%- if section.settings.enable_shop_login_button == false -%}
+  {%- assign hide_shop_login_button = true -%}
+{%- endif -%}
+
+<div class="customer login section-{{ section.id }}-padding">
+  <h1 id="recover" tabindex="-1">
+    {{ 'customer.recover_password.title' | t }}
+  </h1>
+  <div>
+    <p>
+      {{ 'customer.recover_password.subtext' | t }}
+    </p>
+
+    {%- form 'recover_customer_password' -%}
+      {% assign recover_success = form.posted_successfully? %}
+      <div class="field">
+        <input
+          type="email"
+          value=""
+          name="email"
+          id="RecoverEmail"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="email"
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="RecoverEmail-email-error"
+            autofocus
+          {% endif %}
+          placeholder="{{ 'customer.login_page.email' | t }}"
+        >
+        <label for="RecoverEmail">
+          {{ 'customer.login_page.email' | t }}
+        </label>
       </div>
-    {% endform %}
+      {%- if form.errors -%}
+        <small id="RecoverEmail-email-error" class="form__message">
+          <span class="svg-wrapper">
+            {{- 'icon-error.svg' | inline_asset_content -}}
+          </span>
+          {{ form.errors.messages.form }}
+        </small>
+      {%- endif -%}
 
-    {% form 'customer_login' %}
-      {{ form.errors | default_errors }}
+      <button>
+        {{ 'customer.login_page.submit' | t }}
+      </button>
 
-      <div class="login-form">
-        <div class="email">
-          <input
-            placeholder="email"
-            type="email"
-            name="customer[email]">
-        </div>
+      <a href="#login">
+        {{ 'customer.login_page.cancel' | t }}
+      </a>
+    {%- endform -%}
+  </div>
 
-        <div class="password">
+  <h1 id="login" tabindex="-1">
+    {{ 'customer.login_page.title' | t }}
+  </h1>
+  <div>
+    {%- if recover_success == true -%}
+      <h3 class="form__message" tabindex="-1" autofocus>
+        <span class="svg-wrapper">
+          {{- 'icon-success.svg' | inline_asset_content -}}
+        </span>
+        {{ 'customer.recover_password.success' | t }}
+      </h3>
+    {%- endif -%}
+    {%- form 'customer_login', novalidate: 'novalidate' -%}
+      {%- if form.errors -%}
+        <h2 class="form__message" tabindex="-1" autofocus>
+          <span class="visually-hidden">{{ 'accessibility.error' | t }} </span>
+          <span class="svg-wrapper">
+            {{- 'icon-error.svg' | inline_asset_content -}}
+          </span>
+          {{ 'templates.contact.form.error_heading' | t }}
+        </h2>
+        {{ form.errors | default_errors }}
+      {%- endif -%}
+
+      {%- if shop.features.login_with_shop_classic_customer_accounts? -%}
+        <section name="sign-in-with-shop-provider">
+          {{ shop | login_button: hide_button: hide_shop_login_button }}
+
+          {%- unless hide_shop_login_button -%}
+            <p>
+              {{ 'customer.login_page.alternate_provider_separator' | t }}
+            </p>
+          {%- endunless -%}
+        </section>
+      {%- endif -%}
+
+      <div class="field">
+        <input
+          type="email"
+          name="customer[email]"
+          id="CustomerEmail"
+          autocomplete="email"
+          autocorrect="off"
+          autocapitalize="off"
+          {% if form.errors contains 'form' %}
+            aria-invalid="true"
+          {% endif %}
+          placeholder="{{ 'customer.login_page.email' | t }}"
+        >
+        <label for="CustomerEmail">
+          {{ 'customer.login_page.email' | t }}
+        </label>
+      </div>
+
+      {%- if form.password_needed -%}
+        <div class="field">
           <input
             type="password"
+            value=""
             name="customer[password]"
-            placeholder="password">
+            id="CustomerPassword"
+            autocomplete="current-password"
+            {% if form.errors contains 'form' %}
+              aria-invalid="true"
+            {% endif %}
+            placeholder="{{ 'customer.login_page.password' | t }}"
+          >
+          <label for="CustomerPassword">
+            {{ 'customer.login_page.password' | t }}
+          </label>
         </div>
 
-        <div class="remember-me">
-          <input type="checkbox" id="remember-me" name="remember_me">
-          <label for="remember-me">Remember me</label>
-        </div>
-
-        <a id="recover-password" href="#recover">
-          Forgot your password?
+        <a href="#recover">
+          {{ 'customer.login_page.forgot_password' | t }}
         </a>
+      {%- endif -%}
 
-        <div class="submit">
-          <input type="submit" value="Login" class="btn">
-        </div>
+      <button>
+        {{ 'customer.login_page.sign_in' | t }}
+      </button>
 
-        <a href="/pages/register">Create account</a>
-      </div>
-    {% endform %}
-  </div>  <!-- End of login-container -->
-  
-  <style>
-    .login-section {
-        display: flex;  /* Use flexbox for the section to allow centering */
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically */
-        height: 70vh; /* Full viewport height */
-    }
+      <a href="{{ routes.account_register_url }}">
+        {{ 'customer.login_page.create_account' | t }}
+      </a>
+    {%- endform -%}
+  </div>
 
-    .login-form,
-    .recover-form {
-      width: 100%; /* Full width of the container */
-      margin-bottom: 20px; /* Space between forms */
-    }
+  {%- if shop.checkout.guest_login -%}
+    <div>
+      <hr>
+      <h2>{{ 'customer.login_page.guest_title' | t }}</h2>
 
-    .email,
-    .password {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 15px; /* Space below input fields */
-    }
+      {%- form 'guest_login' -%}
+        <button>
+          {{ 'customer.login_page.guest_continue' | t }}
+        </button>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</div>
 
-    input[type="email"],
-    input[type="password"] {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 100%; /* Full width for input fields */
-      box-sizing: border-box; /* Include padding and border in element's total width */
-    }
-
-    .btn {
-      padding: 10px 15px; /* Button padding */
-      background-color: #007bff; /* Button color */
-      color: white; /* Text color */
-      border: none; /* Remove default border */
-      border-radius: 5px; /* Rounded corners */
-      cursor: pointer; /* Pointer on hover */
-      width: 100%; /* Full width for button */
-    }
-
-    .btn:hover {
-      background-color: #0056b3; /* Darker blue on hover */
-    }
-
-    a {
-      color: #007bff; /* Link color */
-      text-decoration: none; /* Remove underline */
-    }
-
-    a:hover {
-      text-decoration: underline; /* Underline on hover */
-    }
-
-    .remember-me {
-      margin-bottom: 15px; /* Space below checkbox */
-      display: flex;
-      align-items: center; /* Align checkbox and label */
-    }
-    
-    input[type="checkbox"] {
-      margin-right: 5px; /* Space between checkbox and label */
-    }
-
-    .remember-me label {
-      margin-top: -8px; /* Move label 5 pixels up */
-      font-weight: normal; /* Make font non-bold */
-    }
-
-    .remember-me label:hover {
-      text-decoration: underline; /* Underline on hover */
-    }
-  </style>
-</section>
-
-<script>
-  // Function to set a cookie
-  function setCookie(cname, cvalue, exdays) {
-    const d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); 
-    const expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; 
-  }
-
-  // Function to get a cookie value
-  function getCookie(cname) {
-    const name = cname + "=";
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length); 
-      }
-    }
-    return ""; 
-  }
-
-  const loginForm = document.getElementById('customer_login');
-
-  document.addEventListener('DOMContentLoaded', function() {
-    // Hide the recover customer password form on page load
-    var recoverForm = document.querySelector('form[action="/account/recover"]');
-    if (recoverForm) {
-       recoverForm.style.display = 'none';
-    }
-
-    // Check for the remember me cookie and set the email field if it exists
-    const storedEmail = getCookie("rememberedEmail");
-    if (storedEmail) {
-      document.querySelector('input[name="customer[email]"]').value = storedEmail; 
-    }
-
-    // Handle form submission
-    loginForm.addEventListener('submit', function(event) {
-      const rememberMeCheckbox = document.getElementById('remember-me');
-      const emailField = document.querySelector('input[name="customer[email]"]');
-
-      if (rememberMeCheckbox.checked) {
-        setCookie("rememberedEmail", emailField.value, 30); // Cookie expires in 30 days
-      } else {
-        setCookie("rememberedEmail", "", -1); // Delete the cookie if not checked
-      }
-    });
-
-    function showResetPasswordForm() {
-      loginForm.style.display = 'none';
-      var recoverForm = document.querySelector('form[action="/account/recover"]');
-      if (recoverForm) {
-          recoverForm.style.display = 'block';
-      }
-    }
-
-    document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
-  });
-</script>
-
-{% schema %}
-  {
-    "name": "Login"
-  }
-{% endschema %}

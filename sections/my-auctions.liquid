@@ -19,8 +19,8 @@
     const paginationContainer = document.getElementById("pagination");
     const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
     
-    const auctionsPerPage = 9;  // Number of auctions per page
-    let currentPage = 1;  // Start from page 1
+    const auctionsPerPage = 9;  
+    let currentPage = 1;  
 
     function createAuctionCard(auction) {
       const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
@@ -58,26 +58,26 @@
         
         const auctions = await response.json();
 
-        // Filter auctions where customerEmail matches auction's customerId
+     
         const userAuctions = auctions.filter((auction) => auction.customerId === customerEmail);
 
         if (userAuctions.length === 0) {
           auctionListContainer.innerHTML = "<p>You have not created any auctions yet.</p>";
-          paginationContainer.innerHTML = "";  // Hide pagination if no auctions
+          paginationContainer.innerHTML = "";  
           return;
         }
 
-        // Sort auctions: active ones first (those that haven't expired)
+       
         const sortedAuctions = userAuctions.sort((a, b) => {
           const endA = new Date(a.endDate);
           const endB = new Date(b.endDate);
           
-          // If auction A is active and B is expired, A should come first
+        
           if (endA >= new Date() && endB < new Date()) return -1;
-          // If auction B is active and A is expired, B should come first
+         
           if (endA < new Date() && endB >= new Date()) return 1;
           
-          // Otherwise, sort by end date in ascending order (soonest ending first)
+         
           return endA - endB;
         });
 
@@ -95,9 +95,9 @@
     }
 
     function createPagination(totalPages) {
-      paginationContainer.innerHTML = "";  // Clear existing pagination
+      paginationContainer.innerHTML = "";  
       
-      if (totalPages <= 1) return;  // No pagination if there's only one page
+      if (totalPages <= 1) return;  
 
       const prevButton = document.createElement("a");
       prevButton.href = "#";

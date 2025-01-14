@@ -199,7 +199,12 @@
     margin-left: 0rem; /* Adjust margin as necessary */
     padding: 2px 10px;
     font-size: 2rem;
-    display: none; /* Hidden by default */
+    display: block; /* Always display the notification count */
+    text-align: center;    
+  }
+
+  .notification-count.zero {
+    background-color: blue; /* Blue background when there are no notifications */
   }
 
   .notification-item {
@@ -304,6 +309,10 @@
   <button class="close-icon" id="close-popup">X</button>
 </div>
 
+{% if customer %}
+  <div id="customer-email" data-email="{{ customer.email }}" style="display: none;"></div>
+{% endif %}
+
 {% javascript %}
   class StickyHeader extends HTMLElement {
     constructor(notifications) {
@@ -314,6 +323,11 @@
       // Determine logged customer id
       const customerId = String(window.customerId || null);
       console.log('Logged in customer id:' + customerId); // Debug log
+
+      // Retrieve customer email from the hidden element
+      const customerEmailElement = document.getElementById('customer-email');
+      const customerEmail = customerEmailElement ? customerEmailElement.getAttribute('data-email') : null;
+      console.log('Logged in customer email:' + customerEmail); // Debug log
 
       this.isMouseOverBell = false;
       this.isMouseOverDropdown = false;
@@ -404,13 +418,19 @@
     async checkNotifications() {
       console.log('Checking for new notifications via API'); // Debug log
       const notificationCountElement = document.getElementById('notification-count');
+      const notificationBell = document.getElementById('notification-bell');
 
       // Determine logged customer id
       const customerId = String(window.customerId || null);
       console.log('Logged in customer id:' + customerId); // Debug log
 
+      // Retrieve customer email from the hidden element
+      const customerEmailElement = document.getElementById('customer-email');
+      const customerEmail = customerEmailElement ? customerEmailElement.getAttribute('data-email') : null;
+      console.log('Logged in customer email:' + customerEmail); // Debug log
+      
       try {
-        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerId;
+        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerEmail;
 
         const response = await fetch(notificationsUrl, {
           method: "GET",
@@ -436,11 +456,14 @@
       if (this.notificationCount > 0) {
         notificationCountElement.textContent = this.notificationCount;
         notificationCountElement.style.display = 'block';
-        document.getElementById('notification-bell').style.color = 'red';
+        notificationCountElement.classList.remove('zero');
+        notificationBell.style.color = 'red';
         this.populateNotifications();
       } else {
-        notificationCountElement.style.display = 'none';
-        document.getElementById('notification-bell').style.color = '';
+        notificationCountElement.textContent = '0';
+        notificationCountElement.style.display = 'block';
+        notificationCountElement.classList.add('zero');
+        notificationBell.style.color = '';
       }
       
       // Add event listeners for notifications
@@ -643,11 +666,16 @@
       item.remove();
       this.notificationCount -= 1;
       const notificationCountElement = document.getElementById('notification-count');
+      const notificationBell = document.getElementById('notification-bell');
+
       if (this.notificationCount > 0) {
         notificationCountElement.textContent = this.notificationCount;
+        notificationCountElement.classList.remove('zero');
+        notificationBell.style.color = 'red';
       } else {
-        notificationCountElement.style.display = 'none';
-        document.getElementById('notification-bell').style.color = '';
+        notificationCountElement.textContent = '0';
+        notificationCountElement.classList.add('zero');
+        notificationBell.style.color = '';
       }
     }
   }

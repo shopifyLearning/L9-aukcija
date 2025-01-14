@@ -217,6 +217,7 @@ document.getElementById('auction-form').addEventListener('submit', async (e) => 
     
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + durationDays);
+    endDate.setHours(endDate.getHours() + 1); 
 
     const auctionApiUrl = 'https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions';
     const auctionPayload = {

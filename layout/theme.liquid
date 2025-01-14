@@ -342,6 +342,14 @@
     </a>
 
     {% if customer %}
+      {% comment %} Shopify after login redirects to /account by default. This script prevents that redirect and instead redirects to the homepage {% endcomment %}
+      <script>
+        if (window.location.pathname === '/account' && sessionStorage.getItem('redirected') === 'false') {
+          sessionStorage.setItem('redirected', 'true'); // Prevent redirect loop
+          console.log('Set redirect flag to: ' + sessionStorage.getItem('redirected') );
+          window.location.href = '/';
+        }
+      </script>   
       {%- if settings.cart_type == 'drawer' -%}
         {%- render 'cart-drawer' -%}
       {%- endif -%}

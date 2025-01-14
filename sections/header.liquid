@@ -1,104 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopify Header</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+<style>
+  header-drawer {
+    justify-self: start;
+    margin-left: -1.2rem;
+  }
+
+  .menu-drawer-container {
+    display: flex;
+  }
+
+  .list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-menu--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+  }
+
+  summary.list-menu__item {
+    padding-right: 2.7rem;
+  }
+
+  .list-menu__item {
+    display: flex;
+    align-items: center;
+    line-height: calc(1 + 0.3 / var(--font-body-scale));
+  }
+
+  .list-menu__item--link {
+    text-decoration: none;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+  }
+
+  @media screen and (min-width: 750px) {
+    .list-menu__item--link {
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
     }
+  }
 
-    .header {
-      width: 100%;
-      background-color: #0D40C4;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      box-sizing: border-box;
+  /* Popup Styles */
+  #popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #popup.active {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  #popup p {
+    margin: 10px 0 0 0; /* Moved text down by 10 pixels */
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  #popup .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #popup .close-icon:hover {
+    background-color: #ff1a1a;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .header {
+    width: 100%;
+    background-color: #0D40C4;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+  }
+
+  .home-link {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-left: -46%; 
+  }
+
+  .home-link:hover {
+    text-decoration: underline;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .search-bar input {
+    width: 200px;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    margin-right: 10px;
+  }
+
+  .account-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .search-bar button {
+    background-color: #ffffff;
+    color: #0D40C4; 
+    border: 2px solid #0D40C4;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .search-bar button:hover {
+    background-color: #0D40C4; 
+    color: white; 
+  }
+
+  .account-icon:hover {
+    opacity: 0.8;
+  }
+
+  .store-logo {
+    height: 40px; 
+    width: auto;
+    margin-right: 10px;
+    vertical-align: middle; 
+  }
+
+  .header__notifications {
+    position: relative;
+    margin-left: 10px; /* Adjust margin as necessary */
+  }
+
+  /* Notification Dropdown Styles */
+  .notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1001;
+    display: none; /* Initially hidden */
+  }
+
+  .notification-bell:hover + .notification-dropdown {
+    display: block; /* Show dropdown on hover */
+  }
+
+  /*
+    .notification-dropdown.active { 
+      display: block;
     }
+  */
 
-    .store-name {
-      font-size: 1.8rem;
-      font-weight: bold;
-      font-style: italic;
-      letter-spacing: 1px;
-      margin-right: auto; 
-    }
+  .notification-count {
+    position: flex;
+    top: -5px;
+    right: 10px;
+    width: 40px; /* Adjusted to be equal to height */
+    height: 5px; /* Adjusted to be equal to width */
+    background-color: red;
+    color: white;
+    border-radius: 10%;
+    margin-left: 0rem; /* Adjust margin as necessary */
+    padding: 2px 10px;
+    font-size: 2rem;
+    display: none; /* Hidden by default */
+  }
 
-    .home-link {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: white;
-      text-decoration: none;
-      margin-left: -46%; 
-    }
+  .notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
 
-    .home-link:hover {
-      text-decoration: underline;
-    }
+  .notification-item:last-child {
+    border-bottom: none;
+  }
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      margin-left: auto;
-    }
+  .notification-item:hover {
+    background-color: #f9f9f9;
+  }
 
-    .search-bar input {
-      width: 200px;
-      padding: 6px;
-      border: none;
-      border-radius: 4px;
-      outline: none;
-      margin-right: 10px;
-    }
+  .notification-item a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .account-icon {
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
+  .notification-item a .notification-time {
+    font-size: 0.8rem;
+    color: #555;
+  }
 
-     .search-bar button {
-      background-color: #ffffff;
-      color: #0D40C4; 
-      border: 2px solid #0D40C4;
-      border-radius: 4px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-    }
+  .notification-item a .notification-message {
+    font-size: 1rem;
+  }
 
-    .search-bar button:hover {
-      background-color: #0D40C4; 
-      color: white; 
-    }
-    .account-icon:hover {
-      opacity: 0.8;
-    }
+  .store-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center; 
+  }
+</style>
 
-    .store-logo {
-  height: 40px; 
-  width: auto;
-  margin-right: 10px; /
-  vertical-align: middle; 
-}
-
-
-.store-name {
-  font-size: 1.8rem;
-  font-weight: bold;
-  font-style: italic;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center; 
-}
-    
-  </style>
-</head>
 <body>
 
   <header class="header">
@@ -116,9 +270,391 @@
         <input type="hidden" name="constraint" value="auction-products" />
         <button type="submit" style="display: none;">Search</button>
       </form>
+
       <a href="https://levi9-test.myshopify.com/account" class="account-icon">👤</a>
+
+      <!-- Notification Bell -->
+      <div class="header__notifications">
+        <a href="javascript:void(0)" class="header__icon header__icon--notifications link focus-inset" id="notification-bell">
+          <span class="svg-wrapper">{{ 'icon-bell.svg' | inline_asset_content }}</span>
+          <span class="notification-count" id="notification-count">0</span>
+        </a>
+        <div class="notification-dropdown" id="notification-dropdown">
+          <!-- Notification items will be populated dynamically -->
+        </div>
+      </div>
     </div>
   </header>
-
 </body>
-</html>
+
+<!-- JSON data for notifications -->
+<script id="notification-data" type="application/json">
+{
+    "notifications": [
+        { "time": "09:11 26-Dec-2024", "message": "Auction ended", "url": "/pages/auction-details?auctionId=19" },
+        { "time": "09:15 26-Dec-2024", "message": "A higher bid has been placed, so your bid is no longer the highest", "url": "/pages/auction-details?auctionId=33" },
+        { "time": "20:29 24-Dec-2024", "message": "Auction ended", "url": "/pages/auction-details?auctionId=20" }
+    ]
+}
+</script>
+
+<!-- Popup message -->
+<div id="popup" style="opacity: 0;">
+  <p>You have a new notification!</p>
+  <button class="close-icon" id="close-popup">X</button>
+</div>
+
+{% javascript %}
+  class StickyHeader extends HTMLElement {
+    constructor(notifications) {
+      super();
+      this.notifications = notifications || [];
+      this.notificationCount = 0;
+
+      // Determine logged customer id
+      const customerId = String(window.customerId || null);
+      console.log('Logged in customer id:' + customerId); // Debug log
+
+      this.isMouseOverBell = false;
+      this.isMouseOverDropdown = false;
+    }   
+
+    connectedCallback() {
+      this.header = document.querySelector('.section-header');
+      this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type') === 'always' || this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+      this.headerBounds = {};
+
+      if (this.headerIsAlwaysSticky) {
+          this.header.classList.add('shopify-section-header-sticky');
+      }
+
+      this.currentScrollTop = 0;
+      this.preventReveal = false;
+
+      this.onScrollHandler = this.onScroll.bind(this);
+      this.hideHeaderOnScrollUp = () => this.preventReveal = true;
+
+      this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.addEventListener('scroll', this.onScrollHandler, false);
+
+      // Initialize notification checking
+      this.checkNotifications();
+      setInterval(this.checkNotifications.bind(this), 15000); // Check notifications every 15 seconds
+
+      // Add event listeners for notifications
+      this.addNotificationEventListeners();
+    }  
+
+    disconnectedCallback() {
+      this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.removeEventListener('scroll', this.onScrollHandler);
+      this.removeNotificationEventListeners();
+    }
+
+    onScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (this.preventHide) return;
+        requestAnimationFrame(this.hide.bind(this));
+      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (!this.preventReveal) {
+          requestAnimationFrame(this.reveal.bind(this));
+        } else {
+          window.clearTimeout(this.isScrolling);
+
+          this.isScrolling = setTimeout(() => {
+            this.preventReveal = false;
+          }, 66);
+
+          requestAnimationFrame(this.hide.bind(this));
+        }
+      } else if (scrollTop <= this.headerBounds.top) {
+        this.header.classList.remove('scrolled-past-header');
+        requestAnimationFrame(this.reset.bind(this));
+      }
+
+      this.currentScrollTop = scrollTop;
+    }
+
+    hide() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+      this.closeMenuDisclosure();
+    }
+
+    reveal() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-sticky', 'animate');
+      this.header.classList.remove('shopify-section-header-hidden');
+    }
+
+    reset() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+    }
+
+    closeMenuDisclosure() {
+      this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
+      this.disclosures.forEach(disclosure => disclosure.close());
+    }
+
+    async checkNotifications() {
+      console.log('Checking for new notifications via API'); // Debug log
+      const notificationCountElement = document.getElementById('notification-count');
+
+      // Determine logged customer id
+      const customerId = String(window.customerId || null);
+      console.log('Logged in customer id:' + customerId); // Debug log
+
+      try {
+        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerId;
+
+        const response = await fetch(notificationsUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+          }
+        });
+        if (!response.ok) throw new Error("Failed to get notifications.");
+        const notifications = await response.json();
+        this.notifications = notifications; // Update notifications with the fetched data
+        this.notifications = notifications.map(notification => ({
+          ...notification,
+          time: this.formatDate(notification.createdAt),
+          url: this.auctionUrl(notification.auctionId) // Add URL here
+        }));        
+        this.notificationCount = notifications.length; // Update notification count with the fetched data
+        console.log("API notifications count: ", this.notificationCount); // Debug log    
+      } catch (error) {
+        console.error("Error getting notifications via API: ", error);
+      }      
+      
+      if (this.notificationCount > 0) {
+        notificationCountElement.textContent = this.notificationCount;
+        notificationCountElement.style.display = 'block';
+        document.getElementById('notification-bell').style.color = 'red';
+        this.populateNotifications();
+      } else {
+        notificationCountElement.style.display = 'none';
+        document.getElementById('notification-bell').style.color = '';
+      }
+      
+      // Add event listeners for notifications
+      this.addNotificationEventListeners();      
+    }
+
+    populateNotifications() {
+      const dropdown = document.getElementById('notification-dropdown');
+      dropdown.innerHTML = '';
+
+      if (this.notifications.length === 0) {
+        dropdown.innerHTML = '<div class="notification-item">No notifications available</div>';
+        return;
+      }
+
+      this.notifications.forEach(notification => {
+        const notificationItem = document.createElement('div');
+        notificationItem.className = 'notification-item';
+        notificationItem.dataset.id = notification.id; // Add dataset for notification ID
+        notificationItem.dataset.url = notification.url; // Use the URL from the notification object
+        console.log("API auction url: ", notificationItem.dataset.url); // Debug log 
+        const link = document.createElement('a');
+        link.href = 'javascript:void(0)';
+        link.innerHTML = `
+            <span class="notification-time">${notification.time}</span>
+            <span class="notification-message">${notification.message}</span>
+        `;
+        notificationItem.appendChild(link);
+        dropdown.appendChild(notificationItem);
+      });
+    }
+
+    formatDate(createdAt) {
+      const date = new Date(createdAt);
+      const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      };
+      return date.toLocaleString('en-GB', options).replace(',', '');
+    }
+
+    auctionUrl(auctionId) {
+      return "/pages/auction-details?auctionId=" + auctionId;
+    }
+
+    showPopup() {
+      const popup = document.getElementById('popup');
+      if (popup) {
+        popup.classList.add('active');
+        popup.style.opacity = '1';
+        popup.style.transform = 'translate(-50%, -50%)';
+
+        // Add event listener to close the popup
+        const closePopupButton = document.getElementById('close-popup');
+        if (closePopupButton) {
+          closePopupButton.addEventListener('click', () => {
+            this.hidePopup();
+          });
+        }
+      }
+    }
+
+    hidePopup() {
+      const popup = document.getElementById('popup');
+      if (popup) {
+        popup.classList.remove('active');
+        popup.style.opacity = '0';
+        popup.style.transform = 'translate(-50%, -50%)';
+      }
+    }
+
+    addNotificationEventListeners() {
+      const notificationBell = document.getElementById('notification-bell');
+      if (!notificationBell) {
+        console.error('Notification bell element not found'); // Debug log
+        return;
+      }
+
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (!notificationDropdown) {
+        console.error('Notification dropdown element not found'); // Debug log
+        return;
+      }
+
+      // Add hover event listeners to the notification bell
+      notificationBell.addEventListener('mouseover', () => {
+        this.isMouseOverBell = true;
+        this.updateDropdownVisibility();
+        console.log('Dropdown should be visible now'); // Debug log
+      });
+
+      notificationBell.addEventListener('mouseout', () => {
+        this.isMouseOverBell = false;
+        this.updateDropdownVisibility();
+        console.log('Mouse out of bell, checking dropdown hover'); // Debug log
+      });
+
+      // Add hover event listeners to the notification dropdown
+      notificationDropdown.addEventListener('mouseover', () => {
+        this.isMouseOverDropdown = true;
+        this.updateDropdownVisibility();
+        console.log('Mouse over dropdown, keeping it visible'); // Debug log
+      });
+
+      notificationDropdown.addEventListener('mouseout', () => {
+        this.isMouseOverDropdown = false;
+        this.updateDropdownVisibility();
+        console.log('Mouse out of dropdown, checking bell hover'); // Debug log
+      });
+
+      // Add click event listeners to the notification items
+      notificationDropdown.addEventListener('click', async (event) => {
+        const item = event.target.closest('.notification-item');
+        if (item) {
+          const id = item.dataset.id;
+          const url = item.dataset.url;
+          console.log('Mouse click on notification: ', id); // Debug log
+          console.log('Redirecting to: ', url); // Debug log
+
+          try {
+            const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + id;
+
+            const response = await fetch(notificationsUrl, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+              }
+            });
+            if (!response.ok) throw new Error("Failed to delete the notification.");
+            this.removeNotification(item);
+            window.location.href = url;
+          } catch (error) {
+            console.error("Error deleting notification via API: ", error);
+          }           
+        }
+      });
+
+      console.log('Notification event listeners added'); // Debug log
+    }
+
+    updateDropdownVisibility() {
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (!notificationDropdown) {
+        console.error('Dropdown element not found'); // Debug log
+        return;
+      }
+
+      if (this.isMouseOverBell || this.isMouseOverDropdown) {
+        notificationDropdown.style.display = 'block'; // Show dropdown if mouse is over bell or dropdown
+      } else {
+        notificationDropdown.style.display = 'none'; // Hide dropdown if mouse is not over either
+      }
+    }
+
+    removeNotificationEventListeners() {
+      const notificationBell = document.getElementById('notification-bell');
+      if (notificationBell) {
+        notificationBell.removeEventListener('mouseover', () => {
+          this.isMouseOverBell = true;
+          this.updateDropdownVisibility();
+          console.log('Dropdown should be visible now'); // Debug log
+        });
+
+        notificationBell.removeEventListener('mouseout', () => {
+          this.isMouseOverBell = false;
+          this.updateDropdownVisibility();
+          console.log('Mouse out of bell, checking dropdown hover'); // Debug log
+        });
+      }
+
+      const notificationDropdown = document.getElementById('notification-dropdown');
+      if (notificationDropdown) {
+        notificationDropdown.removeEventListener('mouseover', () => {
+          this.isMouseOverDropdown = true;
+          this.updateDropdownVisibility();
+          console.log('Mouse over dropdown, keeping it visible'); // Debug log
+        });
+
+        notificationDropdown.removeEventListener('mouseout', () => {
+          this.isMouseOverDropdown = false;
+          this.updateDropdownVisibility();
+          console.log('Mouse out of dropdown, checking bell hover'); // Debug log
+        });
+
+        notificationDropdown.querySelectorAll('.notification-item').forEach(item => {
+          item.removeEventListener('click', () => {
+            const url = item.dataset.url;
+            this.removeNotification(item);
+            window.location.href = url;
+          });
+        });
+      }
+    }
+
+    removeNotification(item) {
+      item.remove();
+      this.notificationCount -= 1;
+      const notificationCountElement = document.getElementById('notification-count');
+      if (this.notificationCount > 0) {
+        notificationCountElement.textContent = this.notificationCount;
+      } else {
+        notificationCountElement.style.display = 'none';
+        document.getElementById('notification-bell').style.color = '';
+      }
+    }
+  }
+
+  customElements.define('sticky-header', StickyHeader);
+{% endjavascript %}
+
+<{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+  {%- liquid  -%}
+</{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>

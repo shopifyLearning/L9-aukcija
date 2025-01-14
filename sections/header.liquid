@@ -240,6 +240,17 @@
     display: flex;
     align-items: center; 
   }
+  .home-link {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin-right: 20px;
+  }
+
+  .home-link:hover {
+    text-decoration: underline;
+  }
 </style>
 
 <body>
@@ -250,13 +261,7 @@
       <img src="{{ 'logo222.png' | asset_url }}" alt="Store Logo" class="store-logo">
      
     </div>
-     <nav class="menu-drawer-container">
-    <ul class="list-menu list-menu--inline">
-      <li class="list-menu__item">
-        <a href="/" class="list-menu__item--link">Home</a>
-      </li>
-    </ul>
-  </nav>
+    <a href="/" class="home-link">Home</a>
  
 
     <div class="search-bar">

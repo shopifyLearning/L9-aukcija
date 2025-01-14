@@ -64,8 +64,24 @@
     auctionImage.src = auction.imgUrlProduct;
     startPrice.textContent = `RSD ${auction.startPrice}`;
     currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    startDate.textContent = new Date(auction.startDate).toISOString();
-    endDate.textContent = new Date(auction.endDate).toISOString();
+    startDate.textContent = startDateTime.toLocaleString('en-US', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: true
+});
+
+// End Date
+endDate.textContent = endDateTime.toLocaleString('en-US', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: true
+});
 
    
     bids = auction.bids || [];

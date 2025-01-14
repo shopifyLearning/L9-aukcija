@@ -64,8 +64,8 @@
     auctionImage.src = auction.imgUrlProduct;
     startPrice.textContent = `RSD ${auction.startPrice}`;
     currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    startDate.textContent = new Date(new Date(auction.startDate).getTime() - 3600000).toLocaleString();
-    endDate.textContent = new Date(new Date(auction.endDate).getTime() - 3600000).toLocaleString();
+    startDate.textContent = new Date(new Date(auction.startDate).getTime()).toLocaleString();
+    endDate.textContent = new Date(new Date(auction.endDate).getTime()).toLocaleString();
 
    
     bids = auction.bids || [];

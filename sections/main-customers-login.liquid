@@ -1,6 +1,8 @@
 <section class="login-section">
   <div class="login-container">  <!-- New container for centering -->
-  
+  <div class="logo-container">
+      <img src="{{ 'logo.jpg' | asset_url }}" alt="Logo" class="logo">
+    </div>
       {% form 'recover_customer_password' %}
       {{ form.errors | default_errors }}
 
@@ -86,6 +88,19 @@
   width: 100%;
   max-width: 400px;
   box-sizing: border-box;
+}
+        .logo-container {
+  margin-bottom: 15px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  max-width: 100px;
+  height: auto;
 }
 
 

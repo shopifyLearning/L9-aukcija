@@ -8,13 +8,13 @@
  * ------------------------------------------------------------
  */
 {
-    "sections": {
-      "main": {
-        "type": "home-page",
-        "settings": {}
-      }
-    },
-    "order": [
-      "main"
-    ]
-  }
+  "sections": {
+    "main": {
+      "type": "search",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

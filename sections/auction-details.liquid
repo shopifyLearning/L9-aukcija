@@ -14,12 +14,24 @@
   <p><strong>End Date:</strong> <span id="end-date"></span></p>
  
 </div>
+<script>
+    window.customerEmail = "{{ customer.email | escape }}";
+</script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js'></script>
+<script type='text/javascript'>
+   (function(){
+      emailjs.init('UW-9aMs2LssiFTzga');
+   })();
+</script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+  const customerEmail = window.customerEmail || null;
+  let bids = [];
+  let auctionOwner;
+  document.addEventListener("DOMContentLoaded", async () => {
   const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
-    const auctionTitle = document.getElementById("auction-title");
+  const auctionTitle = document.getElementById("auction-title");
   const auctionImage = document.getElementById("auction-image");
   const startPrice = document.getElementById("start-price");
   const currentPrice = document.getElementById("current-price");
@@ -42,6 +54,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw new Error("Failed to fetch auction details.");
     const auction = await response.json();
 
+    auctionOwner = auction.customerId;
+   
+
+    
+     bids = auction.bids || [];
     
     auctionTitle.textContent = auction.productTitle;
     auctionImage.src = auction.imgUrlProduct;
@@ -50,13 +67,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     startDate.textContent = new Date(new Date(auction.startDate).getTime() - 3600000).toLocaleString();
     endDate.textContent = new Date(new Date(auction.endDate).getTime() - 3600000).toLocaleString();
 
-
    
-    const bids = auction.bids || [];
-    console.log("Bids:", bids);
+    bids = auction.bids || [];
+   
     if (bids.length > 0) {
       const lastBid = bids[bids.length - 1];
-      console.log("Last Bid:", lastBid);
+     
     }
 
     
@@ -69,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         countdownTimer.textContent = "Auction Ended";
         clearInterval(countdownInterval);
 
-     
+        
         submitBidButton.disabled = true;
         submitBidButton.style.opacity = 0.5;
         bidInput.disabled = true;
@@ -77,18 +93,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
        
         if (bids.length > 0) {
-  const lastBid = bids[bids.length - 1];
-  const customerId = lastBid.customerId || "Unknown"; 
+        const lastBid = bids[bids.length - 1];
+        const customerId = lastBid.customerId || "Unknown"; 
 
-  const congratulationsMessage = document.createElement("p");
-  congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
-  congratulationsMessage.className = "congratulations-message";
-  submitBidButton.parentElement.appendChild(congratulationsMessage);
-}
+        const congratulationsMessage = document.createElement("p");
+        congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
+        congratulationsMessage.className = "congratulations-message";
+        submitBidButton.parentElement.appendChild(congratulationsMessage);
+        sendWinnerEmail(customerId, auctionTitle, lastBid);
+        }
 
         return;
       }
-
       
       const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
       const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -101,12 +117,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     const countdownInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
 
+      if (customerEmail === auctionOwner) {
+      bidInput.disabled = true;
+      submitBidButton.disabled = true;
+      bidInput.style.opacity = 0.5;
+      submitBidButton.style.opacity = 0.5;
+
+      
+      const ownerMessage = document.createElement("p");
+      ownerMessage.textContent = "You are the owner of this auction. Bidding is disabled.";
+      ownerMessage.className = "info-message";
+      ownerMessage.style.color = "red"; 
+      ownerMessage.style.fontWeight = "bold";
+      ownerMessage.style.marginTop = "10px";
+      submitBidButton.parentElement.appendChild(ownerMessage);
+
+      return;
+    }
+
   } catch (error) {
     console.error("Error fetching auction details:", error);
     responseMessage.textContent = "Error loading auction details.";
   }
-
+  function sendWinnerEmail(customerId, auctionTitleElement, lastBid) {
+    const emailParams = {
+      to_email: customerId,
+      auction_title: auctionTitleElement.textContent,
+      winning_bid: `RSD ${lastBid.price}`,
+    };
   
+    emailjs.send('shopify_learning@outlook', 'template_kqb8a9o', emailParams)
+      .then(() => {
+        
+      })
+      .catch((error) => {
+        console.error('Error sending email:', error);
+      });
+  }
+    function notifyOutbidder(outbidderEmail, auctionTitleElement, previousBid) {
+    const emailParams = {
+        to_email: outbidderEmail,
+        auction_title: auctionTitleElement.textContent,
+        outbid_price: `RSD ${previousBid}`,
+    };
+
+    emailjs.send('shopify_learning@outlook', 'template_g9irw73', emailParams)
+        .then(() => {
+            
+        })
+        .catch((error) => {
+            console.error('Error sending outbid notification email:', error);
+        });
+}
+
+    
   submitBidButton.addEventListener("click", async () => {
     const price = parseFloat(bidInput.value);
     if (!price || price <= 0) {
@@ -122,6 +186,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+     if (bids.length > 0) {
+    const lastBid = bids[bids.length - 1];
+    if (lastBid.customerId === customerEmail) {
+      responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
+      responseMessage.className = "error-message";
+      responseMessage.style.display = "block";
+      return;
+    }
+  }
+ 
     submitBidButton.disabled = true;
     submitBidButton.style.opacity = 0.5;
     bidInput.disabled = true;
@@ -129,9 +203,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const auctionIdAsInt = parseInt(auctionId, 10);
-      const customerId = window.customerId || null;
+      const previousBidder = bids.length > 0 ? bids[bids.length - 1] : null;
+      
       const bidPayload = {
-        customerId: String(customerId),
+        customerId: String(customerEmail),
         auctionId: auctionIdAsInt,
         price: price,
       };
@@ -139,13 +214,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
 
       const response = await fetch(bidApiUrl, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
-  },
-  body: JSON.stringify(bidPayload)
-});
+       method: "POST",
+       headers: {
+       "Content-Type": "application/json",
+       "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+      },
+          body: JSON.stringify(bidPayload)
+         });
 
       if (!response.ok) throw new Error("Failed to submit bid.");
 
@@ -154,8 +229,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       responseMessage.style.display = "block";
 
       const updatedAuction = await response.json();
+      bids = updatedAuction.bids || [];
       currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
 
+      if (previousBidder) {
+            notifyOutbidder(previousBidder.customerId, auctionTitle, previousBidder.price);
+        }
+      
       setTimeout(() => {
         responseMessage.style.display = "none";
         bidInput.value = "";

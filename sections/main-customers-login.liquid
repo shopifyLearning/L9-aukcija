@@ -143,7 +143,7 @@ input[type="submit"]:hover {
 a {
   text-decoration: none;
   color: #0D40C4;
-  font-size: 1.6rem;
+  font-size: 0.9rem;
   text-align: center;
   margin-top: 10px;
 }
@@ -258,6 +258,10 @@ div {
   const loginForm = document.getElementById('customer_login');
 
   document.addEventListener('DOMContentLoaded', function() {
+        var recoverForm = document.querySelector('form[action="/account/recover"]');
+    if (recoverForm) {
+       recoverForm.style.display = 'none';
+    }
     // Check for the remember me cookie and set the email field if it exists
     const storedEmail = getCookie("rememberedEmail");
     if (storedEmail) {

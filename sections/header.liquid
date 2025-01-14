@@ -110,17 +110,6 @@
     box-sizing: border-box;
   }
 
-  .home-link {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-    margin-left: -46%; 
-  }
-
-  .home-link:hover {
-    text-decoration: underline;
-  }
 
   .search-bar {
     display: flex;
@@ -261,8 +250,14 @@
       <img src="{{ 'logo222.png' | asset_url }}" alt="Store Logo" class="store-logo">
      
     </div>
-
-    <a href="/" class="home-link">Home</a>
+     <nav class="menu-drawer-container">
+    <ul class="list-menu list-menu--inline">
+      <li class="list-menu__item">
+        <a href="/" class="list-menu__item--link">Home</a>
+      </li>
+    </ul>
+  </nav>
+ 
 
     <div class="search-bar">
       <form action="/pages/search" method="get" role="search">

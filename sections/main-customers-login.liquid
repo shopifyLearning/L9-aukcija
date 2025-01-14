@@ -258,10 +258,12 @@ div {
   const loginForm = document.getElementById('customer_login');
 
   document.addEventListener('DOMContentLoaded', function() {
-        var recoverForm = document.querySelector('form[action="/account/recover"]');
+    // Hide the recover customer password form on page load
+    var recoverForm = document.querySelector('form[action="/account/recover"]');
     if (recoverForm) {
        recoverForm.style.display = 'none';
     }
+
     // Check for the remember me cookie and set the email field if it exists
     const storedEmail = getCookie("rememberedEmail");
     if (storedEmail) {
@@ -275,24 +277,22 @@ div {
 
       sessionStorage.setItem('redirected', 'false'); // Allow redirect
       console.log('Set redirect flag to: ' + sessionStorage.getItem('redirected') ); // Debug log
-      if (rememberMeCheckbox.checked) {
+     if (rememberMeCheckbox.checked) {
         setCookie("rememberedEmail", emailField.value, 30); // Cookie expires in 30 days
       } else {
         setCookie("rememberedEmail", "", -1); // Delete the cookie if not checked
       }
     });
 
-    // Toggle visibility of forms
-    const recoverLink = document.getElementById('recover-password');
-    const recoverForm = document.querySelector('.recover-form');
+    function showResetPasswordForm() {
+      loginForm.style.display = 'none';
+      var recoverForm = document.querySelector('form[action="/account/recover"]');
+      if (recoverForm) {
+          recoverForm.style.display = 'block';
+      }
+    }
 
-    recoverLink.addEventListener('click', function(e) {
-      e.preventDefault(); // Prevent default link action
-      const isLoginFormVisible = loginForm.style.display !== 'none';
-
-      loginForm.style.display = isLoginFormVisible ? 'none' : 'block';
-      recoverForm.style.display = isLoginFormVisible ? 'block' : 'none';
-    });
+    document.getElementById('recover-password').addEventListener('click', showResetPasswordForm);
   });
 </script>
 

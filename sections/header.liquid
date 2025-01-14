@@ -428,7 +428,7 @@
       const customerEmailElement = document.getElementById('customer-email');
       const customerEmail = customerEmailElement ? customerEmailElement.getAttribute('data-email') : null;
       console.log('Logged in customer email:' + customerEmail); // Debug log
-      
+
       try {
         const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerEmail;
 
@@ -587,17 +587,7 @@
           console.log('Redirecting to: ', url); // Debug log
 
           try {
-            const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + id;
-
-            const response = await fetch(notificationsUrl, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
-              }
-            });
-            if (!response.ok) throw new Error("Failed to delete the notification.");
-            this.removeNotification(item);
+            this.removeNotificationsByUrlWithAPI(url);
             window.location.href = url;
           } catch (error) {
             console.error("Error deleting notification via API: ", error);
@@ -662,6 +652,33 @@
       }
     }
 
+    async removeNotificationsByUrlWithAPI(url) {
+      const dropdown = document.getElementById('notification-dropdown');
+      const itemsToRemove = dropdown.querySelectorAll(`.notification-item[data-url="${url}"]`);
+
+      for (const item of itemsToRemove) {
+        const id = item.dataset.id;
+        console.log('Removing notification with id: ', id); // Debug log
+        try {
+          const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + id;
+
+          const response = await fetch(notificationsUrl, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+            }
+          });
+          if (!response.ok) throw new Error("Failed to delete the notification.");
+        } catch (error) {
+          console.error("Error deleting notification via API: ", error);
+          // Optionally, handle the error (e.g., show a message to the user)
+        } finally {
+          this.removeNotification(item);
+        }
+      }
+    }
+
     removeNotification(item) {
       item.remove();
       this.notificationCount -= 1;
@@ -678,6 +695,15 @@
         notificationBell.style.color = '';
       }
     }
+
+    removeNotificationsByUrl(url) {
+      const dropdown = document.getElementById('notification-dropdown');
+      const itemsToRemove = dropdown.querySelectorAll(`.notification-item[data-url="${url}"]`);
+      itemsToRemove.forEach(item => {
+        this.removeNotification(item);
+      });
+    }
+
   }
 
   customElements.define('sticky-header', StickyHeader);

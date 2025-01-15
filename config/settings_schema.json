@@ -1465,5 +1465,19 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Notification Settings",
+    "settings": [
+      {
+        "type": "range",
+        "id": "notification_interval",
+        "label": "Notification Check Interval (seconds)",
+        "default": 15,
+        "min": 5,
+        "max": 300,
+        "step": 5
+      }
+    ]
   }
 ]

@@ -290,6 +290,10 @@
       </div>
     </div>
   </header>
+  <!-- Add data attribute for notification interval -->
+  <div class="section-header" data-notification-interval="{{ settings.notification_interval }}">
+    <!-- Your existing header content -->
+  </div>  
 </body>
 
 <!-- JSON data for notifications -->
@@ -353,7 +357,8 @@
 
       // Initialize notification checking
       this.checkNotifications();
-      setInterval(this.checkNotifications.bind(this), 15000); // Check notifications every 15 seconds
+      const notificationInterval = this.header.getAttribute('data-notification-interval') * 1000; // Convert to milliseconds
+      setInterval(this.checkNotifications.bind(this), notificationInterval); // Check notifications using the configurable interval
 
       // Add event listeners for notifications
       this.addNotificationEventListeners();

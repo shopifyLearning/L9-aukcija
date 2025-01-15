@@ -335,6 +335,9 @@
 
       this.isMouseOverBell = false;
       this.isMouseOverDropdown = false;
+
+      // Add a property to store the last check time
+      this.lastCheckTime = null;
     }   
 
     connectedCallback() {
@@ -421,6 +424,13 @@
     }
 
     async checkNotifications() {
+      const currentTime = new Date();
+      if (this.lastCheckTime) {
+        const timeSinceLastCheck = (currentTime - this.lastCheckTime) / 1000; // Calculate time in seconds
+        console.log(`Time since last check: ${timeSinceLastCheck} seconds`);
+      }
+      this.lastCheckTime = currentTime; // Update the last check time
+
       console.log('Checking for new notifications via API'); // Debug log
       const notificationCountElement = document.getElementById('notification-count');
       const notificationBell = document.getElementById('notification-bell');
@@ -620,39 +630,17 @@
     removeNotificationEventListeners() {
       const notificationBell = document.getElementById('notification-bell');
       if (notificationBell) {
-        notificationBell.removeEventListener('mouseover', () => {
-          this.isMouseOverBell = true;
-          this.updateDropdownVisibility();
-          console.log('Dropdown should be visible now'); // Debug log
-        });
-
-        notificationBell.removeEventListener('mouseout', () => {
-          this.isMouseOverBell = false;
-          this.updateDropdownVisibility();
-          console.log('Mouse out of bell, checking dropdown hover'); // Debug log
-        });
+        notificationBell.removeEventListener('mouseover', this.onMouseOverBell.bind(this));
+        notificationBell.removeEventListener('mouseout', this.onMouseOutBell.bind(this));
       }
 
       const notificationDropdown = document.getElementById('notification-dropdown');
       if (notificationDropdown) {
-        notificationDropdown.removeEventListener('mouseover', () => {
-          this.isMouseOverDropdown = true;
-          this.updateDropdownVisibility();
-          console.log('Mouse over dropdown, keeping it visible'); // Debug log
-        });
-
-        notificationDropdown.removeEventListener('mouseout', () => {
-          this.isMouseOverDropdown = false;
-          this.updateDropdownVisibility();
-          console.log('Mouse out of dropdown, checking bell hover'); // Debug log
-        });
+        notificationDropdown.removeEventListener('mouseover', this.onMouseOverDropdown.bind(this));
+        notificationDropdown.removeEventListener('mouseout', this.onMouseOutDropdown.bind(this));
 
         notificationDropdown.querySelectorAll('.notification-item').forEach(item => {
-          item.removeEventListener('click', () => {
-            const url = item.dataset.url;
-            this.removeNotification(item);
-            window.location.href = url;
-          });
+          item.removeEventListener('click', this.onNotificationItemClick.bind(this, item));
         });
       }
     }
@@ -709,6 +697,43 @@
       });
     }
 
+    onMouseOverBell() {
+      this.isMouseOverBell = true;
+      this.updateDropdownVisibility();
+      console.log('Dropdown should be visible now'); // Debug log
+    }
+
+    onMouseOutBell() {
+      this.isMouseOverBell = false;
+      this.updateDropdownVisibility();
+      console.log('Mouse out of bell, checking dropdown hover'); // Debug log
+    }
+
+    onMouseOverDropdown() {
+      this.isMouseOverDropdown = true;
+      this.updateDropdownVisibility();
+      console.log('Mouse over dropdown, keeping it visible'); // Debug log
+    }
+
+    onMouseOutDropdown() {
+      this.isMouseOverDropdown = false;
+      this.updateDropdownVisibility();
+      console.log('Mouse out of dropdown, checking bell hover'); // Debug log
+    }
+
+    onNotificationItemClick(item) {
+      const id = item.dataset.id;
+      const url = item.dataset.url;
+      console.log('Mouse click on notification: ', id); // Debug log
+      console.log('Redirecting to: ', url); // Debug log
+
+      try {
+        this.removeNotificationsByUrlWithAPI(url);
+        window.location.href = url;
+      } catch (error) {
+        console.error("Error deleting notification via API: ", error);
+      }           
+    }
   }
 
   customElements.define('sticky-header', StickyHeader);

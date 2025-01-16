@@ -1,0 +1,12 @@
+{
+    "sections": {
+      "main": {
+        "type": "my-bidder-auctions",
+        "settings": {}
+      }
+    },
+    "order": [
+      "main"
+    ]
+  }
+  

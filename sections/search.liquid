@@ -94,6 +94,7 @@
 
     async function fetchAuctions(query) {
       try {
+        console.log(`${apiUrl}?search=${query}`); // Debug log
         const response = await fetch(`${apiUrl}?search=${query}`, {
           method: "GET",
           headers: {

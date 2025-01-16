@@ -1,0 +1,190 @@
+<div class="home-page-container">
+  <h1>My Auctions</h1>
+</div>
+
+<div class="auction-list-container">
+  <div id="auction-list" class="auction-grid"></div>
+</div>
+
+<div id="pagination" class="pagination"></div>
+
+<script>
+    window.customerEmail = "{{ customer.email | escape }}";
+</script>
+
+<script>
+  console.log(customerEmail);
+  document.addEventListener("DOMContentLoaded", async () => {
+    const auctionListContainer = document.getElementById("auction-list");
+    const paginationContainer = document.getElementById("pagination");
+    const apiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions";
+    
+    const auctionsPerPage = 9;  
+    let currentPage = 1;  
+
+    function createAuctionCard(auction) {
+      const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
+      const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
+      const isExpired = new Date(auction.endDate) < new Date();
+      const cardClass = isExpired ? "auction-card expired" : "auction-card";
+      const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
+
+      return `
+        <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
+          <div class="image-wrapper">
+            <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
+            ${expiredLabel}
+          </div>
+          <h2>${auction.productTitle}</h2>
+          <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
+          <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
+          <p><strong>Start Date:</strong> ${startDate}</p>
+          <p><strong>End Date:</strong> ${endDate}</p>
+        </div>
+      `;
+    }
+
+    async function fetchUserAuctions() {
+      try {
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81",
+          },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch auctions.");
+        
+        const auctions = await response.json();
+
+     
+        const userAuctions = auctions.filter((auction) => auction.customerId === customerEmail);
+
+        if (userAuctions.length === 0) {
+          auctionListContainer.innerHTML = "<p>You have not created any auctions yet.</p>";
+          paginationContainer.innerHTML = "";  
+          return;
+        }
+
+       
+        const sortedAuctions = userAuctions.sort((a, b) => {
+          const endA = new Date(a.endDate);
+          const endB = new Date(b.endDate);
+          
+        
+          if (endA >= new Date() && endB < new Date()) return -1;
+         
+          if (endA < new Date() && endB >= new Date()) return 1;
+          
+         
+          return endA - endB;
+        });
+
+        const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
+        const auctionsToDisplay = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
+
+        const auctionCards = auctionsToDisplay.map(createAuctionCard).join("");
+        auctionListContainer.innerHTML = auctionCards;
+
+        createPagination(totalPages);
+      } catch (error) {
+        console.error("Error fetching auctions:", error);
+        auctionListContainer.innerHTML = "<p>Error loading auctions. Please try again later.</p>";
+      }
+    }
+
+    function createPagination(totalPages) {
+      paginationContainer.innerHTML = "";  
+      
+      if (totalPages <= 1) return;  
+
+      const prevButton = document.createElement("a");
+      prevButton.href = "#";
+      prevButton.innerText = "«";
+      prevButton.classList.add("pagination-link");
+      if (currentPage === 1) prevButton.classList.add("disabled");
+      prevButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (currentPage > 1) {
+          currentPage--;
+          fetchUserAuctions();
+        }
+      });
+      paginationContainer.appendChild(prevButton);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement("a");
+        pageButton.href = "#";
+        pageButton.innerText = i;
+        pageButton.classList.add("pagination-link");
+        if (i === currentPage) pageButton.classList.add("active");
+        pageButton.addEventListener("click", (event) => {
+          event.preventDefault();
+          currentPage = i;
+          fetchUserAuctions();
+        });
+        paginationContainer.appendChild(pageButton);
+      }
+
+      const nextButton = document.createElement("a");
+      nextButton.href = "#";
+      nextButton.innerText = "»";
+      nextButton.classList.add("pagination-link");
+      if (currentPage === totalPages) nextButton.classList.add("disabled");
+      nextButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (currentPage < totalPages) {
+          currentPage++;
+          fetchUserAuctions();
+        }
+      });
+      paginationContainer.appendChild(nextButton);
+    }
+
+    window.redirectToAuctionPage = (auctionId) => {
+      const auctionPageUrl = `/pages/auction-details?auctionId=${auctionId}`;
+      window.location.href = auctionPageUrl;
+    };
+
+    fetchUserAuctions();
+  });
+</script>
+
+<style>
+h1 {
+  font-family: 'Arial', sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #0D40C4;
+  text-align: center;
+  padding: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-color: #fff;
+  box-shadow: 0px;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination-link {
+  margin: 0 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  color: #0D40C4;
+  cursor: pointer;
+}
+
+.pagination-link.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-link.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+</style>

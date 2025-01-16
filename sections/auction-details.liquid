@@ -5,9 +5,8 @@
       <div class="image-gallery">
         <img id="auction-image" class="auction-image" alt="Auction Image">
       </div>
-      <div class="image-thumbnails">
-        <img class="thumbnail" src="" alt="Thumbnail" data-index="0">
-      </div>
+      <div class="image-thumbnails"></div>
+
     </div>
     <div class="auction-info">
       <p id="auction-description">Loading description...</p>
@@ -81,7 +80,7 @@
   margin-top: 10px;
   justify-content: center;
 }
-
+ 
 .thumbnail {
   width: 60px;
   height: 60px;
@@ -92,6 +91,7 @@
   opacity: 0.7;
   transition: opacity 0.3s;
 }
+
 
 .thumbnail:hover {
   opacity: 1;
@@ -252,19 +252,26 @@
     const thumbnailContainer = document.querySelector(".image-thumbnails");
     thumbnailContainer.innerHTML = ''; 
 
-    images.forEach((imageSrc, index) => {
-      const thumbnail = document.createElement("img");
-      thumbnail.src = imageSrc;
-      thumbnail.alt = `Thumbnail ${index + 1}`;
-      thumbnail.classList.add("thumbnail");
-      thumbnail.dataset.index = index;
+   images.forEach((imageSrc, index) => {
+  const img = new Image(); // Kreirajte novi Image objekat
+  img.src = imageSrc;
+  img.alt = `Thumbnail ${index + 1}`;
+  img.classList.add("thumbnail");
+  img.dataset.index = index;
 
-      thumbnail.addEventListener('click', () => {
-        auctionImage.src = imageSrc;
-      });
-
-      thumbnailContainer.appendChild(thumbnail);
+  // Prikažite thumbnail tek kad se slika učita
+  img.onload = () => {
+    img.addEventListener('click', () => {
+      auctionImage.src = imageSrc;
     });
+    thumbnailContainer.appendChild(img); // Dodajte u DOM nakon učitavanja
+  };
+
+  // Opcionalno: dodajte fallback za greške pri učitavanju
+  img.onerror = () => {
+    console.error(`Failed to load image: ${imageSrc}`);
+  };
+});
       
   } catch (error) {
     console.error("Error fetching product images:", error);
@@ -286,7 +293,6 @@ fetchImages();
       endDate.textContent = new Date(auction.endDate).toISOString().replace('T', ' ').replace('.000Z', '');
 
 
-     
       
       const descriptionLength = auctionDescription.textContent.length;
       if (descriptionLength > 300) {

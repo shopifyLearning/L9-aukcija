@@ -3,7 +3,7 @@
   <div class="auction-content">
     <div class="auction-image-container">
       <div class="image-gallery">
-        <img id="auction-image" class="auction-image">
+        <img id="auction-image" class="auction-image" >
       </div>
       <div class="image-thumbnails"></div>
 
@@ -38,6 +38,25 @@
 </script>
 
 <script>
+const handleStringToDate = (date) => {
+  if (!date) {
+    return 'n/a';
+  }
+
+  let localDate = new Date(date);
+  // Add 1 hour to the time to correct the time zone issue
+  localDate.setHours(localDate.getHours() + 1);
+
+  return (
+    localDate.toLocaleDateString('nl-NL', {
+      hour12: false,
+      timeZone: 'UTC',
+    }) +
+    ' - ' +
+    localDate.toLocaleTimeString('nl-NL', { hour12: false, timeZone: 'UTC' })
+  );
+};
+  
   const customerEmail = window.customerEmail || null;
   let bids = [];
   let auctionOwner;
@@ -55,6 +74,8 @@
   const submitBidButton = document.getElementById("submit-bid");
   const responseMessage = document.getElementById("response-message");
   const countdownTimer = document.getElementById("countdown-timer");
+
+    
 
   try {
     const response = await fetch(auctionApiUrl, {
@@ -156,8 +177,9 @@ fetchImages();
     auctionDescription.textContent = auction.description || "No description available.";
     startPrice.textContent = `RSD ${auction.startPrice}`;
     currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    startDate.textContent = new Date(auction.startDate).toISOString();
-    endDate.textContent = new Date(auction.endDate).toISOString();
+    
+     startDate.textContent = handleStringToDate(auction.startDate);
+    endDate.textContent = handleStringToDate(auction.endDate);
 
    
     bids = auction.bids || [];

@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const startDate = new Date(auction.startDate).toLocaleString("en-US");
     const endDate = new Date(auction.endDate).toLocaleString("en-US"); 
     const isExpired = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000) < new Date();
+    console.log(isExpired);
     const cardClass = isExpired ? "auction-card expired" : "auction-card";
     const expiredLabel = isExpired
         ? `<span class="expired-label">Expired</span>`

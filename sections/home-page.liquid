@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let currentPage = 1;
 
   function createAuctionCard(auction) {
-    const startDate = new Date(new Date(auction.startDate).getTime() - 60 * 60 * 1000).toLocaleString("en-US");
-    const endDate = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000).toLocaleString("en-US"); 
+    const startDate = new Date(new Date(auction.startDate).getTime()).toLocaleString("en-US");
+    const endDate = new Date(new Date(auction.endDate).getTime()).toLocaleString("en-US"); 
     const now = new Date();
     
     // Subtract one hour (60 minutes) from the endDate for expired condition

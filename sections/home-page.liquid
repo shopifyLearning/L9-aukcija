@@ -1,10 +1,10 @@
 <div class="home-page-container">
   <h1>Welcome to Levi9 Auction Site</h1>
   <div class="auction2-links">
-    <a href="/pages/auction" class="auction2-link">
+    <a href="https://levi9-test.myshopify.com/pages/auction" class="auction2-link">
       Create Auction
     </a>
-    <a href="/pages/my-auctions" class="auction2-link">
+    <a href="https://levi9-test.myshopify.com/pages/my-auctions" class="auction2-link">
       My Auctions
     </a>
   </div>
@@ -29,11 +29,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   let currentPage = 1;
 
   function createAuctionCard(auction) {
-    const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
-    const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
-    const isExpired = new Date(auction.endDate) < new Date();
+    const startDate = new Date(new Date(auction.startDate).getTime() - 60 * 60 * 1000).toLocaleString("en-US");
+    const endDate = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000).toLocaleString("en-US"); 
+    const now = new Date();
+    
+    // Subtract one hour (60 minutes) from the endDate for expired condition
+    const oneHourEarlier = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000);
+    
+    const isExpired = oneHourEarlier < now;  // Aukcija je istekla sat vremena ranije
     const cardClass = isExpired ? "auction-card expired" : "auction-card";
-    const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
+    const expiredLabel = isExpired
+        ? `<span class="expired-label">Expired</span>`
+        : "";
 
     return `
       <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
@@ -63,25 +70,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       const auctions = await response.json();
 
       if (auctions.length === 0) {
-        auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
-        return;
-      }
+      auctionListContainer.innerHTML = "<p>No active auctions at the moment.</p>";
+      return;
+    }
 
-      const now = new Date();
-      const sortedAuctions = auctions.sort((a, b) => {
-        const aEndDate = new Date(a.endDate);
-        const bEndDate = new Date(b.endDate);
-        if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate;
-        if (aEndDate < now) return 1;
-        if (bEndDate < now) return -1;
-        return aEndDate - bEndDate;
-      });
+    const now = new Date();
+    
+    // Sortiraj aukcije tako da aktivne aukcije budu prvo
+    const sortedAuctions = auctions.sort((a, b) => {
+      const aEndDate = new Date(a.endDate);
+      const bEndDate = new Date(b.endDate);
+      const aStartDate = new Date(a.startDate);
+      const bStartDate = new Date(b.startDate);
+      
+      // Oduzmi sat vremena za poređenje
+      const oneHourEarlierA = new Date(aEndDate.getTime() - 60 * 60 * 1000);
+      const oneHourEarlierB = new Date(bEndDate.getTime() - 60 * 60 * 1000);
 
-      const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
-      const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
+      const isExpiredA = oneHourEarlierA < now;
+      const isExpiredB = oneHourEarlierB < now;
 
-      const auctionCards = currentAuctions.map(createAuctionCard).join("");
-      auctionListContainer.innerHTML = auctionCards;
+      if (isExpiredA && !isExpiredB) return 1;  // A je istekla, B nije
+      if (!isExpiredA && isExpiredB) return -1; // B je istekla, A nije
+
+      return aEndDate - bEndDate;  // Sortiraj po datumu kraja ako su oba isteka
+    });
+
+    const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
+    const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
+
+    const auctionCards = currentAuctions.map(createAuctionCard).join("");
+    auctionListContainer.innerHTML = auctionCards;
 
       createPagination(totalPages);
     } catch (error) {
@@ -165,8 +184,7 @@ h1 {
   transform: translateX(-100%);  
   animation: slideIn 1s forwards;  
 }
-
-.auction2-links {
+  .auction2-links {
   display: flex;
   gap: 20px; 
   justify-content: center; 
@@ -177,19 +195,18 @@ h1 {
   display: inline-block;
   padding: 10px 20px;
   text-decoration: none;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: white;
   background-color: #0D40C4;
   border-radius: 5px;
   font-weight: bold;
   transition: background-color 0.3s, transform 0.2s;
-  width: 200px; /* Fiksna širina za oba dugmeta */
-  text-align: center; /* Centriranje teksta unutar dugmeta */
 }
 
 .auction2-link:hover {
   background-color: #083a99; 
   transform: scale(1.05); 
 }
+
 
 </style>

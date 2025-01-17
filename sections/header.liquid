@@ -110,7 +110,6 @@
     box-sizing: border-box;
   }
 
-
   .search-bar {
     display: flex;
     align-items: center;
@@ -245,30 +244,48 @@
     display: flex;
     align-items: center; 
   }
-  .home-link {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-  margin-left: 70px; 
-}
 
-  .home-link:hover {
+  .header-link {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    padding: 0 10px;
+  }
+
+  .header-link:hover {
     text-decoration: underline;
+  }
+
+  .header-links-container {
+    display: flex;
+    justify-content: space-between;
+    width: 300px; /* Adjust width as necessary */
+  }
+
+  .header-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Space between links */
+    width: 100%;
+    margin-left: 170px; /* Move the entire section 1 centimeter (100px) to the right */
   }
 </style>
 
 <body>
-
   <header class="header">
     <div class="store-name">
-       Auction
+       Levi9
       <img src="{{ 'logo222.png' | asset_url }}" alt="Store Logo" class="store-logo">
-     
     </div>
-    <a href="/" class="home-link">Home</a>
- 
 
+    <div class="header-links">
+      <a href="/" class="header-link">Auctions</a>
+      <a href="/pages/my-auctions" class="header-link">Sell</a>
+      <a href="/pages/my-bidder-auctions" class="header-link">Watchlist</a>
+    </div>
+ 
     <div class="search-bar">
       <form action="/pages/search" method="get" role="search">
         <input type="text" name="q" placeholder="Search Auctions..." aria-label="Search Auctions..." />

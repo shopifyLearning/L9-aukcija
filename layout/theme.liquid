@@ -334,8 +334,75 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-  </head>
 
+    <style>
+      .sidebar {
+        display: none; /* Hide by default */
+        position: fixed;
+        top: 200px;
+        left: 95px;
+        width: 250px;
+        height: fit-content; /* Adjusts height to fit the content */
+        background-color: #fff;
+        padding: 50px;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 6px; /* Slightly rounded corners */
+        box-sizing: border-box; 
+      }
+      
+      .sidebar.active {
+        display: block;
+      }
+      
+      .sidebar h3 {
+        margin-top: 0;
+      }
+      
+      .sidebar label {
+        display: block;
+        margin-bottom: 10px;
+        color: #0D40C4; /* Blue color for the labels */
+      }
+
+      .sidebar select {
+        width: 100%; /* Ensures the select takes the full width */
+        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        border: 1px solid #0D40C4; /* Light blue border */
+        border-radius: 4px; /* Slightly rounded corners */
+        padding: 8px; /* Adds some padding inside the select */
+        color: #0D40C4; /* Blue color for the select text */
+        background-color: #fff; /* White background */
+      }
+
+      .sidebar option {
+        color: #0D40C4; /* Blue color for the labels */
+      }
+
+      .sidebar input[type="checkbox"] {
+        margin-right: 5px; /* Adds space between checkbox and label */
+      }
+
+      .sidebar select, .sidebar .apply-button {
+        width: 100%; /* Ensures the select and button take the full width */
+        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+      }
+
+      .sidebar .apply-button {
+        background-color: #0D40C4; /* Blue background */
+        color: white; /* White letters */
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px; /* Rounded corners for the button */
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .sidebar .apply-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+      }      
+    </style>
+  </head>
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
@@ -349,7 +416,26 @@
           console.log('Set redirect flag to: ' + sessionStorage.getItem('redirected') );
           window.location.href = '/';
         }
-      </script>   
+      </script>
+      {% comment %} Show sidebar for logged in customers {% endcomment %}
+      <div class="sidebar active">
+        <h3></h3>
+        <label>
+          <input type="checkbox" id="new-auctions"> New auctions
+        </label>
+        <label>
+          <input type="checkbox" id="finishing-soon"> Finishing soon
+        </label>
+        <label>
+          <select id="price-order">
+            <option value="">Price sorting</option>
+            <option value="asc">Price ascending</option>
+            <option value="desc">Price descending</option>
+          </select>
+        </label>
+        <button class="apply-button">Apply</button> <!-- Add the Apply button -->
+      </div>
+    
       {%- if settings.cart_type == 'drawer' -%}
         {%- render 'cart-drawer' -%}
       {%- endif -%}

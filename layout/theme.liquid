@@ -341,7 +341,7 @@
         position: fixed;
         top: 200px;
         left: 95px;
-        width: 250px;
+        width: 260px;
         height: fit-content; /* Adjusts height to fit the content */
         background-color: #fff;
         padding: 50px;
@@ -362,6 +362,7 @@
         display: block;
         margin-bottom: 10px;
         color: #0D40C4; /* Blue color for the labels */
+        font-size: 1.4rem; /* Adjusted font size */
       }
 
       .sidebar select {
@@ -409,7 +410,7 @@
     </a>
 
     {% if customer %}
-      {% comment %} Shopify after login redirects to /account by default. This script prevents that redirect and instead redirects to the homepage {% endcomment %}
+      <!-- Shopify after login redirects to /account by default. This script prevents that redirect and instead redirects to the homepage -->
       <script>
         if (window.location.pathname === '/account' && sessionStorage.getItem('redirected') === 'false') {
           sessionStorage.setItem('redirected', 'true'); // Prevent redirect loop
@@ -417,7 +418,7 @@
           window.location.href = '/';
         }
       </script>
-      {% comment %} Show sidebar for logged in customers {% endcomment %}
+      <!-- Show sidebar for logged in customers -->
       <div class="sidebar active">
         <h3></h3>
         <label>
@@ -428,12 +429,12 @@
         </label>
         <label>
           <select id="price-order">
-            <option value="">Price sorting</option>
+            <option value="">Current price sorting</option>
             <option value="asc">Price ascending</option>
             <option value="desc">Price descending</option>
           </select>
         </label>
-        <button class="apply-button">Apply</button> <!-- Add the Apply button -->
+        <button class="apply-button">Apply</button>
       </div>
     
       {%- if settings.cart_type == 'drawer' -%}
@@ -503,6 +504,40 @@
         recipientFormCollapsed: `{{ 'recipient.form.collapsed' | t }}`,
         countrySelectorSearchCount: `{{ 'localization.country_results_count' | t: count: '[count]' }}`,
       };
+    </script>
+
+    <script>
+        document.querySelector('.apply-button').addEventListener('click', function() {
+            // Retrieve the values from the sidebar elements
+            const newAuctionsChecked = document.getElementById('new-auctions').checked;
+            const finishingSoonChecked = document.getElementById('finishing-soon').checked;
+            const priceOrderValue = document.getElementById('price-order').value;
+
+            // Store the values in localStorage
+            localStorage.setItem('newAuctions', newAuctionsChecked);
+            localStorage.setItem('finishingSoon', finishingSoonChecked);
+            localStorage.setItem('priceOrder', priceOrderValue);
+
+            // Optionally, you can log the values to the console
+            console.log('New auctions:', newAuctionsChecked);
+            console.log('Finishing soon:', finishingSoonChecked);
+            console.log('Price order:', priceOrderValue || '');
+
+            // You can also use the values to filter data here
+            // filterData(newAuctionsChecked, finishingSoonChecked, priceOrderValue);
+        });
+
+        // When the page loads, you might want to restore the values from localStorage
+        window.addEventListener('load', function() {
+            const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
+            const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
+            const priceOrderValue = localStorage.getItem('priceOrder');
+
+            // Set the values back to the sidebar elements
+            document.getElementById('new-auctions').checked = newAuctionsChecked;
+            document.getElementById('finishing-soon').checked = finishingSoonChecked;
+            document.getElementById('price-order').value = priceOrderValue;
+        });
     </script>
 
     {%- if settings.predictive_search_enabled -%}

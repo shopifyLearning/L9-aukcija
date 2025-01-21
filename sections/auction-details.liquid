@@ -361,7 +361,7 @@ fetchImages();
 
     } catch (error) {
       console.error("Error submitting bid:", error);
-      responseMessage.textContent = "Failed to place bid. Please try again.";
+      responseMessage.textContent = "Invalid bid amount. Please enter a bid in increments of 100";
       responseMessage.className = "error-message";
       responseMessage.style.display = "block";
 

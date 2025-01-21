@@ -334,22 +334,122 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-  </head>
 
+    <style>
+      .sidebar {
+        display: none; /* Hide by default */
+        position: fixed;
+        top: 200px;
+        left: 95px;
+        width: 260px;
+        height: fit-content; /* Adjusts height to fit the content */
+        background-color: #fff;
+        padding: 50px;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 6px; /* Slightly rounded corners */
+        box-sizing: border-box; 
+      }
+      
+      .sidebar.active {
+        display: block;
+      }
+      
+      .sidebar h3 {
+        margin-top: 0;
+      }
+      
+      .sidebar label {
+        display: block;
+        margin-bottom: 10px;
+        color: #0D40C4; /* Blue color for the labels */
+        font-size: 1.4rem; /* Adjusted font size */
+      }
+
+      .sidebar select {
+        width: 100%; /* Ensures the select takes the full width */
+        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        border: 1px solid #0D40C4; /* Light blue border */
+        border-radius: 4px; /* Slightly rounded corners */
+        padding: 8px; /* Adds some padding inside the select */
+        color: #0D40C4; /* Blue color for the select text */
+        background-color: #fff; /* White background */
+        margin-top: -10px; /* Adds a small margin above the select */
+      }
+
+      .sidebar option {
+        color: #0D40C4; /* Blue color for the labels */
+      }
+
+      .sidebar input[type="checkbox"] {
+        margin-right: 5px; /* Adds space between checkbox and label */
+      }
+
+      .sidebar select, .sidebar .apply-button {
+        width: 100%; /* Ensures the select and button take the full width */
+        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+      }
+
+      .sidebar .apply-button {
+        background-color: #0D40C4; /* Blue background */
+        color: white; /* White letters */
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px; /* Rounded corners for the button */
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .sidebar .apply-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+      }      
+    </style>
+  </head>
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
 
     {% if customer %}
-      {% comment %} Shopify after login redirects to /account by default. This script prevents that redirect and instead redirects to the homepage {% endcomment %}
+      <!-- Shopify after login redirects to /account by default. This script prevents that redirect and instead redirects to the homepage -->
       <script>
         if (window.location.pathname === '/account' && sessionStorage.getItem('redirected') === 'false') {
           sessionStorage.setItem('redirected', 'true'); // Prevent redirect loop
           console.log('Set redirect flag to: ' + sessionStorage.getItem('redirected') );
           window.location.href = '/';
         }
-      </script>   
+      </script>
+      <!-- Show sidebar for logged in customers -->
+      <div class="sidebar active">
+        <h3></h3>
+        <label>
+          <input type="checkbox" id="new-auctions"> New auctions
+        </label>
+        <label>
+          <input type="checkbox" id="finishing-soon"> Finishing soon
+        </label>
+        <label>Sort by Current Price:</label>
+        <label>
+          <select id="price-order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </label>
+        <button class="apply-button">Apply</button>
+      </div>
+
+      <script>
+        // Retrieve the values from localStorage
+        const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
+        const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
+        const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
+
+        // Apply the retrieved values to the sidebar elements
+        document.getElementById('new-auctions').checked = newAuctionsChecked;
+        document.getElementById('finishing-soon').checked = finishingSoonChecked;
+        document.getElementById('price-order').value = priceOrderValue;
+      </script>
+
       {%- if settings.cart_type == 'drawer' -%}
         {%- render 'cart-drawer' -%}
       {%- endif -%}
@@ -417,6 +517,51 @@
         recipientFormCollapsed: `{{ 'recipient.form.collapsed' | t }}`,
         countrySelectorSearchCount: `{{ 'localization.country_results_count' | t: count: '[count]' }}`,
       };
+    </script>
+
+    <script>
+        document.querySelector('.apply-button').addEventListener('click', function() {
+            // Retrieve the values from the sidebar elements
+            const newAuctionsChecked = document.getElementById('new-auctions').checked;
+            const finishingSoonChecked = document.getElementById('finishing-soon').checked;
+            const priceOrderValue = document.getElementById('price-order').value;
+
+            // Store the values in localStorage
+            localStorage.setItem('newAuctions', newAuctionsChecked);
+            localStorage.setItem('finishingSoon', finishingSoonChecked);
+            localStorage.setItem('priceOrder', priceOrderValue);
+
+            // Optionally, you can log the values to the console
+            console.log('New auctions:', newAuctionsChecked);
+            console.log('Finishing soon:', finishingSoonChecked);
+            console.log('Price order:', priceOrderValue);
+
+            // You can also use the values to filter data here
+            // filterData(newAuctionsChecked, finishingSoonChecked, priceOrderValue);
+        });
+
+        // When the page loads, you might want to restore the values from localStorage
+        window.addEventListener('load', function() {
+            // Set default values in localStorage if they are not already present
+            if (localStorage.getItem('newAuctions') === null) {
+              localStorage.setItem('newAuctions', 'true');
+            }
+            if (localStorage.getItem('finishingSoon') === null) {
+              localStorage.setItem('finishingSoon', 'false');
+            }
+            if (localStorage.getItem('priceOrder') === null) {
+              localStorage.setItem('priceOrder', 'desc');
+            }          
+            
+            const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
+            const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
+            const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
+
+            // Set the values back to the sidebar elements
+            document.getElementById('new-auctions').checked = newAuctionsChecked;
+            document.getElementById('finishing-soon').checked = finishingSoonChecked;
+            document.getElementById('price-order').value = priceOrderValue;
+        });
     </script>
 
     {%- if settings.predictive_search_enabled -%}

@@ -63,7 +63,8 @@
 
         if (userAuctions.length === 0) {
           auctionListContainer.innerHTML = "<p>You have not created any auctions yet.</p>";
-          paginationContainer.innerHTML = "";  
+          paginationContainer.innerHTML = "";
+          document.querySelector('.sidebar').classList.remove('active');
           return;
         }
 

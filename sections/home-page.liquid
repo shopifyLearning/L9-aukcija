@@ -31,6 +31,7 @@
     const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
     const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
     const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
+    console.log("priceOrderValue: ", priceOrderValue); // For debugging purposes
     // Construct the query string
     let queryString = `?showNewAuctions=${newAuctionsChecked}&showFinishingSoon=${finishingSoonChecked}&sortDescending=${priceOrderValue === 'desc'}`;
     // Update the apiUrl variable
@@ -76,16 +77,7 @@
           return;
         }
 
-        const now = new Date();
 
-        // Sortiraj aukcije tako da aktivne aukcije budu prvo
-    
-
-        const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);
-        const currentAuctions = sortedAuctions.slice((currentPage - 1) * auctionsPerPage, currentPage * auctionsPerPage);
-
-        const auctionCards = currentAuctions.map(createAuctionCard).join("");
-        auctionListContainer.innerHTML = auctionCards;
 
         createPagination(totalPages);
       } catch (error) {

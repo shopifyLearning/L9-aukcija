@@ -373,6 +373,7 @@
         padding: 8px; /* Adds some padding inside the select */
         color: #0D40C4; /* Blue color for the select text */
         background-color: #fff; /* White background */
+        margin-top: -10px; /* Adds a small margin above the select */
       }
 
       .sidebar option {
@@ -427,16 +428,28 @@
         <label>
           <input type="checkbox" id="finishing-soon"> Finishing soon
         </label>
+        <label>Sort by Current Price:</label>
         <label>
           <select id="price-order">
-            <option value="">Current price sorting</option>
-            <option value="asc">Price ascending</option>
-            <option value="desc">Price descending</option>
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
           </select>
         </label>
         <button class="apply-button">Apply</button>
       </div>
-    
+
+      <script>
+        // Retrieve the values from localStorage
+        const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
+        const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
+        const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
+
+        // Apply the retrieved values to the sidebar elements
+        document.getElementById('new-auctions').checked = newAuctionsChecked;
+        document.getElementById('finishing-soon').checked = finishingSoonChecked;
+        document.getElementById('price-order').value = priceOrderValue;
+      </script>
+
       {%- if settings.cart_type == 'drawer' -%}
         {%- render 'cart-drawer' -%}
       {%- endif -%}
@@ -521,7 +534,7 @@
             // Optionally, you can log the values to the console
             console.log('New auctions:', newAuctionsChecked);
             console.log('Finishing soon:', finishingSoonChecked);
-            console.log('Price order:', priceOrderValue || '');
+            console.log('Price order:', priceOrderValue);
 
             // You can also use the values to filter data here
             // filterData(newAuctionsChecked, finishingSoonChecked, priceOrderValue);
@@ -529,9 +542,20 @@
 
         // When the page loads, you might want to restore the values from localStorage
         window.addEventListener('load', function() {
+            // Set default values in localStorage if they are not already present
+            if (localStorage.getItem('newAuctions') === null) {
+              localStorage.setItem('newAuctions', 'true');
+            }
+            if (localStorage.getItem('finishingSoon') === null) {
+              localStorage.setItem('finishingSoon', 'false');
+            }
+            if (localStorage.getItem('priceOrder') === null) {
+              localStorage.setItem('priceOrder', 'desc');
+            }          
+            
             const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
             const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
-            const priceOrderValue = localStorage.getItem('priceOrder');
+            const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
 
             // Set the values back to the sidebar elements
             document.getElementById('new-auctions').checked = newAuctionsChecked;

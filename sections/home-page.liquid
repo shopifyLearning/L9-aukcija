@@ -31,7 +31,6 @@
     const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
     const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
     const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';
-    console.log("priceOrderValue: ", priceOrderValue); // For debugging purposes
     // Construct the query string
     let queryString = `?showNewAuctions=${newAuctionsChecked}&showFinishingSoon=${finishingSoonChecked}&sortDescending=${priceOrderValue === 'desc'}`;
     // Update the apiUrl variable

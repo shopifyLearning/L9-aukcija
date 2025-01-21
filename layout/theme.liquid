@@ -439,6 +439,20 @@
       </div>
 
       <script>
+        // Function to check if the current page path is one of the specified paths
+        function shouldShowSidebar() {
+          console.log('Check if sidebar should be visible for path: ' + window.location.pathname);
+          const allowedPaths = ['/', '/pages/my-auctions', '/pages/my-bidder-auctions'];
+          return allowedPaths.includes(window.location.pathname);
+        }
+
+        // Check if the sidebar should be shown and add the 'active' class if true
+        if (shouldShowSidebar()) {
+          document.querySelector('.sidebar').classList.add('active');
+        } else {
+          document.querySelector('.sidebar').classList.remove('active');
+        }
+
         // Retrieve the values from localStorage
         const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
         const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
@@ -448,6 +462,23 @@
         document.getElementById('new-auctions').checked = newAuctionsChecked;
         document.getElementById('finishing-soon').checked = finishingSoonChecked;
         document.getElementById('price-order').value = priceOrderValue;
+
+        // Set default values in localStorage if they are not already present
+        if (localStorage.getItem('newAuctions') === null) {
+          localStorage.setItem('newAuctions', 'false');
+        }
+        if (localStorage.getItem('finishingSoon') === null) {
+          localStorage.setItem('finishingSoon', 'false');
+        }
+        if (localStorage.getItem('priceOrder') === null) {
+          localStorage.setItem('priceOrder', 'asc');
+        }
+
+        // Convert priceOrderValue to a boolean: true for 'desc', false for 'asc'
+        const sortDescending = priceOrderValue === 'desc';
+
+        // Optionally, you can log the converted boolean value to the console
+        console.log('Sort descending:', sortDescending);
       </script>
 
       {%- if settings.cart_type == 'drawer' -%}
@@ -552,7 +583,7 @@
             if (localStorage.getItem('priceOrder') === null) {
               localStorage.setItem('priceOrder', 'desc');
             }          
-            
+
             const newAuctionsChecked = localStorage.getItem('newAuctions') === 'true';
             const finishingSoonChecked = localStorage.getItem('finishingSoon') === 'true';
             const priceOrderValue = localStorage.getItem('priceOrder') || 'asc';

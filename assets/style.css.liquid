@@ -1172,6 +1172,7 @@ width: 100%;
 max-width: 200px;
 height: auto;
 border-radius: 5px;
+
 }
 
 .auction-details {
@@ -1184,78 +1185,139 @@ text-align: center;
 max-width: 400px;
 }
 .auction-details-container {
-max-width: 800px;
-margin: 20px auto;
-padding: 20px;
-border: 1px solid #ccc;
-border-radius: 8px;
-background-color: #f9f9f9;
-font-family: Arial, sans-serif;
-display: flex;
-flex-wrap: wrap; 
-justify-content: space-between; 
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .auction-details-container h1 {
-font-size: 24px;
-margin-bottom: 15px;
-color: #333;
-width: 100%;
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
 }
 
-.auction-details-container p {
-font-size: 16px;
-margin-bottom: 10px;
-color: #555;
-width: 100%;
+.auction-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.auction-details-container .auction-image {
-width: 45%; 
-max-width: 350px; 
-height: auto;
-border-radius: 5px;
-margin-bottom: 20px;
+.auction-image-container {
+   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.auction-details-container .details-left {
-width: 50%; 
+.image-gallery {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
 }
 
-.auction-details-container .bid-section {
-margin-top: 20px;
+.auction-image {
+   cursor: pointer; /* Menja kursor u rukicu */
+  transition: transform 0.2s ease-in-out; 
+  width: 70%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
-.auction-details-container .bid-section label {
-display: block;
-font-weight: bold;
-margin-bottom: 8px;
+  .image-thumbnails {
+  display: flex;
+  margin-top: 10px;
+  justify-content: center;
+}
+ 
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  margin: 0 5px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 5px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
 }
 
-.auction-details-container .bid-section input[type="number"] {
-width: 100%;
-padding: 10px;
-margin-bottom: 15px;
-border: 1px solid #ddd;
-border-radius: 4px;
-font-size: 14px;
-box-sizing: border-box;
+
+.thumbnail:hover {
+  opacity: 1;
+}
+  
+.auction-info {
+  width: 50%;
+   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.auction-details-container .bid-section button {
-padding: 10px 20px;
-font-size: 16px;
-background-color: #0D40C4;
-color: white;
-border: none;
-border-radius: 4px;
-cursor: pointer;
-width: 100%;
-margin-bottom: 10px;
+.auction-info p {
+  margin-bottom: 15px;
 }
 
-.auction-details-container .bid-section button:hover {
-background-color: #4CAF50;
+.auction-info .bid-section {
+  margin-top: 20px;
+}
+
+.auction-info .bid-section label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.auction-info .bid-section input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.auction-info .bid-section button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #45a049;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.auction-info .bid-section button:hover {
+  background-color: #4CAF50;
+}
+
+/* Pricing Section */
+.auction-pricing {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.auction-pricing p {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+#countdown-timer {
+  font-size: 16px;
+  font-weight: bold;
+  color: #d9534f;
 }
 
 .success-message {
@@ -1447,12 +1509,15 @@ input:disabled, button:disabled {
 .expired-label {
   position: absolute;
   top: 10px;
-  right: 0px;
-  background-color: rgba(0, 0, 0, 0.8); 
+  right: 10px; 
+  background-color: rgba(200, 0, 0, 0.9); 
   color: white;
   padding: 5px 10px;
   font-size: 12px;
+  font-weight: bold;
   border-radius: 5px;
+  opacity: 1; 
+  z-index: 50; 
 }
 
 .pagination {
@@ -1502,4 +1567,58 @@ input:disabled, button:disabled {
   color: #FFFFFF;
   border-color: #0A2F8A; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+/* Lightbox container */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* Tamnija pozadina */
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+
+.lightbox-content {
+  max-width: 80vw; 
+  max-height: 80vh; 
+  width: auto; 
+  height: auto; 
+  object-fit: contain; 
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none; 
+}
+
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+.image-thumbnails img {
+  width: 80px;
+  height: auto;
+  margin: 5px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.image-thumbnails img:hover {
+  border-color: #0D40C4;
+  transform: scale(1.1);
 }

@@ -1,18 +1,31 @@
 <div class="auction-details-container">
-  <h1 id="auction-title">Loading...</h1>
-   <p><strong>Time Remaining:</strong> <span id="countdown-timer">Loading...</span></p>
-  <img id="auction-image" class="auction-image" alt="Auction Image">
-  <div class="bid-section">
-    <label for="bid-input"><strong>Place Your Bid:</strong></label>
-    <input type="number" id="bid-input" min="0" step="100">
-    <button id="submit-bid">Submit Bid</button>
-     <div id="response-message"></div>
+  <h1 id="auction-title"></h1>
+  <div class="auction-content">
+    <div class="auction-image-container">
+      <div class="image-gallery">
+        <img id="auction-image" class="auction-image" >
+      </div>
+      <div class="image-thumbnails"></div>
+
+    </div>
+    <div class="auction-info">
+      <p id="auction-description"></p>
+      <div class="bid-section">
+        <label for="bid-input"><strong>Place Your Bid:</strong></label>
+        <input type="number" id="bid-input" min="0" step="100">
+        <button id="submit-bid">Submit Bid</button>
+        <div id="response-message"></div>
+      </div>
+    </div>
   </div>
-  <p><strong>Start Price:</strong> <span id="start-price"></span></p>
-  <p><strong>Current Price:</strong> <span id="current-price"></span></p>
-  <p><strong>Start Date:</strong> <span id="start-date"></span></p>
-  <p><strong>End Date:</strong> <span id="end-date"></span></p>
- 
+
+  <div class="auction-pricing">
+    <p><strong>Start Price:</strong> <span id="start-price"></span></p>
+    <p><strong>Current Price:</strong> <span id="current-price"></span></p>
+    <p><strong>Start Date:</strong> <span id="start-date"></span></p>
+    <p><strong>End Date:</strong> <span id="end-date"></span></p>
+    <p id="countdown-timer"></p>
+  </div>
 </div>
 <script>
     window.customerEmail = "{{ customer.email | escape }}";
@@ -25,6 +38,25 @@
 </script>
 
 <script>
+const handleStringToDate = (date) => {
+  if (!date) {
+    return 'n/a';
+  }
+
+  let localDate = new Date(date);
+  // Add 1 hour to the time to correct the time zone issue
+  localDate.setHours(localDate.getHours() + 1);
+
+  return (
+    localDate.toLocaleDateString('nl-NL', {
+      hour12: false,
+      timeZone: 'UTC',
+    }) +
+    ' - ' +
+    localDate.toLocaleTimeString('nl-NL', { hour12: false, timeZone: 'UTC' })
+  );
+};
+  
   const customerEmail = window.customerEmail || null;
   let bids = [];
   let auctionOwner;
@@ -33,6 +65,7 @@
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
   const auctionTitle = document.getElementById("auction-title");
   const auctionImage = document.getElementById("auction-image");
+  const auctionDescription = document.getElementById("auction-description")
   const startPrice = document.getElementById("start-price");
   const currentPrice = document.getElementById("current-price");
   const startDate = document.getElementById("start-date");
@@ -41,6 +74,8 @@
   const submitBidButton = document.getElementById("submit-bid");
   const responseMessage = document.getElementById("response-message");
   const countdownTimer = document.getElementById("countdown-timer");
+
+    
 
   try {
     const response = await fetch(auctionApiUrl, {
@@ -54,18 +89,97 @@
     if (!response.ok) throw new Error("Failed to fetch auction details.");
     const auction = await response.json();
 
-    auctionOwner = auction.customerId;
-   
+          const graphQlUrl = 'https://levi9-test.myshopify.com/admin/api/2024-04/graphql.json';
+      const accessToken = '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';
 
+      const productId = auction.productId;
+
+      const query = `
+  query {
+    product(id: "gid://shopify/Product/${productId}") {
+      id
+      title
+      images(first: 5) {
+        edges {
+          node {
+            src
+            altText
+          }
+        }
+      }
+    }
+  }
+`;
+      const fetchImages = async () => {
+  try {
+    const response = await fetch(graphQlUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': accessToken,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    const data = await response.json();
+    if (data.errors) {
+      console.error("GraphQL Error:", data.errors);
+      return;
+    }
+
+    const product = data.data.product;
+    const images = product.images.edges.map(edge => edge.node.src);
+
+    const auctionImage = document.getElementById("auction-image");
+    auctionImage.src = images[0];
+
+    const thumbnailContainer = document.querySelector(".image-thumbnails");
+    thumbnailContainer.innerHTML = ''; 
+
+   images.forEach((imageSrc, index) => {
+  const img = new Image(); 
+  img.src = imageSrc;
+  img.alt = `Thumbnail ${index + 1}`;
+  img.classList.add("thumbnail");
+  img.dataset.index = index;
+
+  
+  img.onload = () => {
+    img.addEventListener('click', () => {
+      auctionImage.src = imageSrc;
+    });
+    thumbnailContainer.appendChild(img); 
+  };
+
+  
+  img.onerror = () => {
+    console.error(`Failed to load image: ${imageSrc}`);
+  };
+});
+      
+  } catch (error) {
+    console.error("Error fetching product images:", error);
+  }
+};
+
+fetchImages();
     
-     bids = auction.bids || [];
+    auctionOwner = auction.customerId;
+    const descriptionLength = auctionDescription.textContent.length;
+      if (descriptionLength > 300) {
+        auctionImage.style.maxWidth = '500px'; 
+      } else {
+        auctionImage.style.maxWidth = '350px'; 
+      }
     
     auctionTitle.textContent = auction.productTitle;
     auctionImage.src = auction.imgUrlProduct;
+    auctionDescription.textContent = auction.description || "No description available.";
     startPrice.textContent = `RSD ${auction.startPrice}`;
     currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    startDate.textContent = new Date(auction.startDate).toISOString().replace('T', ' ').replace('.000Z', '');
-    endDate.textContent = new Date(auction.endDate).toISOString().replace('T', ' ').replace('.000Z', '');
+    
+     startDate.textContent = handleStringToDate(auction.startDate);
+    endDate.textContent = handleStringToDate(auction.endDate);
 
    
     bids = auction.bids || [];
@@ -247,7 +361,7 @@
 
     } catch (error) {
       console.error("Error submitting bid:", error);
-      responseMessage.textContent = "Failed to place bid. Please try again.";
+      responseMessage.textContent = "Invalid bid amount. Please enter a bid in increments of 100";
       responseMessage.className = "error-message";
       responseMessage.style.display = "block";
 

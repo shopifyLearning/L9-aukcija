@@ -78,13 +78,25 @@
         }
 
         const now = new Date();
+
+        // Sortiraj aukcije tako da aktivne aukcije budu prvo
         const sortedAuctions = auctions.sort((a, b) => {
           const aEndDate = new Date(a.endDate);
           const bEndDate = new Date(b.endDate);
-          if (aEndDate < now && bEndDate < now) return aEndDate - bEndDate;
-          if (aEndDate < now) return 1;
-          if (bEndDate < now) return -1;
-          return aEndDate - bEndDate;
+          const aStartDate = new Date(a.startDate);
+          const bStartDate = new Date(b.startDate);
+          
+          // Oduzmi sat vremena za poređenje
+          const oneHourEarlierA = new Date(aEndDate.getTime() - 60 * 60 * 1000);
+          const oneHourEarlierB = new Date(bEndDate.getTime() - 60 * 60 * 1000);
+
+          const isExpiredA = oneHourEarlierA < now;
+          const isExpiredB = oneHourEarlierB < now;
+
+          if (isExpiredA && !isExpiredB) return 1;  // A je istekla, B nije
+          if (!isExpiredA && isExpiredB) return -1; // B je istekla, A nije
+
+          return aEndDate - bEndDate;  // Sortiraj po datumu kraja ako su oba isteka
         });
 
         const totalPages = Math.ceil(sortedAuctions.length / auctionsPerPage);

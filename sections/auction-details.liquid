@@ -345,13 +345,11 @@ if (bids.length > 0) {
     const lastBid = bids[bids.length - 1];
     const customerId = lastBid.customerId || "Unknown";
 
-   
+    // Asinhrono preuzimanje e-maila korisnika na osnovu customerId
     fetchCustomerEmailById(customerId).then((email) => {
         
-        const customerEmail = email;
-
-       
-        if (lastBid.customerId === customerEmail) {
+        // Provera da li je email poslednjeg bidera isti kao trenutni korisnik
+        if (email === customerEmail) {
             responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
             responseMessage.className = "error-message";
             responseMessage.style.display = "block";

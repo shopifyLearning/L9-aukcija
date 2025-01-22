@@ -29,6 +29,7 @@
 </div>
 <script>
     window.customerEmail = "{{ customer.email | escape }}";
+   window.customerId = "{{ customer.id | escape }}";
 </script>
 <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js'></script>
 <script type='text/javascript'>
@@ -320,7 +321,7 @@ fetchImages();
       const previousBidder = bids.length > 0 ? bids[bids.length - 1] : null;
       
       const bidPayload = {
-        customerId: String(customerEmail),
+        customerId,
         auctionId: auctionIdAsInt,
         price: price,
       };

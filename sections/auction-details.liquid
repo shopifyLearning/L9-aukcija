@@ -215,7 +215,7 @@ fetchImages();
         congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
         congratulationsMessage.className = "congratulations-message";
         submitBidButton.parentElement.appendChild(congratulationsMessage);
-        sendWinnerEmail(customerId, auctionTitle, lastBid);
+        // sendWinnerEmail(customerId, auctionTitle, lastBid);
         }
 
         return;
@@ -347,9 +347,7 @@ fetchImages();
       bids = updatedAuction.bids || [];
       currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
 
-      if (previousBidder) {
-            notifyOutbidder(previousBidder.customerId, auctionTitle, previousBidder.price);
-        }
+      
       
       setTimeout(() => {
         responseMessage.style.display = "none";

@@ -334,7 +334,7 @@ fetchImages();
     return;
   }
 
-  // Proveri da li je ponuda viša od trenutne cene
+ 
   if (price <= parseFloat(currentPrice.textContent.replace('RSD ', '').replace(',', ''))) {
     responseMessage.textContent = "Your bid must be higher than the current price.";
     responseMessage.className = "error-message";
@@ -342,23 +342,23 @@ fetchImages();
     return;
   }
 
-  // Proveri poslednjeg bidera da li je isti kao trenutni korisnik
+ 
   if (bids.length > 0) {
     const lastBid = bids[bids.length - 1];
     const customerId = lastBid.customerId || "Unknown";
 
-    // Asinhrono preuzimanje e-maila korisnika na osnovu customerId
-    const email = await fetchCustomerEmailById(customerId);  // Koristi await da sačekaš rezultat
+   
+    const email = await fetchCustomerEmailById(customerId);  
 
     if (email === customerEmail) {
       responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
       responseMessage.className = "error-message";
       responseMessage.style.display = "block";
-      return; // Prekida funkciju nakon prikaza greške
+      return; 
     }
   }
 
-  // Ako je sve u redu, omogući sledeći korak
+ 
   submitBidButton.disabled = true;
   submitBidButton.style.opacity = 0.5;
   bidInput.disabled = true;

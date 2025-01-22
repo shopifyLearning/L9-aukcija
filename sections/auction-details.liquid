@@ -341,7 +341,7 @@ fetchImages();
     }
 
      if (bids.length > 0) {
-  console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxx", lastBid);
+  console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxx", customerEmail);
    if (lastBid.customerId === customerEmail) {
   const customerId = lastBid.customerId || "Unknown";
   responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";

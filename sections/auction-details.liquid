@@ -324,99 +324,96 @@ fetchImages();
 }
 
  
-  submitBidButton.addEventListener("click", async () => {
-      const lastBid = bids[bids.length - 1];
-    const price = parseFloat(bidInput.value);
-    if (!price || price <= 0) {
-      responseMessage.textContent = "Please enter a valid bid.";
-      responseMessage.className = "error-message";
-      responseMessage.style.display = "block";
-      return;
-    }
-    if (price <= parseFloat(currentPrice.textContent.replace('RSD ', '').replace(',', ''))) {
-      responseMessage.textContent = "Your bid must be higher than the current price.";
-      responseMessage.className = "error-message";
-      responseMessage.style.display = "block";
-      return;
-    }
-    
-      
-if (bids.length > 0) {
+ submitBidButton.addEventListener("click", async () => {
+  const price = parseFloat(bidInput.value);
+  
+  if (!price || price <= 0) {
+    responseMessage.textContent = "Please enter a valid bid.";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+    return;
+  }
+
+  // Proveri da li je ponuda viša od trenutne cene
+  if (price <= parseFloat(currentPrice.textContent.replace('RSD ', '').replace(',', ''))) {
+    responseMessage.textContent = "Your bid must be higher than the current price.";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+    return;
+  }
+
+  // Proveri poslednjeg bidera da li je isti kao trenutni korisnik
+  if (bids.length > 0) {
     const lastBid = bids[bids.length - 1];
     const customerId = lastBid.customerId || "Unknown";
 
     // Asinhrono preuzimanje e-maila korisnika na osnovu customerId
-    fetchCustomerEmailById(customerId).then((email) => {
-        // Provera da li je email poslednjeg bidera isti kao trenutni korisnik
-        if (email === customerEmail) {
-            responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
-            responseMessage.className = "error-message";
-            responseMessage.style.display = "block";
+    const email = await fetchCustomerEmailById(customerId);  // Koristi await da sačekaš rezultat
 
-            // Prekidanje funkcije, sprečavanje daljeg izvršavanja
-            return; // Ovo će zaustaviti izvršavanje koda
-        }
-    });
-}
-    submitBidButton.disabled = true;
-    submitBidButton.style.opacity = 0.5;
-    bidInput.disabled = true;
-    bidInput.style.opacity = 0.5;
-
-    try {
-      const auctionIdAsInt = parseInt(auctionId, 10);
-      const previousBidder = bids.length > 0 ? bids[bids.length - 1] : null;
-      
-      const bidPayload = {
-        customerId,
-        auctionId: auctionIdAsInt,
-        price: price,
-      };
-
-      const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
-
-      const response = await fetch(bidApiUrl, {
-       method: "POST",
-       headers: {
-       "Content-Type": "application/json",
-       "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
-      },
-          body: JSON.stringify(bidPayload)
-         });
-
-      if (!response.ok) throw new Error("Failed to submit bid.");
-
-      responseMessage.textContent = "Your bid has been successfully placed!";
-      responseMessage.className = "success-message";
-      responseMessage.style.display = "block";
-
-      const updatedAuction = await response.json();
-      bids = updatedAuction.bids || [];
-      currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
-
-      
-      
-      setTimeout(() => {
-        responseMessage.style.display = "none";
-        bidInput.value = "";
-        submitBidButton.disabled = false;
-        submitBidButton.style.opacity = 1;
-        bidInput.disabled = false;
-        bidInput.style.opacity = 1;
-      }, 2000);
-
-    } catch (error) {
-      console.error("Error submitting bid:", error);
-      responseMessage.textContent = "Invalid bid amount. Please enter a bid in increments of 100";
+    if (email === customerEmail) {
+      responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
       responseMessage.className = "error-message";
       responseMessage.style.display = "block";
+      return; // Prekida funkciju nakon prikaza greške
+    }
+  }
 
+  // Ako je sve u redu, omogući sledeći korak
+  submitBidButton.disabled = true;
+  submitBidButton.style.opacity = 0.5;
+  bidInput.disabled = true;
+  bidInput.style.opacity = 0.5;
+
+  try {
+    const auctionIdAsInt = parseInt(auctionId, 10);
+    const bidPayload = {
+      customerId,
+      auctionId: auctionIdAsInt,
+      price: price,
+    };
+
+    const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
+    const response = await fetch(bidApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+      },
+      body: JSON.stringify(bidPayload)
+    });
+
+    if (!response.ok) throw new Error("Failed to submit bid.");
+
+    responseMessage.textContent = "Your bid has been successfully placed!";
+    responseMessage.className = "success-message";
+    responseMessage.style.display = "block";
+
+    const updatedAuction = await response.json();
+    bids = updatedAuction.bids || [];
+    currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
+
+    setTimeout(() => {
+      responseMessage.style.display = "none";
+      bidInput.value = "";
       submitBidButton.disabled = false;
       submitBidButton.style.opacity = 1;
       bidInput.disabled = false;
       bidInput.style.opacity = 1;
-    }
-  });
+    }, 2000);
+
+  } catch (error) {
+    console.error("Error submitting bid:", error);
+    responseMessage.textContent = "Invalid bid amount. Please enter a bid in increments of 100";
+    responseMessage.className = "error-message";
+    responseMessage.style.display = "block";
+
+    submitBidButton.disabled = false;
+    submitBidButton.style.opacity = 1;
+    bidInput.disabled = false;
+    bidInput.style.opacity = 1;
+  }
+});
+
 });
 
 

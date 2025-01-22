@@ -343,7 +343,7 @@ fetchImages();
      if (bids.length > 0) {
     const lastBid = bids[bids.length - 1];
    if (lastBid.customerId === customerEmail) {
-  
+  const customerId = lastBid.customerId || "Unknown";
   responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
   responseMessage.className = "error-message";
   responseMessage.style.display = "block";

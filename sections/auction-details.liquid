@@ -339,17 +339,26 @@ fetchImages();
       responseMessage.style.display = "block";
       return;
     }
+    
+      
+if (bids.length > 0) {
+    const lastBid = bids[bids.length - 1];
+    const customerId = lastBid.customerId || "Unknown";
 
-     if (bids.length > 0) {
-  console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxx", customerEmail);
-   if (lastBid.customerId === customerEmail) {
-  const customerId = lastBid.customerId || "Unknown";
-  responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
-  responseMessage.className = "error-message";
-  responseMessage.style.display = "block";
-  return;
+    // Asinhrono preuzimanje e-maila
+    fetchCustomerEmailById(customerId).then((email) => {
+        // Kada dobijemo email, postavljamo ga u promenljivu
+        const customerEmail = email;
+
+        // Provera da li je poslednji bid isti kao e-mail trenutnog korisnika
+        if (lastBid.customerId === customerEmail) {
+            responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
+            responseMessage.className = "error-message";
+            responseMessage.style.display = "block";
+            return;
+        }
+    });
 }
-  }
  
     submitBidButton.disabled = true;
     submitBidButton.style.opacity = 0.5;

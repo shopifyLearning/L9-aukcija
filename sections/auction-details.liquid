@@ -191,7 +191,7 @@ fetchImages();
     }
 
     
-    const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000).getTime();
+    const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000 + 3600000).getTime();
     function updateCountdown() {
       const now = new Date().getTime();
       const timeRemaining = endDateTime - now;

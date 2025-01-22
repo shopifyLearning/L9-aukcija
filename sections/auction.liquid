@@ -37,6 +37,7 @@
 
 <script>
     window.customerEmail = "{{ customer.email | escape }}";
+    window.customerId = "{{ customer.id | escape }}";
 </script>
 
 <script>  
@@ -226,6 +227,8 @@
       endDate.setDate(endDate.getDate() + durationDays);
       endDate.setHours(endDate.getHours() + 1); 
 
+      const customerId = window.customerId || null;
+      
       const startDateObj = new Date(startDate); // Ovde sam dodao +1 jer sa onim 01 u payloadu nije moglo
       //startDateObj.setHours(startDateObj.getHours() - 1 );
       
@@ -233,7 +236,7 @@
       const auctionPayload = {
         productTitle,
         description: productDescriptionHtml,
-        customerId: customerEmail,
+        customerId,
         bidderId: "bidder_id_placeholder",
         productId,
         status: "Active",

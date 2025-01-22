@@ -191,11 +191,12 @@ fetchImages();
     }
 
     
-    const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000 + 3600000).getTime();
+   const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000).getTime();
+
     function updateCountdown() {
       const now = new Date().getTime();
-      const timeRemaining = endDateTime - now;
-
+      let timeRemaining = endDateTime - now;
+      timeRemaining += 3600000;
       if (timeRemaining <= 0) {
         countdownTimer.textContent = "Auction Ended";
         clearInterval(countdownInterval);
@@ -225,6 +226,8 @@ fetchImages();
       const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      
 
       countdownTimer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }

@@ -212,7 +212,7 @@ fetchImages();
         const customerId = lastBid.customerId || "Unknown"; 
 
         const congratulationsMessage = document.createElement("p");
-        congratulationsMessage.textContent = `Congratulations ${customerId}!`; 
+        congratulationsMessage.textContent = `Congratulations ${lastBid.customerId}!`; 
         congratulationsMessage.className = "congratulations-message";
         submitBidButton.parentElement.appendChild(congratulationsMessage);
         // sendWinnerEmail(customerId, auctionTitle, lastBid);

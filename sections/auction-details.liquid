@@ -347,19 +347,17 @@ if (bids.length > 0) {
 
     // Asinhrono preuzimanje e-maila korisnika na osnovu customerId
     fetchCustomerEmailById(customerId).then((email) => {
-        
         // Provera da li je email poslednjeg bidera isti kao trenutni korisnik
         if (email === customerEmail) {
             responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
             responseMessage.className = "error-message";
             responseMessage.style.display = "block";
-            return;
+
+            // Prekidanje funkcije, sprečavanje daljeg izvršavanja
+            return; // Ovo će zaustaviti izvršavanje koda
         }
     });
 }
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxx", lastBid.customerId);
-    console.log("zzzzzzzzzzzzzzzzzzzzz", customerEmail);
- 
     submitBidButton.disabled = true;
     submitBidButton.style.opacity = 0.5;
     bidInput.disabled = true;

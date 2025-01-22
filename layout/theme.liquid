@@ -402,7 +402,7 @@
 
       .sidebar .apply-button:hover {
         background-color: #0056b3; /* Darker blue on hover */
-      }      
+      }
     </style>
   </head>
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -567,8 +567,8 @@
             console.log('Finishing soon:', finishingSoonChecked);
             console.log('Price order:', priceOrderValue);
 
-            // You can also use the values to filter data here
-            // filterData(newAuctionsChecked, finishingSoonChecked, priceOrderValue);
+            // Reload current page with filter applied
+            location.reload();
         });
 
         // When the page loads, you might want to restore the values from localStorage

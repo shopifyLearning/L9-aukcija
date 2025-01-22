@@ -325,6 +325,7 @@ fetchImages();
 
  
   submitBidButton.addEventListener("click", async () => {
+      const lastBid = bids[bids.length - 1];
     const price = parseFloat(bidInput.value);
     if (!price || price <= 0) {
       responseMessage.textContent = "Please enter a valid bid.";
@@ -340,7 +341,7 @@ fetchImages();
     }
 
      if (bids.length > 0) {
-    const lastBid = bids[bids.length - 1];
+  
    if (lastBid.customerId === customerEmail) {
   const customerId = lastBid.customerId || "Unknown";
   responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";

@@ -51,7 +51,7 @@
     const isExpired = oneHourEarlier < now; 
     const cardClass = isExpired ? "auction-card expired" : "auction-card";
     const expiredLabel = isExpired
-        ? `<span class="expired-label">Expired</span>`
+        ? `<span class="expired-label">Finished</span>`
         : "";
 
     return `

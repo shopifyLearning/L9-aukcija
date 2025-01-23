@@ -68,8 +68,8 @@
         
         const auctions = await response.json();
 
-     
-        const userAuctions = auctions.filter((auction) => auction.customerId === customerEmail);
+        const customerId = String(window.customerId || null);
+        const userAuctions = auctions.filter((auction) => auction.customerId === customerId);
 
         if (userAuctions.length === 0) {
           auctionListContainer.innerHTML = "<p>You have not created any auctions yet.</p>";

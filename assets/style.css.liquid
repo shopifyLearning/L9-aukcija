@@ -1507,17 +1507,14 @@ input:disabled, button:disabled {
 }
 
 .expired-label {
-  position: absolute;
-  top: 10px;
-  right: 10px; 
-  background-color: rgba(200, 0, 0, 0.9); 
-  color: white;
-  padding: 5px 10px;
-  font-size: 12px;
+    opacity: 1; /* Poništi izbleđivanje za natpis "Finished" */
+  position: absolute; /* Omogućava slobodno pozicioniranje natpisa */
+  top: 10px; /* Prilagodite po potrebi */
+  right: 10px; /* Prilagodite po potrebi */
+  background-color: #fff; /* Opcionalno: pozadina za kontrast */
+  color: #ff0000; /* Opcionalno: naglasite boju natpisa */
   font-weight: bold;
-  border-radius: 5px;
-  opacity: 1; 
-  z-index: 50; 
+  z-index: 2;
 }
 
 .pagination {

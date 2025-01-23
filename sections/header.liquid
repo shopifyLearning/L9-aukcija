@@ -519,7 +519,7 @@
       console.log('Logged in customer email:' + customerEmail); // Debug log
 
       try {
-        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerEmail;
+        const notificationsUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/" + customerId;
 
         const response = await fetch(notificationsUrl, {
           method: "GET",

@@ -37,7 +37,7 @@
       const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
       const isExpired = new Date(auction.endDate) < new Date();
       const cardClass = isExpired ? "auction-card expired" : "auction-card";
-      const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
+      const expiredLabel = isExpired ? `<span class="expired-label">Finished</span>` : "";
 
       return `
         <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">

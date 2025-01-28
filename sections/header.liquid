@@ -335,9 +335,9 @@
       </form>
 
       <div class="account-icon-container">
-        <a href="/account" class="account-icon">
+        <div class="account-icon">
           <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
-        </a>
+        </div>
         <div class="account-dropdown" id="account-dropdown">
           <div class="list-menu">
             <div class="list-menu__item list-menu__item--link" onclick="window.location.href='/account/logout';">Log out</div>
@@ -824,40 +824,46 @@
     addAccountDropdownEventListeners() {
       const accountIcon = document.querySelector('.account-icon');
       if (!accountIcon) {
-        console.error('Account icon element not found'); // Debug log
+        console.error('Account icon element not found');
         return;
       }
 
       const accountDropdown = document.getElementById('account-dropdown');
       if (!accountDropdown) {
-        console.error('Account dropdown element not found'); // Debug log
+        console.error('Account dropdown element not found');
         return;
       }
+
+      // Prevent default click behavior
+      accountIcon.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent navigation
+        event.stopPropagation(); // Stop event bubbling
+      });
 
       // Add hover event listeners to the account icon
       accountIcon.addEventListener('mouseover', this.accountIconMouseOverHandler = () => {
         this.isMouseOverAccountIcon = true;
         this.updateDropdownVisibility();
-        console.log('Account icon mouseover triggered'); // Debug log
+        console.log('Account icon mouseover triggered');
       });
 
       accountIcon.addEventListener('mouseout', this.accountIconMouseOutHandler = () => {
         this.isMouseOverAccountIcon = false;
         this.updateDropdownVisibility();
-        console.log('Account icon mouseout triggered'); // Debug log
+        console.log('Account icon mouseout triggered');
       });
 
       // Add hover event listeners to the account dropdown
       accountDropdown.addEventListener('mouseover', this.accountDropdownMouseOverHandler = () => {
         this.isMouseOverAccountDropdown = true;
         this.updateDropdownVisibility();
-        console.log('Account dropdown mouseover triggered'); // Debug log
+        console.log('Account dropdown mouseover triggered');
       });
 
       accountDropdown.addEventListener('mouseout', this.accountDropdownMouseOutHandler = () => {
         this.isMouseOverAccountDropdown = false;
         this.updateDropdownVisibility();
-        console.log('Account dropdown mouseout triggered'); // Debug log
+        console.log('Account dropdown mouseout triggered');
       });
     }
 

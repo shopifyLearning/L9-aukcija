@@ -110,6 +110,7 @@ const handleStringToDate = (date) => {
   const responseMessage = document.getElementById("response-message");
   const countdownTimer = document.getElementById("countdown-timer");
 
+
     
 
   try {
@@ -223,7 +224,23 @@ fetchImages();
       const lastBid = bids[bids.length - 1];
      
     }
+      const auctionStartDate = new Date(auction.startDate).getTime();
+  const now = new Date().getTime();
 
+if (now < auctionStartDate) {
+  bidInput.disabled = true;
+  submitBidButton.disabled = true;
+  bidInput.style.opacity = 0.5;
+  submitBidButton.style.opacity = 0.5;
+
+  const comingSoonMessage = document.createElement("p");
+  comingSoonMessage.textContent = "📅  Auction Not Started";
+  comingSoonMessage.className = "info-message";
+  comingSoonMessage.style.color = "#d9534f"; 
+  comingSoonMessage.style.fontWeight = "bold";
+  comingSoonMessage.style.marginTop = "10px";
+  submitBidButton.parentElement.appendChild(comingSoonMessage);
+}
     
    const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000).getTime();
 
@@ -413,6 +430,7 @@ fetchImages();
     bidInput.style.opacity = 1;
   }
 });
+    
 
 });
 

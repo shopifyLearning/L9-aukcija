@@ -1,4 +1,18 @@
 <style>
+
+  /* CSS Variables */
+  :root {
+    --font-body-scale: 1; /* Example variable */
+    --color-primary: #0D40C4;
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray: #f9f9f9;
+    --font-size-large: 1.8rem;
+    --font-size-medium: 1.5rem;
+    --font-size-small: 1rem;
+    --border-radius: 5px;    
+  }
+
   header-drawer {
     justify-self: start;
     margin-left: -1.2rem;
@@ -109,7 +123,7 @@
 
   .header {
     width: 100%;
-    background-color: #0D40C4;
+    background-color: var(--color-primary);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -161,80 +175,6 @@
     margin-left: 10px; /* Adjust margin as necessary */
   }
 
-  /* Notification Dropdown Styles */
-  .notification-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    width: 300px;
-    z-index: 1001;
-    display: none; /* Initially hidden */
-  }
-
-  .notification-bell:hover + .notification-dropdown {
-    display: block; /* Show dropdown on hover */
-  }
-
-  /*
-    .notification-dropdown.active { 
-      display: block;
-    }
-  */
-
-  .notification-count {
-    position: flex;
-    top: -5px;
-    right: 10px;
-    width: 40px; /* Adjusted to be equal to height */
-    height: 5px; /* Adjusted to be equal to width */
-    background-color: red;
-    color: white;
-    border-radius: 10%;
-    margin-left: 0rem; /* Adjust margin as necessary */
-    padding: 2px 10px;
-    font-size: 2rem;
-    display: block; /* Always display the notification count */
-    text-align: center;    
-  }
-
-  .notification-count.zero {
-    background-color: blue; /* Blue background when there are no notifications */
-  }
-
-  .notification-item {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-  }
-
-  .notification-item:last-child {
-    border-bottom: none;
-  }
-
-  .notification-item:hover {
-    background-color: #f9f9f9;
-  }
-
-  .notification-item a {
-    text-decoration: none;
-    color: black;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .notification-item a .notification-time {
-    font-size: 0.8rem;
-    color: #555;
-  }
-
-  .notification-item a .notification-message {
-    font-size: 1rem;
-  }
-
   .store-name {
     font-size: 1.8rem;
     font-weight: bold;
@@ -274,7 +214,7 @@
   /* Account Dropdown Styles */
   .account-dropdown {
     position: absolute;
-    top: calc(100% - 7px); /* Adjusted to overlap slightly */
+    top: calc(100% - 2px); /* Adjusted to overlap slightly */
     right: 0;
     background-color: white;
     border: 1px solid #ccc;
@@ -292,12 +232,45 @@
     margin-left: 10px; /* Adjust margin as necessary */
   }
 
+  .account-dropdown .list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--color-primary); /* Blue background */
+    color: var(--color-white);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+  }
+
+  .account-dropdown .list-menu__item {
+    color: var(--color-white);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .account-dropdown .list-menu__item:hover {
+    background-color: var(--color-white); /* White background on hover */
+    color: var(--color-primary);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+  }
+
   /* Account Icon Styles */
   .account-icon {
-    font-size: 1.5rem;
-    cursor: pointer;
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(102%) contrast(102%);    
-  }  
+      background-color: var(--color-primary); /* Blue background by default */
+      color: white; /* White text */
+      cursor: pointer;
+      border: none;
+      padding: 5px;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .account-icon:hover {
+      background-color: var(--color-white); /* White background on hover */
+      color: var(--color-primary); /* Blue text on hover */
+  }
 
   .account-icon svg {
     fill: #ffffff; /* Lighter color for SVG icon */
@@ -310,8 +283,122 @@
   .account-icon-container {
     position: relative;
     margin-left: 10px; /* Adjust margin as necessary */
-    margin-top: 8px; /* Adjust margin as necessary */
+    margin-top: 2px; /* Adjust margin as necessary */
   }
+
+  /* Notification Bell Styles */
+  .header__icon--notifications {
+    background-color: var(--color-primary); /* Blue background by default */
+    color: white; /* White text */
+    cursor: pointer;
+    border: none;
+    padding: 5px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header__icon--notifications:hover {
+    background-color: var(--color-white); /* White background on hover */
+    color: var(--color-primary); /* Blue text on hover */
+  }
+
+  .header__icon--notifications svg {
+    fill: #ffffff; /* Lighter color for SVG icon */
+  }
+
+  .header__icon--notifications:hover svg {
+    fill: #ffffff; /* Keep the same color on hover for consistency */
+  }
+
+  /* Notification Dropdown Styles */
+  .notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1001;
+    display: none; /* Initially hidden */
+  }
+
+  .notification-bell:hover + .notification-dropdown {
+    display: block; /* Show dropdown on hover */
+  }
+
+  .notification-dropdown:hover {
+    display: block; /* Keep dropdown visible when hovered */
+  }
+
+  /*
+    .notification-dropdown.active { 
+      display: block;
+    }
+  */
+
+  .notification-count {
+    position: flex;
+    top: -px;
+    right: 10px;
+    width: 40px; /* Adjusted to be equal to height */
+    height: 5px; /* Adjusted to be equal to width */
+    background-color: red;
+    color: white;
+    border-radius: 10%;
+    margin-left: 0rem; /* Adjust margin as necessary */
+    padding: 1px 10px;
+    font-size: 2rem;
+    display: block; /* Always display the notification count */
+    text-align: center;    
+  }
+
+  .notification-count.zero {
+    background-color: white; /* Blue background when there are no notifications */
+    color: black;
+  }
+
+  .notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    color: black;
+    border-radius: 2%;
+  }
+
+  .notification-item:hover .notification-time,
+  .notification-item:hover .notification-message {
+    color: white; /* Ensure both spans inside the notification change to white */
+  }
+
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+
+  .notification-item:hover {
+    background-color: var(--color-primary); /* Blue background on hover */
+    color: var(--color-white); /* White text on hover */
+  }
+
+  .notification-item a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .notification-item a .notification-time {
+    font-size: 0.8rem;
+    color: #555;
+  }
+
+  .notification-item a .notification-message {
+    font-size: 1rem;
+  }
+
 </style>
 
 <body>
@@ -335,9 +422,9 @@
       </form>
 
       <div class="account-icon-container">
-        <a href="/account" class="account-icon">
+        <div class="account-icon">
           <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
-        </a>
+        </div>
         <div class="account-dropdown" id="account-dropdown">
           <div class="list-menu">
             <div class="list-menu__item list-menu__item--link" onclick="window.location.href='/account/logout';">Log out</div>
@@ -498,6 +585,7 @@
     }
 
     async checkNotifications() {
+      console.log('### Notif check init ... ###'); // Debug log
       const currentTime = new Date();
       if (this.lastCheckTime) {
         const timeSinceLastCheck = (currentTime - this.lastCheckTime) / 1000; // Calculate time in seconds
@@ -824,40 +912,46 @@
     addAccountDropdownEventListeners() {
       const accountIcon = document.querySelector('.account-icon');
       if (!accountIcon) {
-        console.error('Account icon element not found'); // Debug log
+        console.error('Account icon element not found');
         return;
       }
 
       const accountDropdown = document.getElementById('account-dropdown');
       if (!accountDropdown) {
-        console.error('Account dropdown element not found'); // Debug log
+        console.error('Account dropdown element not found');
         return;
       }
+
+      // Prevent default click behavior
+      accountIcon.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent navigation
+        event.stopPropagation(); // Stop event bubbling
+      });
 
       // Add hover event listeners to the account icon
       accountIcon.addEventListener('mouseover', this.accountIconMouseOverHandler = () => {
         this.isMouseOverAccountIcon = true;
         this.updateDropdownVisibility();
-        console.log('Account icon mouseover triggered'); // Debug log
+        console.log('Account icon mouseover triggered');
       });
 
       accountIcon.addEventListener('mouseout', this.accountIconMouseOutHandler = () => {
         this.isMouseOverAccountIcon = false;
         this.updateDropdownVisibility();
-        console.log('Account icon mouseout triggered'); // Debug log
+        console.log('Account icon mouseout triggered');
       });
 
       // Add hover event listeners to the account dropdown
       accountDropdown.addEventListener('mouseover', this.accountDropdownMouseOverHandler = () => {
         this.isMouseOverAccountDropdown = true;
         this.updateDropdownVisibility();
-        console.log('Account dropdown mouseover triggered'); // Debug log
+        console.log('Account dropdown mouseover triggered');
       });
 
       accountDropdown.addEventListener('mouseout', this.accountDropdownMouseOutHandler = () => {
         this.isMouseOverAccountDropdown = false;
         this.updateDropdownVisibility();
-        console.log('Account dropdown mouseout triggered'); // Debug log
+        console.log('Account dropdown mouseout triggered');
       });
     }
 

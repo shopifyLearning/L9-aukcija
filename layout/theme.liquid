@@ -338,13 +338,14 @@
     <style>
       .sidebar {
         display: none; /* Hide by default */
-        position: fixed;
-        top: 200px;
-        left: 95px;
-        width: 260px;
+        position: absolute; /* Position based on the nearest positioned ancestor */
+        top: 20%; /* Position from the top, 20% of viewport height */
+        left: 5%; /* Position from the left, 5% of viewport width */
+        width: 20%; /* Width as a percentage of the viewport width */
+        max-width: 25.7143vw; /* Limit the maximum width */
         height: fit-content; /* Adjusts height to fit the content */
         background-color: #fff;
-        padding: 50px;
+        padding: 5% 5% 5% 1.85714vw; /* Padding as a percentage of the viewport width, with left padding for 5 mm */
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
         border-radius: 6px; /* Slightly rounded corners */
         box-sizing: border-box; 
@@ -354,15 +355,12 @@
         display: block;
       }
       
-      .sidebar h3 {
-        margin-top: 0;
-      }
-      
       .sidebar label {
         display: block;
         margin-bottom: 10px;
         color: #0D40C4; /* Blue color for the labels */
         font-size: 1.4rem; /* Adjusted font size */
+        margin-left: 0; /* Align to the left edge of the sidebar */
       }
 
       .sidebar select {
@@ -374,6 +372,7 @@
         color: #0D40C4; /* Blue color for the select text */
         background-color: #fff; /* White background */
         margin-top: -10px; /* Adds a small margin above the select */
+        margin-left: 0; /* Align to the left edge of the sidebar */
       }
 
       .sidebar option {
@@ -382,11 +381,13 @@
 
       .sidebar input[type="checkbox"] {
         margin-right: 5px; /* Adds space between checkbox and label */
+        margin-left: 0; /* Align to the left edge of the sidebar */
       }
 
       .sidebar select, .sidebar .apply-button {
-        width: 100%; /* Ensures the select and button take the full width */
+        width: 125%; /* Ensures the select and button are properly resized */
         box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        margin-left: 0; /* Align to the left edge of the sidebar */
       }
 
       .sidebar .apply-button {
@@ -403,6 +404,45 @@
       .sidebar .apply-button:hover {
         background-color: #0056b3; /* Darker blue on hover */
       }
+
+      /* Responsive adjustments */
+      @media screen and (max-width: 750px) {
+        .sidebar {
+          position: fixed; /* Stay in place on smaller screens */
+          top: 0;
+          left: 0;
+          width: 100%; /* Full width on smaller screens */
+          height: 100%; /* Full height on smaller screens */
+          padding: 15px 15px 15px 1.85714vw; /* Increased padding for smaller screens, with left padding for 5 mm */
+          box-shadow: none; /* No shadow on smaller screens */
+        }
+
+        .sidebar.active {
+          top: 0; /* Ensure the sidebar aligns with the top of the viewport */
+        }
+
+        .sidebar label {
+          font-size: 1.2rem; /* Smaller font size for smaller screens */
+        }
+
+        .sidebar select, .sidebar input[type="checkbox"], .sidebar .apply-button {
+          width: 100%; /* Full width of the sidebar */
+          box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        }
+
+        .sidebar .apply-button {
+          margin-top: 15px; /* Adjust margin for smaller screens */
+        }
+      }      
+
+      /* Additional CSS to align sidebar with auction-list-container on smaller screens */
+      @media screen and (max-width: 750px) {
+        .sidebar.active {
+          top: 0; /* Align with the top of the viewport or auction-list-container */
+          /* You can adjust the top value if auction-list-container has a specific offset */
+        }
+      }
+      
     </style>
   </head>
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -421,7 +461,6 @@
       </script>
       <!-- Show sidebar for logged in customers -->
       <div class="sidebar active">
-        <h3></h3>
         <label>
           <input type="checkbox" id="new-auctions"> New auctions
         </label>
@@ -551,6 +590,20 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          function alignSidebar() {
+            const auctionListContainer = document.querySelector('.auction-list-container');
+            const sidebar = document.querySelector('.sidebar.active');
+            if (auctionListContainer && sidebar) {
+              const offsetTop = auctionListContainer.offsetTop + 20;
+              sidebar.style.top = `${offsetTop}px`;
+            }
+          }
+
+          alignSidebar();
+          window.addEventListener('resize', alignSidebar);
+        });
+
         document.querySelector('.apply-button').addEventListener('click', function() {
             // Retrieve the values from the sidebar elements
             const newAuctionsChecked = document.getElementById('new-auctions').checked;

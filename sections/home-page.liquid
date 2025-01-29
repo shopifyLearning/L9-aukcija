@@ -54,7 +54,7 @@
     const expiredLabel = isExpired
         ? `<span class="expired-label">Finished</span>`
         : "";
-    const comingSoonLabel = isComingSoon ? `<span class="coming-soon-label">Upcoming Auction</span>` : "";
+    const comingSoonLabel = isComingSoon ? `<span class="coming-soon-label">Upcoming</span>` : "";
 
     return `
       <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">

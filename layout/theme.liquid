@@ -7,6 +7,117 @@
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
 
+    <style>
+      :root {
+        --sidebar-width: 200px;
+        --sidebar-min-width: 180px;
+        --sidebar-max-width: 250px;
+        --sidebar-padding: 15px; /* Fixed padding */
+        --sidebar-bg-color: #fff;
+        --sidebar-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        --sidebar-border-radius: 6px;
+        --sidebar-label-color: #0D40C4;
+        --sidebar-font-size: 1.2rem; /* Fixed font size */
+        --sidebar-button-bg: #0D40C4;
+        --sidebar-button-hover-bg: #0056b3;
+        --sidebar-button-color: white;
+      }
+
+      .sidebar {
+        display: none;
+        position: absolute;
+        top: 20%; /* Fixed position from the top */
+        left: 5%; /* Fixed position from the left */
+        width: var(--sidebar-width); /* Fixed width */
+        min-width: var(--sidebar-min-width);
+        max-width: var(--sidebar-max-width);
+        height: fit-content;
+        background-color: var(--sidebar-bg-color);
+        padding: var(--sidebar-padding); /* Fixed padding */
+        box-shadow: var(--sidebar-shadow);
+        border-radius: var(--sidebar-border-radius);
+        box-sizing: border-box;
+      }
+      
+      .sidebar.active {
+        display: block;
+      }
+      
+      .sidebar label,
+      .sidebar select,
+      .sidebar option,
+      .sidebar .apply-button {
+        font-size: var(--sidebar-font-size);
+        color: var(--sidebar-label-color);
+      }
+
+      .sidebar label {
+        display: block;
+        margin-bottom: 10px;
+        margin-left: 0;
+      }
+
+      .sidebar select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--sidebar-label-color);
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: -10px;
+        margin-left: 0;
+      }
+
+      .sidebar input[type="checkbox"] {
+        margin-right: 5px;
+      }
+
+      .sidebar select, .sidebar .apply-button {
+        width: 100%; /* Ensures the select and button are properly resized */
+        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+      }
+
+      .sidebar .apply-button {
+        width: 100%;
+        box-sizing: border-box;
+        background-color: var(--sidebar-button-bg);
+        color: var(--sidebar-button-color);
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: 10px;
+        margin-left: 0;
+      }
+
+      .sidebar .apply-button:hover {
+        background-color: var(--sidebar-button-hover-bg);
+      }
+
+      @media screen and (max-width: 350px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          padding: 15px;
+          box-shadow: none;
+          width: var(--sidebar-width);
+        }
+
+        .sidebar select,
+        .sidebar input[type="checkbox"],
+        .sidebar .apply-button {
+          width: 100%;
+          padding: 10px;
+        }
+
+        .sidebar .apply-button {
+          margin-top: 15px;
+        }
+      }
+    </style>
+
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
@@ -334,76 +445,6 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-
-    <style>
-      .sidebar {
-        display: none; /* Hide by default */
-        position: fixed;
-        top: 200px;
-        left: 95px;
-        width: 260px;
-        height: fit-content; /* Adjusts height to fit the content */
-        background-color: #fff;
-        padding: 50px;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-        border-radius: 6px; /* Slightly rounded corners */
-        box-sizing: border-box; 
-      }
-      
-      .sidebar.active {
-        display: block;
-      }
-      
-      .sidebar h3 {
-        margin-top: 0;
-      }
-      
-      .sidebar label {
-        display: block;
-        margin-bottom: 10px;
-        color: #0D40C4; /* Blue color for the labels */
-        font-size: 1.4rem; /* Adjusted font size */
-      }
-
-      .sidebar select {
-        width: 100%; /* Ensures the select takes the full width */
-        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
-        border: 1px solid #0D40C4; /* Light blue border */
-        border-radius: 4px; /* Slightly rounded corners */
-        padding: 8px; /* Adds some padding inside the select */
-        color: #0D40C4; /* Blue color for the select text */
-        background-color: #fff; /* White background */
-        margin-top: -10px; /* Adds a small margin above the select */
-      }
-
-      .sidebar option {
-        color: #0D40C4; /* Blue color for the labels */
-      }
-
-      .sidebar input[type="checkbox"] {
-        margin-right: 5px; /* Adds space between checkbox and label */
-      }
-
-      .sidebar select, .sidebar .apply-button {
-        width: 100%; /* Ensures the select and button take the full width */
-        box-sizing: border-box; /* Includes padding and border in the element's total width and height */
-      }
-
-      .sidebar .apply-button {
-        background-color: #0D40C4; /* Blue background */
-        color: white; /* White letters */
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        border-radius: 5px; /* Rounded corners for the button */
-        text-align: center;
-        margin-top: 20px;
-      }
-
-      .sidebar .apply-button:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-      }
-    </style>
   </head>
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
@@ -421,7 +462,6 @@
       </script>
       <!-- Show sidebar for logged in customers -->
       <div class="sidebar active">
-        <h3></h3>
         <label>
           <input type="checkbox" id="new-auctions"> New auctions
         </label>
@@ -551,6 +591,20 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          function alignSidebar() {
+            const auctionListContainer = document.querySelector('.auction-list-container');
+            const sidebar = document.querySelector('.sidebar.active');
+            if (auctionListContainer && sidebar) {
+              const offsetTop = auctionListContainer.offsetTop + 20;
+              sidebar.style.top = `${offsetTop}px`;
+            }
+          }
+
+          alignSidebar();
+          window.addEventListener('resize', alignSidebar);
+        });
+
         document.querySelector('.apply-button').addEventListener('click', function() {
             // Retrieve the values from the sidebar elements
             const newAuctionsChecked = document.getElementById('new-auctions').checked;

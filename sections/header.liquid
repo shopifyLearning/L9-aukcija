@@ -13,109 +13,12 @@
     --border-radius: 5px;    
   }
 
-  .menu-drawer-container {
-    display: flex;
-  }
-
-  .list-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .list-menu--inline {
-    display: inline-flex;
-    flex-wrap: wrap;
-  }
-
-  summary.list-menu__item {
-    padding-right: 2.7rem;
-  }
-
-  .list-menu__item {
-    display: flex;
-    align-items: center;
-    line-height: calc(1 + 0.3 / var(--font-body-scale));
-  }
-
-  .list-menu__item--link {
-    text-decoration: none;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
-    line-height: calc(1 + 0.8 / var(--font-body-scale));
-    cursor: pointer;
-    color: black; /* Set font color to black */
-    text-align: center; /* Align text to the right */
-    padding-left: 10px; /* Add padding to the right for better alignment */
-  }
-
-  .list-menu__item--link:hover {
-    background-color: #f9f9f9;
-  }
-
-  @media screen and (min-width: 750px) {
-    .list-menu__item--link {
-      padding-bottom: 0.5rem;
-      padding-top: 0.5rem;
-    }
-  }
-
-  /* Popup Styles */
-  #popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    text-align: center;
-    z-index: 1000;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  #popup.active {
-    display: block;
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-
-  #popup p {
-    margin: 10px 0 0 0; /* Moved text down by 10 pixels */
-    font-size: 1.5rem;
-    color: #333;
-  }
-
-  #popup .close-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    height: 20px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1.2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #popup .close-icon:hover {
-    background-color: #ff1a1a;
-  }
-
   body {
     margin: 0;
     font-family: Arial, sans-serif;
   }
 
+  /* Header Styles */
   .header {
     width: 100%;
     background-color: var(--color-primary);
@@ -127,37 +30,6 @@
     box-sizing: border-box;
   }
 
-  .search-bar {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-
-  .search-bar input {
-    width: 200px;
-    padding: 6px;
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    margin-right: 10px;
-  }
-
-  .search-bar button {
-    background-color: #ffffff;
-    color: #0D40C4; 
-    border: 2px solid #0D40C4;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-  }
-
-  .search-bar button:hover {
-    background-color: #0D40C4; 
-    color: white; 
-  }
-
   .store-logo {
     height: 40px; 
     width: auto;
@@ -165,30 +37,13 @@
     vertical-align: middle; 
   }
 
-  .header__notifications {
-    position: relative;
-    margin-left: 10px; /* Adjust margin as necessary */
-  }
-
   .store-name {
-    font-size: 1.8rem;
+    font-size: var(--font-size-large);
     font-weight: bold;
     font-style: italic;
     letter-spacing: 1px;
     display: flex;
     align-items: center; 
-  }
-
-  .header-link {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-    padding: 0 10px;
-  }
-
-  .header-link:hover {
-    text-decoration: underline;
   }
 
   .header-links-container {
@@ -206,85 +61,150 @@
     margin-left: 170px; /* Move the entire section 1 centimeter (100px) to the right */
   }
 
-  /* Account Dropdown Styles */
-  .account-dropdown {
-    position: absolute;
-    top: calc(100% - 2px); /* Adjusted to overlap slightly */
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    width: 60px;
-    z-index: 1001;
-    display: none; /* Initially hidden */
-    font-size: 1rem; /* Ensure font size is set */
+  .header-link {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    padding: 0 10px;
   }
 
-  /* Ensure the account icon is positioned correctly */
-  .header__notifications {
-    position: relative;
-    margin-left: 10px; /* Adjust margin as necessary */
+  .header-link:hover {
+    text-decoration: underline;
   }
 
-  .account-dropdown .list-menu {
+  /* Search Bar Styles */
+  .search-bar {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-bar input {
+    width: 200px;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    margin-right: 10px;
+  }
+
+  .search-bar button {
+    background-color: var(--color-white);
+    color: var(--color-primary); 
+    border: 2px solid var(--color-primary);
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: var(--font-size-small);
+    font-weight: bold;
+  }
+
+  .search-bar button:hover {
+    background-color: var(--color-primary); 
+    color: white; 
+  }
+
+  /* Menu Drawer Styles */
+  .menu-drawer-container {
+    display: flex;
+  }
+
+  .list-menu {
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: var(--color-white); /* White background */
-    color: var(--color-primary);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: var(--border-radius);
   }
 
-  .account-dropdown .list-menu__item {
-    color: var(--color-primary);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  .list-menu--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
   }
 
-  .account-dropdown .list-menu__item:hover {
-    background-color: var(--color-primary); /* Blue background on hover */
+  .list-menu__item {
+    display: flex;
+    align-items: center;
+    line-height: calc(1 + 0.3 / var(--font-body-scale));
+  }
+
+  .list-menu__item--link {
+    text-decoration: none;
+    padding: 1rem 10px;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+    cursor: pointer;
+    color: var(--color-black); /* Set font color to black */
+    text-align: center; /* Align text to the center */
+  }
+
+  .list-menu__item--link:hover {
+    background-color: var(--color-gray);
+  }
+
+  summary.list-menu__item {
+    padding-right: 2.7rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .list-menu__item--link {
+      padding: 0.5rem 10px;
+    }
+  }
+
+  /* Popup Styles */
+  #popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-white);
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+  }
+
+  #popup.active {
+    display: block;
+    opacity: 1;
+  }
+
+  #popup p {
+    margin-top: 10px; /* Moved text down by 10 pixels */
+    font-size: var(--font-size-medium);
+    color: #333;
+  }
+
+  #popup .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4d4d;
     color: var(--color-white);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: var(--border-radius);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Account Icon Styles */
-  .account-icon {
-      background-color: var(--color-primary); /* Blue background by default */
-      color: white; /* White text */
-      cursor: pointer;
-      border: none;
-      padding: 5px;
-      border-radius: var(--border-radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  #popup .close-icon:hover {
+    background-color: #ff1a1a;
   }
 
-  .account-icon:hover {
-      background-color: var(--color-white); /* White background on hover */
-      color: var(--color-primary); /* Blue text on hover */
-  }
-
-  .account-icon svg {
-    fill: #ffffff; /* Lighter color for SVG icon */
-  }
-
-  .account-icon:hover svg {
-    fill: #ffffff; /* Keep the same color on hover for consistency */
-  }
-
-  .account-icon-container {
-    position: relative;
-    margin-left: 10px; /* Adjust margin as necessary */
-    margin-top: 2px; /* Adjust margin as necessary */
-  }
-
-  /* Notification Bell Styles */
+  /* Icon Styles */
+  .account-icon,
   .header__icon--notifications {
     background-color: var(--color-primary); /* Blue background by default */
-    color: white; /* White text */
+    color: var(--color-white); /* White text */
     cursor: pointer;
     border: none;
     padding: 5px;
@@ -294,17 +214,58 @@
     justify-content: center;
   }
 
+  .account-icon:hover,
   .header__icon--notifications:hover {
-    background-color: var(--color-white); /* White background on hover */
-    color: var(--color-primary); /* Blue text on hover */
+      background-color: var(--color-white); /* White background on hover */
+      color: var(--color-primary); /* Blue text on hover */
   }
 
+  .account-icon svg,
   .header__icon--notifications svg {
-    fill: #ffffff; /* Lighter color for SVG icon */
+    fill: var(--color-white); /* Lighter color for SVG icon */
   }
 
-  .header__icon--notifications:hover svg {
-    fill: #ffffff; /* Keep the same color on hover for consistency */
+  /* Account Dropdown Styles */
+  .account-dropdown {
+    position: absolute;
+    top: calc(100% - 2px); /* Adjusted to overlap slightly */
+    right: 0;
+    background-color: var(--color-white);
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    width: 60px;
+    z-index: 1001;
+    display: none; /* Initially hidden */
+    font-size: var(--font-size-small); /* Ensure font size is set */
+  }
+
+  .account-icon-container {
+    position: relative;
+    margin-left: 10px; /* Adjust margin as necessary */
+    margin-top: 2px; /* Adjust margin as necessary */
+  }
+
+  .account-dropdown .list-menu, .account-dropdown .list-menu__item, .notification-dropdown,
+  .account-dropdown .list-menu__item:hover, .notification-item:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+  }
+
+  .account-dropdown .list-menu__item {
+    background-color: var(--color-white); /* White background */
+    color: var(--color-primary);
+  }
+
+  .account-dropdown .list-menu__item:hover {
+    background-color: var(--color-primary); /* Blue background on hover */
+    color: var(--color-white);
+  }
+
+  /* Notification Bell Styles */
+  .header__notifications {
+    position: relative;
+    margin-left: 10px; /* Adjust margin as necessary */
   }
 
   /* Notification Dropdown Styles */
@@ -312,70 +273,53 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: white;
+    background-color: var(--color-white);
     border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
     width: 300px;
     z-index: 1001;
     display: none; /* Initially hidden */
   }
 
-  .notification-bell:hover + .notification-dropdown {
+  .notification-bell:hover + .notification-dropdown,
+  .notification-dropdown:hover {
     display: block; /* Show dropdown on hover */
   }
 
-  .notification-dropdown:hover {
-    display: block; /* Keep dropdown visible when hovered */
-  }
-
-  /*
-    .notification-dropdown.active { 
-      display: block;
-    }
-  */
-
+  /* Notification Count Styles */
   .notification-count {
     position: flex;
-    top: -px;
-    right: 10px;
     width: 40px; /* Adjusted to be equal to height */
-    height: 5px; /* Adjusted to be equal to width */
     background-color: red;
-    color: white;
+    color: var(--color-white);
     border-radius: 10%;
     margin-left: 0rem; /* Adjust margin as necessary */
     padding: 1px 10px;
     font-size: 2rem;
     display: block; /* Always display the notification count */
-    text-align: center;    
+    align-items: center;
+    justify-content: center;
   }
 
   .notification-count.zero {
-    background-color: white; /* Blue background when there are no notifications */
-    color: black;
+    background-color: var(--color-white); /* White background when there are no notifications */
+    color: var(--color-primary);
   }
 
+  /* Notification Item Styles */
   .notification-item {
     padding: 10px 15px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
     color: black;
-    border-radius: 2%;
-  }
-
-  .notification-item:hover .notification-time,
-  .notification-item:hover .notification-message {
-    color: white; /* Ensure both spans inside the notification change to white */
-  }
-
-  .notification-item:last-child {
-    border-bottom: none;
   }
 
   .notification-item:hover {
     background-color: var(--color-primary); /* Blue background on hover */
     color: var(--color-white); /* White text on hover */
+  }
+
+  .notification-item:last-child {
+    border-bottom: none;
   }
 
   .notification-item a {
@@ -394,6 +338,10 @@
     font-size: 1rem;
   }
 
+  .notification-item:hover .notification-time,
+  .notification-item:hover .notification-message {
+    color: var(--color-white); /* Ensure both spans inside the notification change to white */
+  }
 </style>
 
 <body>

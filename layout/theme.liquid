@@ -9,15 +9,15 @@
 
     <style>
       :root {
-        --sidebar-width: 250px;
-        --sidebar-min-width: 200px;
-        --sidebar-max-width: 300px;
-        --sidebar-padding: 5% 5% 5% 1.85714vw;
+        --sidebar-width: 200px;
+        --sidebar-min-width: 180px;
+        --sidebar-max-width: 250px;
+        --sidebar-padding: 15px; /* Fixed padding */
         --sidebar-bg-color: #fff;
         --sidebar-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
         --sidebar-border-radius: 6px;
         --sidebar-label-color: #0D40C4;
-        --sidebar-font-size: clamp(0.7rem, 1.4rem, 1.4rem);
+        --sidebar-font-size: 1.2rem; /* Fixed font size */
         --sidebar-button-bg: #0D40C4;
         --sidebar-button-hover-bg: #0056b3;
         --sidebar-button-color: white;
@@ -26,16 +26,17 @@
       .sidebar {
         display: none;
         position: absolute;
-        top: 20%;
-        left: 5%;
+        top: 20%; /* Fixed position from the top */
+        left: 5%; /* Fixed position from the left */
+        width: var(--sidebar-width); /* Fixed width */
+        min-width: var(--sidebar-min-width);
+        max-width: var(--sidebar-max-width);
         height: fit-content;
         background-color: var(--sidebar-bg-color);
-        padding: var(--sidebar-padding);
+        padding: var(--sidebar-padding); /* Fixed padding */
         box-shadow: var(--sidebar-shadow);
         border-radius: var(--sidebar-border-radius);
         box-sizing: border-box;
-        min-width: var(--sidebar-min-width);
-        max-width: var(--sidebar-max-width);
       }
       
       .sidebar.active {
@@ -71,12 +72,12 @@
       }
 
       .sidebar select, .sidebar .apply-button {
-        width: 125%; /* Ensures the select and button are properly resized */
+        width: 100%; /* Ensures the select and button are properly resized */
         box-sizing: border-box; /* Includes padding and border in the element's total width and height */
       }
 
       .sidebar .apply-button {
-        width: 125%;
+        width: 100%;
         box-sizing: border-box;
         background-color: var(--sidebar-button-bg);
         color: var(--sidebar-button-color);
@@ -85,7 +86,7 @@
         cursor: pointer;
         border-radius: 5px;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 10px;
         margin-left: 0;
       }
 
@@ -93,7 +94,7 @@
         background-color: var(--sidebar-button-hover-bg);
       }
 
-      @media screen and (max-width: 750px) {
+      @media screen and (max-width: 350px) {
         .sidebar {
           position: fixed;
           top: 0;
@@ -107,7 +108,7 @@
         .sidebar select,
         .sidebar input[type="checkbox"],
         .sidebar .apply-button {
-          width: 80%;
+          width: 100%;
           padding: 10px;
         }
 

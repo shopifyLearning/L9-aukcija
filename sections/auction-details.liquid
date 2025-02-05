@@ -34,16 +34,16 @@
 </script>
 
 <script>
-  const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const graphQlUrl = 'https://levi9-test.myshopify.com/admin/api/2024-04/graphql.json';
-  const accessToken = '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';
+  const accessToken = '{{ settings.access_token }}'; // Fetch from theme settings
+  const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
   const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
   const customerEmail = "{{ customer.email | escape }}";
   const loggedCustomerId = "{{ customer.id | escape }}";
 
-  const fetchCustomerEmailById = async (loggedCustomerId, retryCount = 3) => {
-    const formattedCustomerId = `gid://shopify/Customer/${loggedCustomerId}`;
+  const fetchCustomerEmailById = async (customerId, retryCount = 3) => {
+    const formattedCustomerId = `gid://shopify/Customer/${customerId}`;
     const query = `
       query {
         customer(id: "${formattedCustomerId}") {
@@ -74,7 +74,7 @@
       console.error("Error fetching customer email:", error);
       if (retryCount > 0) {
         console.log(`Retrying fetchCustomerEmailById... Attempts left: ${retryCount}`);
-        return fetchCustomerEmailById(loggedCustomerId, retryCount - 1);
+        return fetchCustomerEmailById(customerId, retryCount - 1);
       }
       return "Email not available";
     }
@@ -99,8 +99,6 @@
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const auctionId = new URLSearchParams(window.location.search).get("auctionId");
-    const loggedCustomerId = "{{ customer.id | escape }}";
     const auctionTitle = document.getElementById("auction-title");
     const auctionImage = document.getElementById("auction-image");
     const auctionDescription = document.getElementById("auction-description");
@@ -112,6 +110,7 @@
     const submitBidButton = document.getElementById("submit-bid");
     const responseMessage = document.getElementById("response-message");
     const countdownTimer = document.getElementById("countdown-timer");
+
     const currentPriceLabel = Array.from(document.querySelectorAll('.auction-pricing strong')).find(
       (el) => el.textContent.trim() === 'Current Price:'
     );
@@ -400,7 +399,7 @@
       try {
         const auctionIdAsInt = parseInt(auctionId, 10);
         const bidPayload = {
-          CustomerId: loggedCustomerId,
+          customerId: loggedCustomerId,
           auctionId: auctionIdAsInt,
           price: price,
         };
@@ -452,5 +451,5 @@
         bidInput.style.opacity = 1;
       }
     });
-  });
+  })();
 </script>

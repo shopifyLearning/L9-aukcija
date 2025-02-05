@@ -1479,5 +1479,16 @@
         "step": 5
       }
     ]
+  },
+  {
+    "name": "Auction Settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "access_token",
+        "label": "GraphQL Access Token",
+        "default": "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"
+      }
+    ]
   }
 ]

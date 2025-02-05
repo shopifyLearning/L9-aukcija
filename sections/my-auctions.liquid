@@ -33,17 +33,27 @@
     console.log("url: ", apiUrl); // For debugging purposes
 
     function createAuctionCard(auction) {
-      const startDate = new Date(auction.startDate).toLocaleString("en-US", { timeZone: "UTC" });
-      const endDate = new Date(auction.endDate).toLocaleString("en-US", { timeZone: "UTC" });
-      const isExpired = new Date(auction.endDate) < new Date();
-      const cardClass = isExpired ? "auction-card expired" : "auction-card";
-      const expiredLabel = isExpired ? `<span class="expired-label">Expired</span>` : "";
+     const startDate = new Date(new Date(auction.startDate).getTime()).toLocaleString("en-US");
+    const endDate = new Date(new Date(auction.endDate).getTime()).toLocaleString("en-US"); 
+    const now = new Date();
+    
+   
+    const oneHourEarlier = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000);
+    
+    const isExpired = oneHourEarlier < now;
+    const isComingSoon = new Date(auction.startDate) > now;
+    const cardClass = isExpired ? "auction-card expired" : "auction-card";
+    const expiredLabel = isExpired
+        ? `<span class="expired-label">Finished</span>`
+        : "";
+    const comingSoonLabel = isComingSoon ? `<span class="coming-soon-label">Upcoming</span>` : "";
 
-      return `
-        <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
+    return `
+      <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
           <div class="image-wrapper">
             <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
             ${expiredLabel}
+            ${comingSoonLabel}
           </div>
           <h2>${auction.productTitle}</h2>
           <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
@@ -198,4 +208,15 @@ h1 {
   font-weight: bold;
   text-decoration: underline;
 }
+   .coming-soon-label {
+       background-color: #76e0bbcc;
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 14px;
+      }
 </style>

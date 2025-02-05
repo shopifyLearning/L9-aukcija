@@ -48,26 +48,29 @@
    
     const oneHourEarlier = new Date(new Date(auction.endDate).getTime() - 60 * 60 * 1000);
     
-    const isExpired = oneHourEarlier < now; 
+    const isExpired = oneHourEarlier < now;
+    const isComingSoon = new Date(auction.startDate) > now;
     const cardClass = isExpired ? "auction-card expired" : "auction-card";
     const expiredLabel = isExpired
         ? `<span class="expired-label">Finished</span>`
         : "";
+    const comingSoonLabel = isComingSoon ? `<span class="coming-soon-label">Upcoming</span>` : "";
 
     return `
       <div class="${cardClass}" onclick="redirectToAuctionPage(${auction.id})">
-        <div class="image-wrapper">
-          <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
-          ${expiredLabel}
+          <div class="image-wrapper">
+            <img src="${auction.imgUrlProduct}" alt="${auction.productTitle}" class="auction-image">
+            ${expiredLabel}
+            ${comingSoonLabel}
+          </div>
+          <h2>${auction.productTitle}</h2>
+          <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
+          <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
+          <p><strong>Start Date:</strong> ${startDate}</p>
+          <p><strong>End Date:</strong> ${endDate}</p>
         </div>
-        <h2>${auction.productTitle}</h2>
-        <p><strong>Start Price:</strong> RSD ${auction.startPrice}</p>
-        <p><strong>Current Price:</strong> RSD ${auction.currentPrice}</p>
-        <p><strong>Start Date:</strong> ${startDate}</p>
-        <p><strong>End Date:</strong> ${endDate}</p>
-      </div>
-    `;
-  }
+      `;
+    }
 
   async function fetchAuctions() {
     try {
@@ -198,5 +201,16 @@ h1 {
   background-color: #083a99; 
   transform: scale(1.05); 
 }
+  .coming-soon-label {
+       background-color: #76e0bbcc;
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 14px;
+      }
   
 </style>

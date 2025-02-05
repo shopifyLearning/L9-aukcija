@@ -6,7 +6,6 @@
         <img id="auction-image" class="auction-image" >
       </div>
       <div class="image-thumbnails"></div>
-
     </div>
     <div class="auction-info">
       <p id="auction-description"></p>
@@ -18,7 +17,6 @@
       </div>
     </div>
   </div>
-
   <div class="auction-pricing">
     <p><strong>Start Price:</strong> <span id="start-price"></span></p>
     <p><strong>Current Price:</strong> <span id="current-price"></span></p>
@@ -27,273 +25,265 @@
     <p id="countdown-timer"></p>
   </div>
 </div>
-<script>
-    window.customerEmail = "{{ customer.email | escape }}";
-   window.customerId = "{{ customer.id | escape }}";
-</script>
+
 <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js'></script>
-<script type='text/javascript'>
-   (function(){
-      emailjs.init('UW-9aMs2LssiFTzga');
-   })();
+<script>
+  (function(){
+    emailjs.init('UW-9aMs2LssiFTzga');
+  })();
 </script>
 
 <script>
   const graphQlUrl = 'https://levi9-test.myshopify.com/admin/api/2024-04/graphql.json';
-    const accessToken = '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';
-  const fetchCustomerEmailById = async (customerId) => {
-  const formattedCustomerId = `gid://shopify/Customer/${customerId}`;
-  const query = `
-    query {
-      customer(id: "${formattedCustomerId}") {
-        email
-      }
-    }
-  `;
-
-  try {
-    const response = await fetch(graphQlUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": accessToken,
-      },
-      body: JSON.stringify({ query }),
-    });
-
-    const data = await response.json();
-    if (data.errors) {
-      console.error("GraphQL Errors:", data.errors);
-      return "Email not available";
-    }
-
-    return data.data?.customer?.email || "Email not available";
-  } catch (error) {
-    console.error("Error fetching customer email:", error);
-    return "Email not available";
-  }
-};
-const handleStringToDate = (date) => {
-  if (!date) {
-    return 'n/a';
-  }
-
-  let localDate = new Date(date);
-  // Add 1 hour to the time to correct the time zone issue
-  localDate.setHours(localDate.getHours() + 1);
-
-  return (
-    localDate.toLocaleDateString('nl-NL', {
-      hour12: false,
-      timeZone: 'UTC',
-    }) +
-    ' - ' +
-    localDate.toLocaleTimeString('nl-NL', { hour12: false, timeZone: 'UTC' })
-  );
-};
-  
-  const customerEmail = window.customerEmail || null;
-  let bids = [];
-  let auctionOwner;
-  document.addEventListener("DOMContentLoaded", async () => {
+  const accessToken = '{{ settings.access_token }}'; // Fetch from theme settings
   const auctionId = new URLSearchParams(window.location.search).get("auctionId");
   const auctionApiUrl = `https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Auctions/${auctionId}`;
-  const auctionTitle = document.getElementById("auction-title");
-  const auctionImage = document.getElementById("auction-image");
-  const auctionDescription = document.getElementById("auction-description")
-  const startPrice = document.getElementById("start-price");
-  const currentPrice = document.getElementById("current-price");
-  const startDate = document.getElementById("start-date");
-  const endDate = document.getElementById("end-date");
-  const bidInput = document.getElementById("bid-input");
-  const submitBidButton = document.getElementById("submit-bid");
-  const responseMessage = document.getElementById("response-message");
-  const countdownTimer = document.getElementById("countdown-timer");
+  const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
+  const customerEmail = "{{ customer.email | escape }}";
+  const loggedCustomerId = "{{ customer.id | escape }}";
 
-
-    
-
-  try {
-    const response = await fetch(auctionApiUrl, {
-    method: "GET",
-    headers: {
-    "Content-Type": "application/json",
-    "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81" 
-  }
-});
-    
-    if (!response.ok) throw new Error("Failed to fetch auction details.");
-    const auction = await response.json();
-
-      const graphQlUrl = 'https://levi9-test.myshopify.com/admin/api/2024-04/graphql.json';
-      const accessToken = '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';
-
-      const productId = auction.productId;
-
-      const query = `
-  query {
-    product(id: "gid://shopify/Product/${productId}") {
-      id
-      title
-      images(first: 5) {
-        edges {
-          node {
-            src
-            altText
-          }
+  const fetchCustomerEmailById = async (customerId, retryCount = 3) => {
+    const formattedCustomerId = `gid://shopify/Customer/${customerId}`;
+    const query = `
+      query {
+        customer(id: "${formattedCustomerId}") {
+          email
         }
       }
+    `;
+
+    try {
+      const response = await fetch(graphQlUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": accessToken,
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch customer email.");
+      const data = await response.json();
+      if (data.errors) {
+        console.error("GraphQL Errors:", data.errors);
+        throw new Error("Email not available");
+      }
+
+      return data.data?.customer?.email || "Email not available";
+    } catch (error) {
+      console.error("Error fetching customer email:", error);
+      if (retryCount > 0) {
+        console.log(`Retrying fetchCustomerEmailById... Attempts left: ${retryCount}`);
+        return fetchCustomerEmailById(customerId, retryCount - 1);
+      }
+      return "Email not available";
     }
-  }
-`;
-      const fetchImages = async () => {
-  try {
-    const response = await fetch(graphQlUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': accessToken,
-      },
-      body: JSON.stringify({ query }),
-    });
+  };
 
-    const data = await response.json();
-    if (data.errors) {
-      console.error("GraphQL Error:", data.errors);
-      return;
+  const handleStringToDate = (date) => {
+    if (!date) {
+      return 'n/a';
     }
 
-    const product = data.data.product;
-    const images = product.images.edges.map(edge => edge.node.src);
+    let localDate = new Date(date);
+    localDate.setHours(localDate.getHours() + 1);
 
+    return (
+      localDate.toLocaleDateString('nl-NL', {
+        hour12: false,
+        timeZone: 'UTC',
+      }) +
+      ' - ' +
+      localDate.toLocaleTimeString('nl-NL', { hour12: false, timeZone: 'UTC' })
+    );
+  };
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const auctionTitle = document.getElementById("auction-title");
     const auctionImage = document.getElementById("auction-image");
-    auctionImage.src = images[0];
+    const auctionDescription = document.getElementById("auction-description");
+    const startPrice = document.getElementById("start-price");
+    const currentPriceElement = document.getElementById("current-price");
+    const startDate = document.getElementById("start-date");
+    const endDate = document.getElementById("end-date");
+    const bidInput = document.getElementById("bid-input");
+    const submitBidButton = document.getElementById("submit-bid");
+    const responseMessage = document.getElementById("response-message");
+    const countdownTimer = document.getElementById("countdown-timer");
 
-    const thumbnailContainer = document.querySelector(".image-thumbnails");
-    thumbnailContainer.innerHTML = ''; 
+    const currentPriceLabel = Array.from(document.querySelectorAll('.auction-pricing strong')).find(
+      (el) => el.textContent.trim() === 'Current Price:'
+    );
+    const auctionDetailsContainer = document.querySelector(".auction-details-container");
 
-   images.forEach((imageSrc, index) => {
-  const img = new Image(); 
-  img.src = imageSrc;
-  img.alt = `Thumbnail ${index + 1}`;
-  img.classList.add("thumbnail");
-  img.dataset.index = index;
+    let stopFlashing = false;
+    let bids = [];
+    let auctionOwner;
 
+    const fetchAuctionDetails = async (retryCount = 3) => {
+      try {
+        const response = await fetch(auctionApiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81" 
+          }
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch auction details.");
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching auction details:", error);
+        if (retryCount > 0) {
+          console.log(`Retrying fetchAuctionDetails... Attempts left: ${retryCount}`);
+          return fetchAuctionDetails(retryCount - 1);
+        }
+        responseMessage.textContent = "Error loading auction details. Please try again later.";
+        return null;
+      }
+    };
+
+    const auction = await fetchAuctionDetails();
+
+    if (!auction) return;
+
+    const fetchImages = async (retryCount = 3) => {
+      try {
+        const productId = auction.productId;
+        const query = `
+          query {
+            product(id: "gid://shopify/Product/${productId}") {
+              id
+              title
+              images(first: 5) {
+                edges {
+                  node {
+                    src
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        `;
+
+        const response = await fetch(graphQlUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': accessToken,
+          },
+          body: JSON.stringify({ query }),
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch product images.");
+        const data = await response.json();
+        if (data.errors) {
+          console.error("GraphQL Errors:", data.errors);
+          throw new Error("Images not available");
+        }
+
+        const product = data.data.product;
+        const images = product.images.edges.map(edge => edge.node.src);
+        auctionImage.src = images[0];
+        const thumbnailContainer = document.querySelector(".image-thumbnails");
+        thumbnailContainer.innerHTML = ''; 
+
+        images.forEach((imageSrc, index) => {
+          const img = new Image(); 
+          img.src = imageSrc;
+          img.alt = `Thumbnail ${index + 1}`;
+          img.classList.add("thumbnail");
+          img.dataset.index = index;
+          img.onload = () => {
+            img.addEventListener('click', () => {
+              auctionImage.src = imageSrc;
+            });
+            thumbnailContainer.appendChild(img); 
+          };
+          img.onerror = () => {
+            console.error(`Failed to load image: ${imageSrc}`);
+          };
+        });
+      } catch (error) {
+        console.error("Error fetching product images:", error);
+        if (retryCount > 0) {
+          console.log(`Retrying fetchImages... Attempts left: ${retryCount}`);
+          return fetchImages(retryCount - 1);
+        }
+        responseMessage.textContent = "Error loading auction images. Please try again later.";
+      }
+    };
+
+    fetchImages();
   
-  img.onload = () => {
-    img.addEventListener('click', () => {
-      auctionImage.src = imageSrc;
-    });
-    thumbnailContainer.appendChild(img); 
-  };
-
-  
-  img.onerror = () => {
-    console.error(`Failed to load image: ${imageSrc}`);
-  };
-});
-      
-  } catch (error) {
-    console.error("Error fetching product images:", error);
-  }
-};
-
-fetchImages();
-    
     auctionOwner = auction.customerId;
     const descriptionLength = auctionDescription.textContent.length;
-      if (descriptionLength > 300) {
-        auctionImage.style.maxWidth = '500px'; 
-      } else {
-        auctionImage.style.maxWidth = '350px'; 
-      }
-    
+
+    if (descriptionLength > 300) {
+      auctionImage.style.maxWidth = '500px'; 
+    } else {
+      auctionImage.style.maxWidth = '350px'; 
+    }
+  
     auctionTitle.textContent = auction.productTitle;
     auctionImage.src = auction.imgUrlProduct;
     auctionDescription.textContent = auction.description || "No description available.";
     startPrice.textContent = `RSD ${auction.startPrice}`;
-    currentPrice.textContent = `RSD ${auction.currentPrice}`;
-    
-     startDate.textContent = handleStringToDate(auction.startDate);
+    currentPriceElement.textContent = `RSD ${auction.currentPrice}`;
+    startDate.textContent = handleStringToDate(auction.startDate);
     endDate.textContent = handleStringToDate(auction.endDate);
 
-   
     bids = auction.bids || [];
-   
     if (bids.length > 0) {
       const lastBid = bids[bids.length - 1];
-     
     }
-      const auctionStartDate = new Date(auction.startDate).getTime();
-  const now = new Date().getTime();
 
-if (now < auctionStartDate) {
-  bidInput.disabled = true;
-  submitBidButton.disabled = true;
-  bidInput.style.opacity = 0.5;
-  submitBidButton.style.opacity = 0.5;
-
-  const comingSoonMessage = document.createElement("p");
-  comingSoonMessage.textContent = "📅  Auction Not Started";
-  comingSoonMessage.className = "info-message";
-  comingSoonMessage.style.color = "#d9534f"; 
-  comingSoonMessage.style.fontWeight = "bold";
-  comingSoonMessage.style.marginTop = "10px";
-  submitBidButton.parentElement.appendChild(comingSoonMessage);
-}
-    
-   const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000).getTime();
+    const endDateTime = new Date(new Date(auction.endDate).getTime() - 3600000).getTime();
 
     function updateCountdown() {
       const now = new Date().getTime();
       let timeRemaining = endDateTime - now;
       timeRemaining += 3600000;
+
       if (timeRemaining <= 0) {
         countdownTimer.textContent = "Auction Ended";
         clearInterval(countdownInterval);
 
-        
         submitBidButton.disabled = true;
         submitBidButton.style.opacity = 0.5;
         bidInput.disabled = true;
         bidInput.style.opacity = 0.5;
 
-       
         if (bids.length > 0) {
-        const lastBid = bids[bids.length - 1];
-        const customerId = lastBid.customerId || "Unknown"; 
-        fetchCustomerEmailById(customerId).then((email) => {
-          const congratulationsMessage = document.createElement("p");
-          congratulationsMessage.textContent = `Congratulations ${email}!`;
-          congratulationsMessage.className = "congratulations-message";
-          submitBidButton.parentElement.appendChild(congratulationsMessage);
-
-
-        });
+          const lastBid = bids[bids.length - 1];
+          const LastBidCustomerId = lastBid.customerId || "Unknown"; 
+          fetchCustomerEmailById(LastBidCustomerId).then((email) => {
+            const congratulationsMessage = document.createElement("p");
+            congratulationsMessage.textContent = `Congratulations ${email}!`;
+            congratulationsMessage.className = "congratulations-message";
+            submitBidButton.parentElement.appendChild(congratulationsMessage);
+          });
+        }
+        return;
       }
-      return;
-    }
       
       const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
       const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-      
-
       countdownTimer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     const countdownInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
 
-      if (customerId === auctionOwner) {
+    if (loggedCustomerId === auctionOwner) {
       bidInput.disabled = true;
       submitBidButton.disabled = true;
       bidInput.style.opacity = 0.5;
       submitBidButton.style.opacity = 0.5;
 
-      
       const ownerMessage = document.createElement("p");
       ownerMessage.textContent = "You are the owner of this auction. Bidding is disabled.";
       ownerMessage.className = "info-message";
@@ -305,134 +295,161 @@ if (now < auctionStartDate) {
       return;
     }
 
-  } catch (error) {
-    console.error("Error fetching auction details:", error);
-    responseMessage.textContent = "Error loading auction details.";
-  }
-  function sendWinnerEmail(customerId, auctionTitleElement, lastBid) {
-    const emailParams = {
-      to_email: customerId,
-      auction_title: auctionTitleElement.textContent,
-      winning_bid: `RSD ${lastBid.price}`,
-    };
-  
-    emailjs.send('shopify_learning@outlook', 'template_kqb8a9o', emailParams)
-      .then(() => {
-        
-      })
-      .catch((error) => {
-        console.error('Error sending email:', error);
-      });
-  }
-    function notifyOutbidder(outbidderEmail, auctionTitleElement, previousBid) {
-    const emailParams = {
-        to_email: outbidderEmail,
-        auction_title: auctionTitleElement.textContent,
-        outbid_price: `RSD ${previousBid}`,
-    };
+    const header = document.querySelector('.section-header');
+    const priceUpdateInterval = header.getAttribute('data-notification-interval') * 1000;
+    setInterval(updateCurrentPrice, priceUpdateInterval);
 
-    emailjs.send('shopify_learning@outlook', 'template_g9irw73', emailParams)
-        .then(() => {
-            
-        })
-        .catch((error) => {
-            console.error('Error sending outbid notification email:', error);
+    async function updateCurrentPrice() {
+      console.log('### Price update check init ... ###');
+      try {
+        const response = await fetch(auctionApiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81" 
+          }
         });
-}
 
- 
- submitBidButton.addEventListener("click", async () => {
-  const price = parseFloat(bidInput.value);
-  
-  if (!price || price <= 0) {
-    responseMessage.textContent = "Please enter a valid bid.";
-    responseMessage.className = "error-message";
-    responseMessage.style.display = "block";
-    return;
-  }
-
- 
-  if (price <= parseFloat(currentPrice.textContent.replace('RSD ', '').replace(',', ''))) {
-    responseMessage.textContent = "Your bid must be higher than the current price.";
-    responseMessage.className = "error-message";
-    responseMessage.style.display = "block";
-    return;
-  }
-
- 
-  if (bids.length > 0) {
-    const lastBid = bids[bids.length - 1];
-    const customerId = lastBid.customerId || "Unknown";
-
-   
-    const email = await fetchCustomerEmailById(customerId);  
-
-    if (email === customerEmail) {
-      responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
-      responseMessage.className = "error-message";
-      responseMessage.style.display = "block";
-      return; 
+        if (!response.ok) throw new Error("Failed to fetch auction details.");
+        const updatedAuction = await response.json();
+        const newPrice = `RSD ${updatedAuction.currentPrice}`;
+        if (currentPriceElement.textContent !== newPrice) {
+          currentPriceElement.textContent = newPrice;
+          stopFlashing = false;
+          togglePriceColor();
+        }
+      } catch (error) {
+        console.error("Error fetching auction details:", error);
+        responseMessage.textContent = "Error updating auction price. Please try again later.";
+      }
     }
-  }
 
- 
-  submitBidButton.disabled = true;
-  submitBidButton.style.opacity = 0.5;
-  bidInput.disabled = true;
-  bidInput.style.opacity = 0.5;
+    function togglePriceColor() {
+      let isRed = true;
+      const toggleInterval = 500;
 
-  try {
-    const auctionIdAsInt = parseInt(auctionId, 10);
-    const bidPayload = {
-      customerId,
-      auctionId: auctionIdAsInt,
-      price: price,
-    };
+      const toggleColor = () => {
+        if (stopFlashing === false) {
+          currentPriceElement.style.color = isRed ? 'red' : 'black';
+          currentPriceLabel.style.color = isRed ? 'red' : 'black';
+          auctionDetailsContainer.style.borderColor = isRed ? 'red' : 'black';
+          auctionDetailsContainer.style.borderWidth = isRed ? '2px' : '1px';
+          auctionDetailsContainer.style.boxShadow = isRed ? '0 0 10px rgba(255, 0, 0, 0.5)' : 'none';
+          isRed = !isRed;
+        }
+      };
 
-    const bidApiUrl = "https://shopifyauctionapp-hrdhadb3f3f5gpdh.northeurope-01.azurewebsites.net/Bids";
-    const response = await fetch(bidApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
-      },
-      body: JSON.stringify(bidPayload)
+      toggleColor();
+
+      const colorToggleInterval = setInterval(toggleColor, toggleInterval);
+
+      setTimeout(() => {
+        clearInterval(colorToggleInterval);
+        currentPriceElement.style.color = 'black';
+        currentPriceLabel.style.color = 'black';
+        auctionDetailsContainer.style.borderColor = 'black';
+        auctionDetailsContainer.style.borderWidth = '1px';
+        auctionDetailsContainer.style.boxShadow = 'none';
+        stopFlashing = false;
+      }, 50000);
+    }
+
+    submitBidButton.addEventListener("click", async () => {
+      const price = parseFloat(bidInput.value);
+      
+      if (!price || price <= 0) {
+        responseMessage.textContent = "Please enter a valid bid amount.";
+        responseMessage.className = "error-message";
+        responseMessage.style.display = "block";
+        return;
+      }
+
+      if (price <= parseFloat(currentPriceElement.textContent.replace('RSD ', '').replace(',', ''))) {
+        responseMessage.textContent = "Your bid must be higher than the current price.";
+        responseMessage.className = "error-message";
+        responseMessage.style.display = "block";
+        return;
+      }
+
+      if (bids.length > 0) {
+        const lastBid = bids[bids.length - 1];
+        const LastBidCustomerId = lastBid.customerId || "Unknown";
+        try {
+          const email = await fetchCustomerEmailById(LastBidCustomerId);
+          if (email === customerEmail) {
+            responseMessage.textContent = "You cannot place consecutive bids. Please wait for someone else to bid.";
+            responseMessage.className = "error-message";
+            responseMessage.style.display = "block";
+            return; 
+          }
+        } catch (error) {
+          console.error("Error fetching customer email:", error);
+          responseMessage.textContent = "Error verifying your bid. Please try again later.";
+          responseMessage.className = "error-message";
+          responseMessage.style.display = "block";
+          return;
+        }
+      }
+
+      submitBidButton.disabled = true;
+      submitBidButton.style.opacity = 0.5;
+      bidInput.disabled = true;
+      bidInput.style.opacity = 0.5;
+
+      try {
+        const auctionIdAsInt = parseInt(auctionId, 10);
+        const bidPayload = {
+          customerId: loggedCustomerId,
+          auctionId: auctionIdAsInt,
+          price: price,
+        };
+
+        const response = await fetch(bidApiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": "7ca2bd89bc8b479f8e4a08dd14434a81"
+          },
+          body: JSON.stringify(bidPayload)
+        });
+
+        if (!response.ok) throw new Error("Failed to submit bid.");
+
+        responseMessage.textContent = "Your bid has been successfully placed!";
+        responseMessage.className = "success-message";
+        responseMessage.style.display = "block";
+
+        stopFlashing = true;
+        currentPriceElement.style.color = 'black';
+        currentPriceLabel.style.color = 'black';
+        auctionDetailsContainer.style.borderColor = 'black';
+        auctionDetailsContainer.style.borderWidth = '1px';
+        auctionDetailsContainer.style.boxShadow = 'none'; 
+
+        const updatedAuction = await response.json();
+        bids = updatedAuction.bids || [];
+        currentPriceElement.textContent = `RSD ${updatedAuction.currentPrice}`;
+
+        setTimeout(() => {
+          responseMessage.style.display = "none";
+          bidInput.value = "";
+          submitBidButton.disabled = false;
+          submitBidButton.style.opacity = 1;
+          bidInput.disabled = false;
+          bidInput.style.opacity = 1;
+        }, 2000);
+
+      } catch (error) {
+        console.error("Error submitting bid:", error);
+        responseMessage.textContent = "Error placing your bid. Please try again later.";
+        responseMessage.className = "error-message";
+        responseMessage.style.display = "block";
+
+        submitBidButton.disabled = false;
+        submitBidButton.style.opacity = 1;
+        bidInput.disabled = false;
+        bidInput.style.opacity = 1;
+      }
     });
-
-    if (!response.ok) throw new Error("Failed to submit bid.");
-
-    responseMessage.textContent = "Your bid has been successfully placed!";
-    responseMessage.className = "success-message";
-    responseMessage.style.display = "block";
-
-    const updatedAuction = await response.json();
-    bids = updatedAuction.bids || [];
-    currentPrice.textContent = `RSD ${updatedAuction.currentPrice}`;
-
-    setTimeout(() => {
-      responseMessage.style.display = "none";
-      bidInput.value = "";
-      submitBidButton.disabled = false;
-      submitBidButton.style.opacity = 1;
-      bidInput.disabled = false;
-      bidInput.style.opacity = 1;
-    }, 2000);
-
-  } catch (error) {
-    console.error("Error submitting bid:", error);
-    responseMessage.textContent = "Invalid bid amount. Please enter a bid in increments of 100";
-    responseMessage.className = "error-message";
-    responseMessage.style.display = "block";
-
-    submitBidButton.disabled = false;
-    submitBidButton.style.opacity = 1;
-    bidInput.disabled = false;
-    bidInput.style.opacity = 1;
-  }
-});
-    
-
-});
-
-
+  })();
 </script>

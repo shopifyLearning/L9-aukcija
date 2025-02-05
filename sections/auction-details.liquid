@@ -42,8 +42,8 @@
   const customerEmail = "{{ customer.email | escape }}";
   const loggedCustomerId = "{{ customer.id | escape }}";
 
-  const fetchCustomerEmailById = async (customerId, retryCount = 3) => {
-    const formattedCustomerId = `gid://shopify/Customer/${customerId}`;
+  const fetchCustomerEmailById = async (loggedCustomerId, retryCount = 3) => {
+    const formattedCustomerId = `gid://shopify/Customer/${loggedCustomerId}`;
     const query = `
       query {
         customer(id: "${formattedCustomerId}") {
@@ -74,7 +74,7 @@
       console.error("Error fetching customer email:", error);
       if (retryCount > 0) {
         console.log(`Retrying fetchCustomerEmailById... Attempts left: ${retryCount}`);
-        return fetchCustomerEmailById(customerId, retryCount - 1);
+        return fetchCustomerEmailById(loggedCustomerId, retryCount - 1);
       }
       return "Email not available";
     }
@@ -99,6 +99,8 @@
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
+    const auctionId = new URLSearchParams(window.location.search).get("auctionId");
+    const loggedCustomerId = "{{ customer.id | escape }}";
     const auctionTitle = document.getElementById("auction-title");
     const auctionImage = document.getElementById("auction-image");
     const auctionDescription = document.getElementById("auction-description");
@@ -451,5 +453,5 @@
         bidInput.style.opacity = 1;
       }
     });
-  })();
+  });
 </script>
